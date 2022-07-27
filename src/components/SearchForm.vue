@@ -62,10 +62,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-@media (max-width: 800px)
-{
-
-
+@media (max-width: 800px) {
 }
 
 h2 {
@@ -73,7 +70,7 @@ h2 {
 }
 
 #search-wrapper {
-  min-height: calc(100vh - 50px);
+  min-height: calc(100vh - 100px);
   border-right: 1px solid #42b983;
   -webkit-box-shadow: 7px -2px 14px -2px rgba(66, 185, 131, 0.6);
   -moz-box-shadow: 7px -2px 14px -2px rgba(66, 185, 131, 0.6);
