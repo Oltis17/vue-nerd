@@ -50,11 +50,12 @@ export default {
 
 #top-bar-wrapper {
   width: 100%;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   height: 50px;
   border-bottom: 1px solid #42b983;
+  background-color: #00031c;
 }
 
 #top-bar {
@@ -107,6 +108,7 @@ button {
   cursor: pointer;
   border: 1px solid white;
   color: white;
+  background-color: #00031c;
 }
 
 button:hover {

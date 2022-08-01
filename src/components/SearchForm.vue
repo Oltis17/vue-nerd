@@ -70,7 +70,9 @@ h2 {
 }
 
 #search-wrapper {
+  position: fixed;
   min-height: calc(100vh - 100px);
+  overflow: auto;
   border-right: 1px solid #42b983;
   -webkit-box-shadow: 7px -2px 14px -2px rgba(66, 185, 131, 0.6);
   -moz-box-shadow: 7px -2px 14px -2px rgba(66, 185, 131, 0.6);

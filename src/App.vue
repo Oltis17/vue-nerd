@@ -9,6 +9,7 @@
         <Results />
       </div>
     </div>
+    <Footer />
   </div>
 </template>
 
@@ -16,6 +17,7 @@
 import TopBar from './components/TopBar.vue';
 import SearchForm from './components/SearchForm.vue';
 import Results from './components/Results.vue';
+import Footer from './components/Footer.vue';
 
 export default {
   name: 'App',
@@ -23,6 +25,7 @@ export default {
     TopBar,
     SearchForm,
     Results,
+    Footer,
   },
 };
 </script>
