@@ -1,7 +1,7 @@
 <template>
   <div id="top-bar-wrapper">
     <div id="top-bar">
-      <div id="title">NERD<sub>by CESNET</sub></div>
+      <div id="title">NERD<sub>by <a href="https://cesnet.cz">CESNET</a></sub></div>
       <div v-if="authenticated" id="right-bar" class="top-bar-control">
         <button class="darker">Log in</button>
         <button>Register</button>
@@ -56,6 +56,7 @@ export default {
   height: 50px;
   border-bottom: 1px solid #42b983;
   background-color: #00031c;
+  z-index: 3;
 }
 
 #top-bar {
@@ -65,6 +66,7 @@ export default {
   align-items: baseline;
   padding-left: 15px;
   padding-right: 15px;
+  padding-top: 8px;
 }
 
 #right-bar {
@@ -135,5 +137,10 @@ button:hover {
 #title sub {
   font-size: 10px;
   opacity: 60%;
+}
+
+a {
+  color: white;
+  text-decoration: none;
 }
 </style>
