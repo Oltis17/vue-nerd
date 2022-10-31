@@ -61,7 +61,7 @@
             </div>
           </Popper>
         </td>
-        <td :style="'color: ' + rep2Color(ip.rep)">{{ ip.rep.toFixed(2) }}</td>
+        <td :style="'color: ' + rep2Color(ip.rep)">{{ ip.rep.toFixed(3) }}</td>
         <td><i class="fa fa-ellipsis-h"></i></td>
       </tr>
     </table>

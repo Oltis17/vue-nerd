@@ -43,16 +43,18 @@ export default {
 
   #wrapper-results {
     width: 100%;
+    height: 90vh;
+    overflow: scroll;
   }
 }
 
 @media (min-width: 801px) {
   #wrapper-search {
-    width: 320px;
+    width: 290px;
   }
 
   #wrapper-results {
-    width: calc(100% - 320px);
+    width: calc(100% - 290px);
   }
 }
 
