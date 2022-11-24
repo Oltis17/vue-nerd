@@ -1,12 +1,21 @@
 <template>
   <div id="app">
+    <TopBar />
     <router-view />
+    <FooterComp />
   </div>
 </template>
 
 <script>
+import TopBar from './components/TopBar.vue';
+import FooterComp from './components/FooterComp.vue';
+
 export default {
   name: 'App',
+  components: {
+      TopBar,
+      FooterComp,
+  },
 };
 </script>
 
@@ -18,6 +27,7 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 50px;
+  background-color: #00031c;
 }
 
 body {

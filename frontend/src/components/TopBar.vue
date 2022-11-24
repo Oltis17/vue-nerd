@@ -66,7 +66,6 @@ export default {
   align-items: baseline;
   padding-left: 15px;
   padding-right: 15px;
-  padding-top: 8px;
 }
 
 #right-bar {

@@ -14,3 +14,8 @@ export async function filterResults(filter) {
     );
     return response.data;
 }
+
+export async function getIpDetails(ip_address) {
+    const response = await axios.get(`/api/ip/${ip_address}/full`, { ip_address });
+    return response.data;
+}

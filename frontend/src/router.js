@@ -4,6 +4,7 @@ import axios from 'axios';
 import MainScreen from './views/MainScreen.vue';
 import LoginScreen from './views/LoginScreen.vue';
 import ProfileScreen from './views/ProfileScreen.vue';
+import IpDetailsScreen from './views/IpDetailsScreen.vue';
 import NotFound from './views/NotFound.vue';
 import UnAuthorized from './views/UnAuthorized.vue';
 
@@ -27,6 +28,11 @@ const router = createRouter({
             component: ProfileScreen,
             // beforeEnter: auth.ifAuthenticated,
         },
+        {
+            path: '/ip/:addr',
+            name: '/ip/:addr',
+            component: IpDetailsScreen,
+          },
         {
             path: '/unauthorized',
             name: 'unauthorized',

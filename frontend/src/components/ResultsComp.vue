@@ -37,7 +37,7 @@
         <tbody>
           <tr v-for="ip in results" :key="ip">
             <td class="result-ip-row">
-              <span class="result-ip-white">{{ ip.ip }}</span>
+              <a class="result-ip-white" :href="`/ip/${ip.ip}`">{{ ip.ip }}</a>
             </td>
             <td>{{ ip.hostname }}</td>
             <td>
@@ -276,5 +276,10 @@ table th {
 
 .row-more {
   cursor: pointer;
+}
+
+a {
+  color: white;
+  text-decoration: none;
 }
 </style>

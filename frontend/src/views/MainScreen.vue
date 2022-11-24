@@ -1,6 +1,6 @@
 <template>
     <div>
-      <TopBar />
+      
       <div id="wrapper">
         <div id="wrapper-search">
           <SearchForm />
@@ -9,23 +9,20 @@
           <ResultsComp />
         </div>
       </div>
-      <FooterComp />
+      
     </div>
   </template>
   
   <script>
-  import TopBar from '../components/TopBar.vue';
   import SearchForm from '../components/SearchForm.vue';
   import ResultsComp from '../components/ResultsComp.vue';
-  import FooterComp from '../components/FooterComp.vue';
+
   
   export default {
     name: 'App',
     components: {
-      TopBar,
       SearchForm,
       ResultsComp,
-      FooterComp,
     },
   };
   </script>
