@@ -24,47 +24,52 @@
     </div>
   </div>
   <div id="res-table-wrapper">
-    <table id="results-table">
-      <tr class="result-table-head">
-        <th>IP</th>
-        <th>Hostname</th>
-        <th>ASN</th>
-        <th>Country</th>
-        <th>Reputation score</th>
-      </tr>
-      <tr v-for="ip in results" :key="ip">
-        <td class="result-ip-row">
-          <span class="result-ip-white">{{ ip.ip }}</span>
-        </td>
-        <td>{{ ip.hostname }}</td>
-        <td>
-          AS{{ ip.asn[0] }}
-          <Popper v-if="ip.asn.length > 1"
-          class="tooltip"
-          :content="otherASN(ip.asn)"
-          hover
-          placement="right"
-          >
-            <span> + {{ ip.asn.length - 1 }}</span>
-          </Popper>
-        </td>
-        <td class="country">
-          <Popper
-          class="tooltip"
-          :content="getCountInfo(ip.geo.ctry)"
-          hover
-          placement="top"
-          >
-            <div>
-              <span><country-flag :country="toLower(ip.geo.ctry)" size='normal'/></span>
-              <span class="text">{{ ip.geo.ctry }}</span>
-            </div>
-          </Popper>
-        </td>
-        <td :style="'color: ' + rep2Color(ip.rep)">{{ ip.rep.toFixed(3) }}</td>
-        <td><i class="fa fa-ellipsis-h"></i></td>
-      </tr>
-    </table>
+    <perfect-scrollbar>
+      <table id="results-table">
+        <thead class="result-table-head">
+          <th>IP</th>
+          <th>Hostname</th>
+          <th>ASN</th>
+          <th>Country</th>
+          <th>Reputation score</th>
+          <th></th>
+        </thead>
+        <tbody>
+          <tr v-for="ip in results" :key="ip">
+            <td class="result-ip-row">
+              <span class="result-ip-white">{{ ip.ip }}</span>
+            </td>
+            <td>{{ ip.hostname }}</td>
+            <td>
+              AS{{ ip.asn[0] }}
+              <Popper v-if="ip.asn.length > 1"
+              class="tooltip"
+              :content="otherASN(ip.asn)"
+              hover
+              placement="right"
+              >
+                <span> + {{ ip.asn.length - 1 }}</span>
+              </Popper>
+            </td>
+            <td class="country">
+              <Popper
+              class="tooltip"
+              :content="getCountInfo(ip.geo.ctry)"
+              hover
+              placement="top"
+              >
+                <div>
+                  <span><country-flag :country="toLower(ip.geo.ctry)" size='normal'/></span>
+                  <span class="text">{{ ip.geo.ctry }}</span>
+                </div>
+              </Popper>
+            </td>
+            <td :style="'color: ' + rep2Color(ip.rep)">{{ ip.rep.toFixed(3) }}</td>
+            <td class="row-more"><i class="fa fa-ellipsis-h"></i></td>
+          </tr>
+        </tbody>
+      </table>
+    </perfect-scrollbar>
   </div>
 </template>
 
@@ -143,6 +148,7 @@ export default {
   justify-content: space-evenly;
   max-width: 900px;
   margin: auto;
+  margin-bottom: 20px;
 }
 
 #results-sorting {
@@ -170,11 +176,16 @@ export default {
 #results-table {
   color: white;
   width: calc(100% - 40px);
-  margin-top: 20px;
   margin-left: 20px;
   margin-right: 20px;
-  border-collapse: separate;
-  border-spacing: 0 7px;
+  border-collapse: collapse;
+}
+
+tbody td {
+  border: 5px solid #00031c;
+  padding: 5px;
+  border-right: 0;
+  border-left: 0;
 }
 
 #results-table tr {
@@ -187,9 +198,8 @@ export default {
   padding-right: 10px;
 }
 
-#res-table-wrapper {
-  overflow-x: auto;
-  height: 80vh;
+.ps {
+  height: calc(100vh - 190px);
 }
 
 .result-ip {
@@ -222,7 +232,7 @@ export default {
 }
 
 .result-table-head th {
-  background-color: rgb(250, 250, 250, 0.7);
+  background-color: rgb(235, 235, 235);
   color: #00031c;
 }
 .result-table-head:first-child {
@@ -255,10 +265,16 @@ export default {
 }
 
 table th {
-    position: -webkit-sticky; 
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background: #fff;
+  margin: 0;
+  height: 40px;
+  position: -webkit-sticky; 
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #fff;
+}
+
+.row-more {
+  cursor: pointer;
 }
 </style>

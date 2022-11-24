@@ -70,6 +70,7 @@ export default {
 body {
   background-color: #00031c;
   margin: 0;
+  overflow: hidden;
 }
 
 #wrapper {
