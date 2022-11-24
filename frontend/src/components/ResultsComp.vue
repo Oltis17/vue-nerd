@@ -106,7 +106,7 @@ export default {
   },
   async mounted() {
     this.results = await api.getResults();
-    console.log(this.results.length);
+    console.log(this.results);
   },
 };
 </script>
@@ -189,6 +189,7 @@ export default {
 
 #res-table-wrapper {
   overflow-x: auto;
+  height: 80vh;
 }
 
 .result-ip {
@@ -251,5 +252,13 @@ export default {
   --popper-theme-border-radius: 6px;
   --popper-theme-padding: 10px;
   --popper-theme-box-shadow: 0 6px 30px -6px rgba(0, 0, 0, 0.25);
+}
+
+table th {
+    position: -webkit-sticky; 
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #fff;
 }
 </style>

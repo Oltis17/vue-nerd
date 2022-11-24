@@ -174,7 +174,7 @@
 
       <div class="search-btns">
         <button class="search-btn-green">Apply</button>
-        <button>Clear all</button>
+        <button class="clear-btn-white">Clear all</button>
       </div>
     </div>
   </div>
@@ -246,14 +246,18 @@ export default {
 @media (max-width: 800px) {
 }
 
+@media (max-height: 700px) {
+  #search-form {
+    overflow: auto;
+  }
+}
+
 h2 {
   color: #42b983;
 }
 
 #search-wrapper {
   position: fixed;
-  min-height: calc(100vh - 100px);
-  overflow: auto;
   border-right: 1px solid #42b983;
   -webkit-box-shadow: 7px -2px 14px -2px rgba(66, 185, 131, 0.6);
   -moz-box-shadow: 7px -2px 14px -2px rgba(66, 185, 131, 0.6);
@@ -264,7 +268,7 @@ h2 {
   display: flex;
   flex-direction: column;
   padding: 20px;
-  overflow: scroll;
+  min-height: calc(100vh - 90px);
 }
 
 #search-form label {
@@ -328,6 +332,10 @@ h2 {
 .search-btn-green {
   color: #42b983;
   border: 2px solid #42b983;
+  background-color: transparent;
+  padding: 10px;
+  border-radius: 7px;
+  cursor: pointer;
 }
 
 .search-btn-green:hover {
@@ -336,6 +344,24 @@ h2 {
   -webkit-box-shadow: 0px 0px 24px -6px rgba(66, 185, 131, 0.76);
   -moz-box-shadow: 0px 0px 24px -6px rgba(66, 185, 131, 0.76);
   box-shadow: 0px 0px 24px -6px rgba(66, 185, 131, 0.76);
+}
+
+.clear-btn-white {
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  background-color: transparent;
+  padding: 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: 10ms linear;
+}
+
+.clear-btn-white:hover {
+  background-color: #ffffff;
+  color: #00031c;
+  -webkit-box-shadow: 0px 0px 24px -6px rgba(255, 255, 255, 0.76);
+  -moz-box-shadow: 0px 0px 24px -6px rgba(255, 255, 255, 0.76);
+  box-shadow: 0px 0px 24px -6px rgba(255, 255, 255, 0.76);
 }
 
 .search-btns {
