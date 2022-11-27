@@ -1,8 +1,5 @@
 <template>
     <div v-if="!loading" class="wrapper">
-        <h2>Details for IP address: {{ ip }}</h2>
-
-
         <div class="top-part">
             <div class="badges">
                 <div class="ip-badge">

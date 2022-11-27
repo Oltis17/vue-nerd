@@ -16,6 +16,12 @@ export default {
       TopBar,
       FooterComp,
   },
+  watch: {
+      '$route' (to, from) {
+        document.title = to.meta.title || 'NERD';
+        from;
+      }
+    },
 };
 </script>
 
