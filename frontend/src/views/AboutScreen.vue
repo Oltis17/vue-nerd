@@ -173,6 +173,9 @@
     color: white;
     padding: 40px;
     height: 80vh;
+    width: 60%;
+    margin: auto;
+    background-color: transparent;
 }
 
 a {

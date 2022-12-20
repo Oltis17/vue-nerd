@@ -1,6 +1,6 @@
 <template>
-  <div id="wrapper-res">
-    <div id="results-sorting">
+  <!-- <div id="wrapper-res"> -->
+    <!-- <div id="results-sorting">
       <div>Order</div>
       <div>Sort by</div>
       <div>Results per page</div>
@@ -22,24 +22,39 @@
         <i class="fa fa-solid fa-angle-right fa-lg"></i>
       </div>
     </div>
-  </div>
+  </div> -->
   <div id="res-table-wrapper">
     <perfect-scrollbar>
       <table id="results-table">
         <thead class="result-table-head">
-          <th>IP</th>
-          <th>Hostname</th>
-          <th>ASN</th>
-          <th>Country</th>
-          <th>Reputation score</th>
+          <th>IP <i class="fa fa-solid fa-arrow-down-wide-short"></i></th>
+          <th>Hostname <i class="fa fa-solid fa-arrow-down-wide-short"></i></th>
+          <th>ASN <i class="fa fa-solid fa-arrow-down-wide-short"></i></th>
+          <th>Blacklists <i class="fa fa-solid fa-arrow-down-wide-short"></i></th>
+          <th>Tags <i class="fa fa-solid fa-arrow-down-wide-short"></i></th>
+          <th>Rep. score <i class="fa fa-solid fa-arrow-down-wide-short"></i></th>
           <th></th>
         </thead>
         <tbody>
           <tr v-for="ip in results" :key="ip">
             <td class="result-ip-row">
-              <a class="result-ip-white" :href="`/ip/${ip.ip}`">{{ ip.ip }}</a>
+              <div>
+                <Popper
+                :content="getCountInfo(ip.geo.ctry)"
+                hover
+                placement="top"
+                class="tooltip wide"
+                style="border: none"
+                >
+                  <div class="flag">
+                    <span><country-flag :country="toLower(ip.geo.ctry)" size='normal' rounded/></span>
+                  </div>
+                </Popper>
+                <a class="result-ip-white" :href="`/ip/${ip.ip}`">{{ ip.ip }}</a>
+              </div>
+              
             </td>
-            <td>{{ ip.hostname }}</td>
+            <td class="result-ip-row">{{ ip.hostname }}</td>
             <td>
               AS{{ ip.asn[0] }}
               <Popper v-if="ip.asn.length > 1"
@@ -48,10 +63,10 @@
               hover
               placement="right"
               >
-                <span> + {{ ip.asn.length - 1 }}</span>
+                <span> + <span class="link">{{ ip.asn.length - 1 }}</span></span>
               </Popper>
             </td>
-            <td class="country">
+            <!-- <td class="country">
               <Popper
               class="tooltip"
               :content="getCountInfo(ip.geo.ctry)"
@@ -63,6 +78,26 @@
                   <span class="text">{{ ip.geo.ctry }}</span>
                 </div>
               </Popper>
+            </td> -->
+            <td>
+              <Popper
+                class="tooltip"
+                hover
+                placement="right"
+              >
+                <span class="link">{{ ip.bl.length - 1 }}</span>
+                <template #content>
+                  This IP address is present on {{ ip.bl.length - 1 }} blacklists:
+                  <ul style="text-align: left">
+                    <li v-for="b in ip.bl" :key="b">{{ b }}</li>
+                  </ul>
+                </template>
+              </Popper>
+            </td>
+            <td style="text-align: left">
+              <span v-for="t in getTags(ip.tags)" :key="t" :class="`tag ${t.color}`">
+                {{ t.name }}
+              </span>
             </td>
             <td :style="'color: ' + rep2Color(ip.rep)">{{ ip.rep.toFixed(3) }}</td>
             <td class="row-more"><i class="fa fa-ellipsis-h"></i></td>
@@ -78,16 +113,19 @@ import * as api from '../api';
 import ctry_info from '../assets/ctry_strings.json';
 import CountryFlag from 'vue-country-flag-next';
 import Popper from "vue3-popper";
+//import TimeStampVue from '@/components/TimeStamp.vue';
 
 export default {
   data() {
     return {
-      results: null
+      results: null,
+      tags: {},
     };
   },
   components: {
     CountryFlag,
     Popper,
+    //TimeStampVue,
   },
   methods: {
     toLower(str) {
@@ -108,6 +146,28 @@ export default {
       }
       return text;
     },
+    getTags(tags) {
+      let out = [];
+      for (const t of tags) {
+        let t_out = {
+          color: "white",
+          name: "Unknown",
+        }
+        if (t.n == "whitelist") {
+          t_out.name = "Whitelisted";
+        } 
+        if (t.n == "researchscanners") {
+          t_out.name = "Research s.";
+          t_out.color = "blue";
+        } 
+        if (t.n == "reconscanning") {
+          t_out.name = "Scanner";
+          t_out.color = "green";
+        } 
+        out.push(t_out);
+      }
+      return out;
+    }
   },
   async mounted() {
     this.results = await api.getResults();
@@ -199,7 +259,7 @@ tbody td {
 }
 
 .ps {
-  height: calc(100vh - 190px);
+  height: calc(100vh - 130px);
 }
 
 .result-ip {
@@ -214,9 +274,12 @@ tbody td {
 .result-ip-white {
   border: 1px solid white;
   border-radius: 19px;
-  padding: 6px;
+  padding: 6px 10px 6px 10px;
   transition: 0.3s ease-out;
   cursor: pointer;
+  position: absolute;
+  top: 0px;
+  left: 30px;
 }
 
 .result-ip-white:hover {
@@ -229,6 +292,11 @@ tbody td {
 
 .result-ip-row {
   text-align: left;
+  min-width: 150px;
+}
+
+.result-ip-row div {
+  position: relative;
 }
 
 .result-table-head th {
@@ -281,5 +349,50 @@ table th {
 a {
   color: white;
   text-decoration: none;
+}
+
+.link {
+  border-bottom: 1px solid white;
+  cursor: pointer;
+}
+
+#res-table-wrapper {
+  margin-top: 20px;
+}
+
+.green {
+  color: #42b983;
+}
+
+.flag {
+  position: absolute;
+  top: 4px;
+  left: 3px;
+  border: 0px;
+}
+
+.wide {
+  min-width: 150%;
+}
+
+.tag {
+  padding: 3px 5px;
+  background-color: #42b983;
+  border-radius: 4px;
+  margin-left: 6px;
+}
+
+.white {
+  background-color: #fff;
+  color: black;
+}
+
+.green {
+  background-color: #42b983;
+  color: black;
+}
+
+.blue {
+  background-color: #4295b9;
 }
 </style>

@@ -15,6 +15,7 @@
   padding: 20px;
   display: flex;
   justify-content: space-evenly;
+  color: rgba(255, 255, 255, 0.462);
 }
 
 #footer-wrapper span {
@@ -30,5 +31,10 @@
   color: white;
   text-decoration: none;
   border-bottom: 1px solid white;
+}
+
+a {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.462);
 }
 </style>
