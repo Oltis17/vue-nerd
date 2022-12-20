@@ -2,7 +2,7 @@
   <div id="app">
     <TopBar />
     <router-view />
-    <FooterComp />
+    <FooterComp class="footer"/>
   </div>
 </template>
 
@@ -26,6 +26,12 @@ export default {
 </script>
 
 <style>
+.footer {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 100%;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

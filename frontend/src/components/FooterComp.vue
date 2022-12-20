@@ -1,8 +1,8 @@
 <template>
   <div id="footer-wrapper">
-    <span>NERD by CESNET 2022</span>
+    <span><a href="/">NERD by CESNET 2022</a></span>
     <span><a href="/about">About</a></span>
-    <span>Privacy Policy</span>
+    <span><a href="/">Privacy Policy</a></span>
   </div>
 </template>
 
@@ -21,7 +21,14 @@
   cursor: pointer;
 }
 
-#footer-wrapper span:hover {
+#footer-wrapper a:hover {
+  color: rgb(184, 184, 184);
+  border-bottom: 2px solid rgb(184, 184, 184);
+}
+
+#footer-wrapper a {
   color: white;
+  text-decoration: none;
+  border-bottom: 1px solid white;
 }
 </style>

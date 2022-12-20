@@ -8,6 +8,7 @@ import IpDetailsScreen from './views/IpDetailsScreen.vue';
 import NotFound from './views/NotFound.vue';
 import UnAuthorized from './views/UnAuthorized.vue';
 import AboutScreen from './views/AboutScreen.vue';
+import CreateAccountScreen from './views/CreateAccountScreen.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -16,6 +17,15 @@ const router = createRouter({
             path: '/login',
             name: 'login',
             component: LoginScreen,
+            meta: {
+                title: 'Login'
+            }
+            // beforeEnter: auth.ifNotAuthenticated,
+        },
+        {
+            path: '/create-account',
+            name: 'create-account',
+            component: CreateAccountScreen,
             meta: {
                 title: 'Login'
             }
