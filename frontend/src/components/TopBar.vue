@@ -2,14 +2,31 @@
   <div id="top-bar-wrapper">
     <div id="top-bar">
       <div id="title">NERD<sub>by <a href="https://cesnet.cz">CESNET</a></sub></div>
-      <div v-if="authenticated" id="right-bar" class="top-bar-control">
-        <button class="darker">Log in</button>
-        <button>Register</button>
-      </div>
-      <div v-if="!authenticated" id="right-bar-auth" class="top-bar-control">
-        <p class="flex-item"><i class="fa fa-solid fa-gear"></i></p>
-        <span class="flex-item" id="username">New User</span>
-        <button class="flex-item">Log out</button>
+        
+      <div id="right-bar" class="top-bar-control">
+        <span v-click-outside-element="close">
+          <p class="flex-item" @click="open()">
+            <i class="fa fa-solid fa-gear"></i>
+          </p>
+          <span style="position: relative">
+            <SettingsComp v-if="visible" >
+            </SettingsComp>
+          </span>
+        </span>
+        
+        <span v-if="authenticated" class="flex-item" id="username">New User</span>
+        <span>
+          <button v-if="authenticated" class="flex-item">Log out</button>
+        </span>
+
+        <span>
+          <button v-if="!authenticated" class="create" @click="this.$router.push('create-account')">Create an account</button>
+        </span>
+        
+        <span>
+          <button v-if="!authenticated" class="login" @click="this.$router.push('login')">Log in</button>
+        </span>
+        
       </div>
       <div id="top-bar-hamburger">
         <p class="flex-item"><i class="fa fa-solid fa-bars"></i></p>
@@ -19,8 +36,27 @@
 </template>
 
 <script>
+import SettingsComp from './SettingsComp.vue';
+
 export default {
   name: 'TopBar',
+  data() {
+    return {
+      authenticated: false,
+      visible: false,
+    };
+  },
+  components: {
+    SettingsComp,
+  },
+  methods: {
+    open() {
+        this.visible = true;
+    },
+    close() {
+        this.visible = false;
+    }
+  }
 };
 </script>
 
@@ -60,51 +96,45 @@ export default {
 }
 
 #top-bar {
+  height: 50px;
   margin: auto;
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   padding-left: 15px;
   padding-right: 15px;
 }
 
 #right-bar {
-  justify-content: space-between;
-  width: 200px;
+  height: 50px;
+  justify-content: right;
+  width: 400px;
   align-items: baseline;
 }
 
-#right-bar-auth {
-  align-items: baseline;
-  width: 50%;
-  justify-content: flex-end;
-  color: white;
+#right-bar > span {
+  margin-left: 10px;
 }
 
 .flex-item {
   margin-left: 25px;
-}
-
-p.flex-item,
-span.flex-item {
-  color: #bbbbbb;
+  color: #ffffff9f;
   cursor: pointer;
 }
 
+.flex-item:hover {
+  color: rgb(255, 255, 255);
+}
 span.flex-item {
   border-bottom: 1px solid;
   transition: opacity 0.3s;
 }
 
-span.flex-item:hover,
-p.flex-item:hover {
-  opacity: 60%;
-}
 
 button {
-  width: 80px;
   height: 33px;
   background-color: transparent;
+  padding: 5px 15px;
   border-radius: 19px;
   cursor: pointer;
   border: 1px solid white;
@@ -113,10 +143,6 @@ button {
 }
 
 button:hover {
-  width: 80px;
-  height: 33px;
-  border-radius: 20px;
-  cursor: pointer;
   -webkit-box-shadow: 0px 0px 24px -6px rgba(255, 255, 255, 0.76);
   -moz-box-shadow: 0px 0px 24px -6px rgba(255, 255, 255, 0.76);
   box-shadow: 0px 0px 24px -6px rgba(255, 255, 255, 0.76);
@@ -141,5 +167,14 @@ button:hover {
 a {
   color: white;
   text-decoration: none;
+}
+
+.create {
+
+}
+
+.login {
+  border: 1px solid #42b983;
+  color: #42b983;
 }
 </style>

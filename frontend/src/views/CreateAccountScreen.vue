@@ -6,14 +6,19 @@
                 <span>Network Entity Reputation Database</span>
             </div>
             <div>
-                <span>Don't have an account yet?</span>
-                <button class="black">Create an account</button>
+                <span>
+                    Information about creating an account...
+                </span>
+            </div>
+            <div>
+                <span>Already have an account?</span>
+                <button class="black">Log in</button>
             </div>
             
         </div>
         <div class="wrapper">
             <div class="normal-login">
-                <h3>Log in</h3>
+                <h3>Create an account</h3>
                 <div>
                     <label>Email</label>
                     <input type="email">
@@ -21,14 +26,31 @@
                 <div>
                     <label>Password</label>
                     <div class="password">
+                        <input :type="this.passwordFieldType" v-model="password"> 
+                        <span @click="switchVisibility()" class="icon">
+                            <i class="fa fa-regular fa-eye"></i>
+                        </span>   
+                    </div>
+                    <password-meter :password="password" />
+                </div>
+                <div>
+                    <label>Confirm password</label>
+                    <div class="password">
                         <input :type="this.passwordFieldType"> 
                         <span @click="switchVisibility()" class="icon">
                             <i class="fa fa-regular fa-eye"></i>
                         </span>   
                     </div>
-                    
                 </div>
-                <button>Log in</button>
+                <div>
+                    <label>Intended purpose of use</label>
+                    <select>
+                        <option>Academic</option>
+                        <option>Research</option>
+                        <option>Security</option>
+                    </select>
+                </div>
+                <button class="create">Create an account</button>
             </div>
             
             <div class="providers-login">
@@ -42,11 +64,23 @@
             </div>
         </div>
     </div>
-    
 </template>
 
 <script>
-export default {
+import { defineComponent, ref } from 'vue';
+import PasswordMeter from 'vue-simple-password-meter';
+
+export default defineComponent({
+  components: {
+    PasswordMeter,
+  },
+  setup() {
+    const password = ref('');
+
+    return {
+      password,
+    };
+  },
   data() {
     return {
         passwordFieldType: "password",
@@ -56,8 +90,8 @@ export default {
     switchVisibility() {
       this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
     }
-  }
-};
+  },
+});
 </script>
 
 <style scoped>
@@ -66,7 +100,7 @@ h3 {
     text-align: center;
 }
 .outer {
-    padding-top: 15vh;
+    padding-top: 10vh;
     display: flex;
     max-width: 800px;
     margin: auto;
@@ -94,7 +128,12 @@ h3 {
     padding-bottom: 10px;
 }
 
-.normal-login, .providers-login {
+.normal-login {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.providers-login {
     width: 100%;
 }
 
@@ -133,16 +172,30 @@ h3 {
     display: flex;
     flex-direction: column;
     align-items: left;
+}
+
+.normal-login > div {
     margin-bottom: 10px;
 }
 
-input {
+input, select {
     background-color: transparent;
     border-radius: 7px;
     border: 1px solid white;
     padding: 4px 10px;
     height: 20px;
     color: white;
+}
+
+
+select {
+    height: 30px;
+    /* position of the dropdown arrow */
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 1em;
 }
 
 input:focus {
@@ -154,14 +207,39 @@ button {
     border:#42b983 2px solid;
     border-radius: 12px;
     color: #42b983;
-    height: 30px;
+    height: 35px;
     margin-top: 15px;
+
+    cursor: pointer;
+}
+
+.create {
+    background: black; /* default color */
+
+    /* "to left" / "to right" - affects initial color */
+    background: linear-gradient(to left, transparent 50%, #42b9833b 50%) right;
+    background-size: 200%;
+    transition: .5s ease-out;
+}
+
+.create:hover {
+    background-position: left;
 }
 
 .black {
     border: #00031c 2px solid;
     color: #00031c;
     width: 50%;
+    background: black; /* default color */
+
+    /* "to left" / "to right" - affects initial color */
+    background: linear-gradient(to left, #42b983 50%, rgba(255, 255, 255, 0.658) 50%) right;
+    background-size: 200%;
+    transition: .5s ease-out;
+}
+
+.black:hover {
+    background-position: left;
 }
 
 h1 {
@@ -169,5 +247,4 @@ h1 {
     font-size: 40px;
     letter-spacing: 4px;
 }
-
 </style>

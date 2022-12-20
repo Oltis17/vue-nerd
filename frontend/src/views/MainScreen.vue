@@ -27,7 +27,7 @@
   };
   </script>
   
-  <style>
+  <style scoped>
   @media (max-width: 800px) {
     #wrapper {
       display: inline-block;

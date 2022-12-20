@@ -6,6 +6,7 @@ import App from './App.vue';
 import VTooltip from 'v-tooltip';
 import PerfectScrollbar from 'vue3-perfect-scrollbar';
 import 'vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.css';
+import vueClickOutsideElement from 'vue-click-outside-element';
 
 // FA icons
 import { library, dom } from "@fortawesome/fontawesome-svg-core";
@@ -26,4 +27,5 @@ createApp(App)
 .use(PerfectScrollbar)
 .component("font-awesome-icon", FontAwesomeIcon)
 .use(router)
+.use(vueClickOutsideElement)
 .mount('#app');
