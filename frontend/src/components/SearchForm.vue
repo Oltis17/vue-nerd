@@ -13,7 +13,7 @@
         @tag="addTag"
         tag-placeholder="Add"
         placeholder="IPs"
-        v-model="selectedIps"
+        v-model="$store.state.filter.subnet"
         :options="ipOptions"
         :hide-selected="true" 
         class="multi"
@@ -36,7 +36,7 @@
         @tag="addTagHost"
         tag-placeholder="Add"
         placeholder="Hosts"
-        v-model="selectedHosts"
+        v-model="$store.state.filter.hostname"
         :options="hostOptions"
         :hide-selected="true" 
         class="multi">
@@ -51,33 +51,14 @@
       </div>
 
       <div class="search-item">
-        <label>ASN</label>
-        <VueMultiselect
-        :multiple="true"
-        :taggable="true"
-        @tag="addTagAsn"
-        tag-placeholder="Add"
-        placeholder="ASNs"
-        v-model="selectedAsns"
-        :options="asnOptions"
-        :hide-selected="true" 
-        class="multi">
-        <template #noResult>
-          Duplicate ASN
-        </template>
-        <template #noOptions>
-          Type an ASN
-        </template>
+        <div class="title">
+          <label>Country</label>
+        </div>
 
-        </VueMultiselect>
-      </div>
-
-      <div class="search-item">
-        <label>Country</label>
         <VueMultiselect
         :multiple="true"
         placeholder="Countries"
-        v-model="selectedCount"
+        v-model="$store.state.filter.country"
         :options="countries"
         :hide-selected="true" 
         selectLabel="Select"
@@ -93,11 +74,40 @@
       </div>
 
       <div class="search-item">
-        <label>Source</label>
+        <div class="title">
+          <label>ASN</label>
+          <AndOrSwitch v-model="$store.state.filter.asn_value"></AndOrSwitch>
+        </div>
+        
+        <VueMultiselect
+        :multiple="true"
+        :taggable="true"
+        @tag="addTagAsn"
+        tag-placeholder="Add"
+        placeholder="ASNs"
+        v-model="$store.state.filter.asn"
+        :options="asnOptions"
+        :hide-selected="true" 
+        class="multi">
+        <template #noResult>
+          Duplicate ASN
+        </template>
+        <template #noOptions>
+          Type an ASN
+        </template>
+
+        </VueMultiselect>
+      </div>
+
+      <div class="search-item">
+        <div class="title">
+          <label>Source</label>
+          <AndOrSwitch v-model="$store.state.filter.source_value"></AndOrSwitch>
+        </div>
         <VueMultiselect
         :multiple="true"
         placeholder="Sources"
-        v-model="selectedSource"
+        v-model="$store.state.filter.cat"
         :options="sources"
         :hide-selected="true" 
         selectLabel="Select"
@@ -113,11 +123,14 @@
       </div>
 
       <div class="search-item">
-        <label>Event category</label>
+        <div class="title">
+          <label>Event category</label>
+          <AndOrSwitch v-model="$store.state.filter.cat_value"></AndOrSwitch>
+        </div>
         <VueMultiselect
         :multiple="true"
         placeholder="Categories"
-        v-model="selectedSource"
+        v-model="$store.state.filter.cat"
         :options="sources"
         :hide-selected="true" 
         selectLabel="Select"
@@ -133,11 +146,14 @@
       </div>
 
       <div class="search-item">
-        <label>Blacklist</label>
+        <div class="title">
+          <label>Blacklist</label>
+          <AndOrSwitch v-model="$store.state.filter.bl_value"></AndOrSwitch>
+        </div>
         <VueMultiselect
         :multiple="true"
         placeholder="Blacklists"
-        v-model="selectedSource"
+        v-model="$store.state.filter.blacklist"
         :options="sources"
         :hide-selected="true" 
         selectLabel="Select"
@@ -153,14 +169,19 @@
       </div>
 
       <div class="search-item">
-        <label>Tag</label>
+        <div class="title">
+          <label>Tag</label>
+          <AndOrSwitch v-model="$store.state.filter.tag_value"></AndOrSwitch>
+        </div>
         <VueMultiselect
         :multiple="true"
         placeholder="Tags"
-        v-model="selectedTag"
+        v-model="$store.state.filter.tag"
         :options="tags"
         :hide-selected="true" 
         selectLabel="Select"
+        track-by="tag"
+        label="name"
         class="multi">
         <template #noResult>
           Duplicate source
@@ -171,10 +192,12 @@
 
         </VueMultiselect>
       </div>
-
+      <div style="color: white; padding: 10px;">
+        <input type="checkbox"> Hide whitelisted
+      </div>
       <div class="search-btns">
-        <button class="search-btn-green">Apply</button>
-        <button class="clear-btn-white">Clear all</button>
+        <button class="search-btn-green" @click="this.$parent.filter()">Apply</button>
+        <button class="clear-btn-white" @click="this.$parent.clear()">Clear all</button>
       </div>
     </div>
   </div>
@@ -182,11 +205,18 @@
 
 <script>
 import VueMultiselect from 'vue-multiselect';
+import AndOrSwitch from './AndOrSwitch.vue';
 import ctry_list from '../assets/ctry_list.json';
+import tags from '../assets/tags.json';
 
 export default {
   data() {
     return {
+      asn_value: 'OR',
+      source_value: 'OR',
+      cat_value: 'OR',
+      bl_value: 'OR',
+      tag_value: 'OR',
       selectedIps: [],
       ipOptions: [],
       selectedHosts: [],
@@ -198,11 +228,12 @@ export default {
       selectedSource: [],
       sources: ["Warden", "Blacklists", "DShield", "OTX", "MISP"],
       selectedTag: [],
-      tags: ["Exploit attempts", "Login attempts", "(D)DoS attacks", "DSL", "Dynamic IP", "IP in hostname", "Malware", "MISP (tlp:white)", "NAT", "Scanner", "Research scanner", "Reserved IP", "SPAM sender", "Static IP", "TOR exit node", "VPN", "Whitelisted"],
+      tags: tags, // TODO if logged in add option  { "name": "MISP (tlp:green)", "tag": "misp_tlp_green"},
     };
   },
   components: {
     VueMultiselect,
+    AndOrSwitch,
   },
   methods: {
     addTag(newTag) {
@@ -222,7 +253,7 @@ export default {
       
     },
     addTagAsn(newTag) {
-      if (newTag.match(/^AS[0-9]{6}?/g))
+      if (newTag.match(/^AS[0-9]*?/g))
       {
         this.asnOptions.push(newTag);
         this.selectedAsns.push(newTag);
@@ -235,8 +266,11 @@ export default {
         list.push(c[count]);
       }
       return list;
-    }
-  }
+    },
+    search() {
+
+    },
+  },
 };
 </script>
 
@@ -267,8 +301,8 @@ h2 {
 #search-form {
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  min-height: calc(100vh - 90px);
+  padding: 10px 20px;
+  min-height: calc(100vh - 70px);
 }
 
 #search-form label {
@@ -284,6 +318,12 @@ h2 {
   letter-spacing: 1px;
   margin: auto;
   margin-bottom: 15px;
+}
+
+.search-item .title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
 }
 
 .search-item input {

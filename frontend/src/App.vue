@@ -29,8 +29,11 @@ export default {
 .footer {
   position: absolute;
   bottom: 0px;
-  right: 0px;
-  width: 100%;
+  width: 30%;
+  left: 0; 
+  right: 0; 
+  margin-left: auto; 
+  margin-right: auto; 
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

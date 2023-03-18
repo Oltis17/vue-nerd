@@ -1,0 +1,21 @@
+[
+    { "name": "Exploit attempts", "tag": "attemptexploit"},
+    { "name": "Malware", "tag": "malware"},
+    { "name": "Scanner", "tag": "reconscanning"},
+    { "name": "Login attempts", "tag": "attemptlogin"},
+    { "name": "(D)DoS attacks", "tag": "availabilitydos"},
+    { "name": "Research scanner", "tag": "researchscanners"},
+    { "name": "VPN", "tag": "vpn"},
+    { "name": "NAT", "tag": "nat"},
+    { "name": "DSL", "tag": "dsl"},
+    { "name": "Static IP", "tag": "ststicIP"},
+    { "name": "Dynamic IP", "tag": "dynamicIP"},
+    { "name": "IP in hostname", "tag": "ip_in_hostname"},
+    { "name": "TOR exit node", "tag": "tor"},
+    { "name": "SPAM sender", "tag": "spam"},
+    { "name": "Reserved IP", "tag": "reserved_ip"},
+    { "name": "MISP (tlp:white)", "tag": "misp_tlp_white"},
+    { "name": "Whitelisted", "tag": "whitelist"}
+
+]
+

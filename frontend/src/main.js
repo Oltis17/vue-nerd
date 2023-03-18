@@ -17,6 +17,7 @@ import { far } from '@fortawesome/free-regular-svg-icons';
 
 // important Vue parts
 import router from './router';
+import store from './store';
 
 
 library.add(fas, far, fab)
@@ -27,5 +28,6 @@ createApp(App)
 .use(PerfectScrollbar)
 .component("font-awesome-icon", FontAwesomeIcon)
 .use(router)
+.use(store)
 .use(vueClickOutsideElement)
 .mount('#app');

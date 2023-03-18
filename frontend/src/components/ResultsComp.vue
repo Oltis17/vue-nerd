@@ -27,29 +27,32 @@
     <perfect-scrollbar>
       <table id="results-table">
         <thead class="result-table-head">
-          <th>IP <i class="fa fa-solid fa-arrow-down-wide-short"></i></th>
-          <th>Hostname <i class="fa fa-solid fa-arrow-down-wide-short"></i></th>
-          <th>ASN <i class="fa fa-solid fa-arrow-down-wide-short"></i></th>
-          <th>Blacklists <i class="fa fa-solid fa-arrow-down-wide-short"></i></th>
-          <th>Tags <i class="fa fa-solid fa-arrow-down-wide-short"></i></th>
-          <th>Rep. score <i class="fa fa-solid fa-arrow-down-wide-short"></i></th>
+          <!-- <th>IP <span><i class="fa fa-solid fa-arrow-down-wide-short"  v-class="{active: sort === 'ip'}" @click="toggleSort('ip')"></i></span></th>
+          <th>Hostname <span><i class="fa fa-solid fa-arrow-down-wide-short" v-class="{active: sort === 'host'}" @click="toggleSort('host')"></i></span></th>
+          <th>ASN <span><i class="fa fa-solid fa-arrow-down-wide-short" v-class="{active: sort === 'asn'}" @click="toggleSort('asn')"></i></span></th>
+          <th>Blacklists <span><i class="fa fa-solid fa-arrow-down-wide-short" v-class="{active: sort === 'bl'}" @click="toggleSort('bl')"></i></span></th>
+          <th>Tags <span><i class="fa fa-solid fa-arrow-down-wide-short" v-class="{active: sort === 'tag'}" @click="toggleSort('tag')"></i></span></th>
+          <th>Rep. score <span><i class="fa fa-solid fa-arrow-down-wide-short" v-class="{active: sort === 'rep'}" @click="toggleSort('rep')"></i></span></th>
+          <th></th> -->
+          <th>IP <span @click="toggleSort('ip')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('ip'), desc: isDesc('ip')}"></i></span></th>
+          <th>Hostname <span @click="toggleSort('host')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('host')}"></i></span></th>
+          <th>ASN <span @click="toggleSort('asn')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('asn')}"></i></span></th>
+          <th>Blacklists <span @click="toggleSort('bl')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('bl')}"></i></span></th>
+          <th>Tags <span  @click="toggleSort('tag')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('tag')}"></i></span></th>
+          <th>Time added <span  @click="toggleSort('tag')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('ta')}"></i></span></th>
+          <th>Last active <span  @click="toggleSort('tag')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('la')}"></i></span></th>
+          <th>Rep. score <span @click="toggleSort('rep')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('rep'), desc: isDesc('rep')}"></i></span></th>
           <th></th>
         </thead>
         <tbody>
           <tr v-for="ip in results" :key="ip">
             <td class="result-ip-row">
-              <div>
-                <Popper
-                :content="getCountInfo(ip.geo.ctry)"
-                hover
-                placement="top"
-                class="tooltip wide"
-                style="border: none"
-                >
-                  <div class="flag">
-                    <span><country-flag :country="toLower(ip.geo.ctry)" size='normal' rounded/></span>
-                  </div>
-                </Popper>
+              <div class="wide">
+                <div class="flag" :title="getCountInfo(ip.geo.ctry)" style="border: none">
+                  <span>
+                    <country-flag :country="toLower(ip.geo.ctry)" size='normal' rounded/>
+                  </span>
+                </div>
                 <a class="result-ip-white" :href="`/ip/${ip.ip}`">{{ ip.ip }}</a>
               </div>
               
@@ -85,9 +88,9 @@
                 hover
                 placement="right"
               >
-                <span class="link">{{ ip.bl.length - 1 }}</span>
+                <span class="link">{{ ip.bl.length }}</span>
                 <template #content>
-                  This IP address is present on {{ ip.bl.length - 1 }} blacklists:
+                  This IP address is present on {{ ip.bl.length }} blacklists:
                   <ul style="text-align: left">
                     <li v-for="b in ip.bl" :key="b">{{ b }}</li>
                   </ul>
@@ -99,27 +102,37 @@
                 {{ t.name }}
               </span>
             </td>
+            <td :title="ip.ts_added" style="cursor: help;">{{ formatDateTime(ip.ts_added) }}</td>
+            <td :title="ip.ts_last_update" style="cursor: help;">{{  formatDateTime(ip.ts_last_update) }}</td>
             <td :style="'color: ' + rep2Color(ip.rep)">{{ ip.rep.toFixed(3) }}</td>
             <td class="row-more"><i class="fa fa-ellipsis-h"></i></td>
           </tr>
         </tbody>
       </table>
     </perfect-scrollbar>
+    <div v-if="results.length == 0" style="position: absolute;  top: 200px;left: 200px; 
+  right: 0; 
+  margin-left: auto; 
+  margin-right: auto; 
+  width: 200px; /* Need a specific value to work */; color: white;">No results found.</div>
   </div>
+  
 </template>
 
 <script>
-import * as api from '../api';
 import ctry_info from '../assets/ctry_strings.json';
 import CountryFlag from 'vue-country-flag-next';
 import Popper from "vue3-popper";
+import moment from 'moment';
 //import TimeStampVue from '@/components/TimeStamp.vue';
 
 export default {
+  props: ['results'],
   data() {
     return {
-      results: null,
       tags: {},
+      sort: null,
+      desc: false,
     };
   },
   components: {
@@ -128,6 +141,28 @@ export default {
     //TimeStampVue,
   },
   methods: {
+    formatDateTime(ts) {
+      if (this.$store.state.time) {
+        return moment.utc(ts).format('DD MMM YYYY HH:mm');
+      }
+      return moment.utc(ts).local().format('DD MMM YYYY HH:mm');
+    },
+    toggleSort(what) {
+      if (what === this.$store.state.filter.sort && !this.$store.state.filter.desc) {
+        this.$store.state.filter.desc = true;
+      }
+      else {
+        this.$store.state.filter.desc = false;
+      }
+      this.$store.state.filter.sort = what;
+      this.$parent.filter();
+    },
+    isActive(what) {
+      return this.$store.state.filter.sort === what;
+    },
+    isDesc(what) {
+      return this.$store.state.filter.sort === what && this.$store.state.filter.desc;
+    },
     toLower(str) {
       return str.toLowerCase();
     },
@@ -156,22 +191,26 @@ export default {
         if (t.n == "whitelist") {
           t_out.name = "Whitelisted";
         } 
-        if (t.n == "researchscanners") {
+        else if (t.n == "researchscanners") {
           t_out.name = "Research s.";
           t_out.color = "blue";
         } 
-        if (t.n == "reconscanning") {
+        else if (t.n == "reconscanning") {
           t_out.name = "Scanner";
           t_out.color = "green";
+        } 
+        else if (t.n == "ip_in_hostname") {
+          t_out.name = "IP in hostname";
+          t_out.color = "orange";
+        } 
+        else if (t.n == "attemptlogin") {
+          t_out.name = "Login attempts";
+          t_out.color = "red";
         } 
         out.push(t_out);
       }
       return out;
     }
-  },
-  async mounted() {
-    this.results = await api.getResults();
-    console.log(this.results);
   },
 };
 </script>
@@ -278,8 +317,8 @@ tbody td {
   transition: 0.3s ease-out;
   cursor: pointer;
   position: absolute;
-  top: 0px;
-  left: 30px;
+  top: 4px;
+  left: 40px;
 }
 
 .result-ip-white:hover {
@@ -299,10 +338,17 @@ tbody td {
   position: relative;
 }
 
+
+.result-table-head th span {
+  color: rgba(0, 0, 0, 0.511) !important;
+  margin-left: 5px;
+}
+
 .result-table-head th {
   background-color: rgb(235, 235, 235);
   color: #00031c;
 }
+
 .result-table-head:first-child {
   border-radius: 10px 10px 0 0;
   background-color: red;
@@ -366,9 +412,10 @@ a {
 
 .flag {
   position: absolute;
-  top: 4px;
-  left: 3px;
+  top: 0px;
+  left: 2px;
   border: 0px;
+  cursor: help;
 }
 
 .wide {
@@ -394,5 +441,22 @@ a {
 
 .blue {
   background-color: #4295b9;
+}
+
+.orange {
+  background-color: #d0aa20;
+}
+
+.red {
+  background-color: #b95042;
+}
+
+.active {
+  color: #42b983;
+}
+
+.desc {
+  transform: rotate(180deg);
+  color: #42b983;
 }
 </style>

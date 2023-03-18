@@ -26,6 +26,7 @@
                             <i class="fa fa-regular fa-eye"></i>
                         </span>   
                     </div>
+                    <span class="forgot">Forgot password?</span>
                     
                 </div>
                 <button>Log in</button>
@@ -168,6 +169,11 @@ h1 {
     font-weight: 100;
     font-size: 40px;
     letter-spacing: 4px;
+}
+
+.forgot {
+    font-size: small;
+    color: #42b983;
 }
 
 </style>

@@ -14,7 +14,7 @@
 #footer-wrapper {
   padding: 20px;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   color: rgba(255, 255, 255, 0.462);
 }
 

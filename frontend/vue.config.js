@@ -4,8 +4,13 @@ module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {
     proxy: {
+      // '/api/': {
+      //   target: 'https://nerd.cesnet.cz/nerd/api/v1',
+      //   pathRewrite: { '^/api': '' },
+      //   changeOrigin: true,
+      // },
       '/api/': {
-        target: 'https://nerd.cesnet.cz/nerd/api/v1',
+        target: 'http://localhost:8000/nerd/api/v2',
         pathRewrite: { '^/api': '' },
         changeOrigin: true,
       },

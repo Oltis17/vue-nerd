@@ -1,7 +1,15 @@
 <template>
   <div id="top-bar-wrapper">
     <div id="top-bar">
-      <div id="title">NERD<sub>by <a href="https://cesnet.cz">CESNET</a></sub></div>
+      <div class="left-bar">
+        <div id="title"><a href="/">NERD</a><sub>by <a href="https://cesnet.cz">CESNET</a></sub></div>
+
+        <div class="middle">
+          <span><a>Data</a></span>
+          <span><a>IP map</a></span>
+        </div>
+      </div>
+      
         
       <div id="right-bar" class="top-bar-control">
         <span v-click-outside-element="close">
@@ -156,7 +164,8 @@ button:hover {
   font-size: 25px;
   color: white;
   letter-spacing: 4px;
-  cursor: pointer;
+  width: 245px;
+  text-align: left;
 }
 
 #title sub {
@@ -169,12 +178,28 @@ a {
   text-decoration: none;
 }
 
-.create {
-
-}
-
 .login {
   border: 1px solid #42b983;
   color: #42b983;
+}
+
+.middle {
+  padding-left: 35px;
+  display: flex;
+  justify-content: space-between;
+  width: 150px;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.43);
+  border-left: solid 1px #42b983;
+}
+
+.middle span {
+  border-bottom: 1px solid white;
+}
+
+.left-bar {
+  display: flex;
+  justify-content: left;
+  align-items: baseline;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <div>
-            <Toggle v-model="localTime" onLabel="UTC" offLabel="local" class="toggle-time"/> 
+            <Toggle v-model="$store.state.time" onLabel="UTC" offLabel="local" class="toggle-time"/> 
             <span>
                 Time
             </span>
@@ -48,6 +48,10 @@ export default {
 
 .toggle-time {
     --toggle-width: 4rem;
+}
+
+span {
+    color: white;
 }
 
 </style>
