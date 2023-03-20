@@ -107,7 +107,7 @@
         <VueMultiselect
         :multiple="true"
         placeholder="Sources"
-        v-model="$store.state.filter.cat"
+        v-model="$store.state.filter.source"
         :options="sources"
         :hide-selected="true" 
         selectLabel="Select"
@@ -131,7 +131,7 @@
         :multiple="true"
         placeholder="Categories"
         v-model="$store.state.filter.cat"
-        :options="sources"
+        :options="categories"
         :hide-selected="true" 
         selectLabel="Select"
         class="multi">
@@ -154,7 +154,7 @@
         :multiple="true"
         placeholder="Blacklists"
         v-model="$store.state.filter.blacklist"
-        :options="sources"
+        :options="categories"
         :hide-selected="true" 
         selectLabel="Select"
         class="multi">
@@ -180,8 +180,6 @@
         :options="tags"
         :hide-selected="true" 
         selectLabel="Select"
-        track-by="tag"
-        label="name"
         class="multi">
         <template #noResult>
           Duplicate source
@@ -193,7 +191,7 @@
         </VueMultiselect>
       </div>
       <div style="color: white; padding: 10px;">
-        <input type="checkbox"> Hide whitelisted
+        <input type="checkbox" v-model="$store.state.filter.whitelisted" style="accent-color: #42b983;"> Hide whitelisted
       </div>
       <div class="search-btns">
         <button class="search-btn-green" @click="this.$parent.filter()">Apply</button>
@@ -208,6 +206,7 @@ import VueMultiselect from 'vue-multiselect';
 import AndOrSwitch from './AndOrSwitch.vue';
 import ctry_list from '../assets/ctry_list.json';
 import tags from '../assets/tags.json';
+import sources from '../assets/sources.json';
 
 export default {
   data() {
@@ -217,18 +216,13 @@ export default {
       cat_value: 'OR',
       bl_value: 'OR',
       tag_value: 'OR',
-      selectedIps: [],
       ipOptions: [],
-      selectedHosts: [],
       hostOptions: [],
-      selectedAsns: [],
       asnOptions: [],
-      selectedCount: [],
       countries: ctry_list,
-      selectedSource: [],
-      sources: ["Warden", "Blacklists", "DShield", "OTX", "MISP"],
-      selectedTag: [],
-      tags: tags, // TODO if logged in add option  { "name": "MISP (tlp:green)", "tag": "misp_tlp_green"},
+      sources: sources.map(s => s.name),
+      categories: ["AnomalyBehaviour", "AnomylaTraffic", "AttemptExploit", "AttemptLogin", "AvailabilityDDoS", "AvailabilityDoS", "IntrusionBotnet", "IntrusionUserCompromise", "Malware", "Other", "ReconScanning", "ReconScanning+AttemtExploit", "VulnerableConfig", "VulnerableOpen"],
+      tags: tags.map(t => t.name), // TODO if logged in add option  { "name": "MISP (tlp:green)", "tag": "misp_tlp_green"},
     };
   },
   components: {

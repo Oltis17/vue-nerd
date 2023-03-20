@@ -118,6 +118,10 @@
       if (this.$route.query.tag_value) {
         this.$store.state.filter.tag_value = this.$route.query.tag_value;
       }
+      if (this.$route.query.whitelisted) {
+        this.$store.state.filter.whitelisted = this.$route.query.whitelisted;
+      }
+      
       this.res = await api.filterResults();
       this.loading = false;
     }

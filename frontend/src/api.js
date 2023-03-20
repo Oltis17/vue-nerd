@@ -16,7 +16,8 @@ export async function filterResults() {
     const asn = store.state.filter.asn ? encodeURIComponent(store.state.filter.asn.join(",")) : null;
     const cat = store.state.filter.cat ? store.state.filter.cat[0] : null;
     const blacklist = store.state.filter.blacklist ? store.state.filter.blacklist[0] : null;
-    const tag = store.state.filter.tag ? encodeURIComponent(store.state.filter.tag.map(tag => tag.tag).join(",")) : null;
+    const source = store.state.filter.source ? encodeURIComponent(store.state.filter.source.map(source => source.short).join(",")) : null;
+    const tag = store.state.filter.tag ? encodeURIComponent(store.state.filter.tag.map(tag => tag.short).join(",")) : null;
     const sortby = store.state.filter.sort;
     const asc = store.state.filter.desc ? store.state.filter.desc : null;
     const asn_value = store.state.filter.asn_value ? store.state.filter.asn_value : null;
@@ -24,6 +25,8 @@ export async function filterResults() {
     const cat_value = store.state.filter.cat_value ? store.state.filter.cat_value : null;
     const bl_value = store.state.filter.bl_value ? store.state.filter.bl_value : null;
     const tag_value = store.state.filter.tag_value ? store.state.filter.tag_value : null;
+    const whitelisted = store.state.filter.whitelisted ? store.state.filter.whitelisted : null;
+    const page = store.state.filter.page ? store.state.filter.page : null;
     const response = await axios.get('/api/search/ip/',
     { params: { 
         subnet,
@@ -32,6 +35,7 @@ export async function filterResults() {
         asn,
         cat,
         blacklist,
+        source,
         tag,
         sortby,
         asc,
@@ -40,6 +44,8 @@ export async function filterResults() {
         cat_value,
         bl_value,
         tag_value,
+        whitelisted,
+        page
     } },
     );
     return response.data;

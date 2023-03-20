@@ -109,6 +109,11 @@
           </tr>
         </tbody>
       </table>
+      <div class="pages">
+        <a>{{ $store.state.filter.page }}</a>
+        <a @click="nextPage($store.state.filter.page + 1)">{{ $store.state.filter.page + 1 }}</a>
+        <a @click="nextPage($store.state.filter.page + 2)">{{ $store.state.filter.page + 2 }}</a>
+      </div>
     </perfect-scrollbar>
     <div v-if="results.length == 0" style="position: absolute;  top: 200px;left: 200px; 
   right: 0; 
@@ -141,6 +146,10 @@ export default {
     //TimeStampVue,
   },
   methods: {
+    nextPage(page) {
+      this.$store.state.filter.page = page;
+      this.$parent.filter();
+    },
     formatDateTime(ts) {
       if (this.$store.state.time) {
         return moment.utc(ts).format('DD MMM YYYY HH:mm');
@@ -458,5 +467,18 @@ a {
 .desc {
   transform: rotate(180deg);
   color: #42b983;
+}
+
+.pages {
+  display: flex;
+  width: 30%;
+  font-size: 20px;
+  justify-content: space-around;
+  padding-top: 20px;
+  margin: auto;
+}
+
+.pages a {
+  cursor: pointer;
 }
 </style>

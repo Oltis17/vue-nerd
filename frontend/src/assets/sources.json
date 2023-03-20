@@ -1,0 +1,7 @@
+[
+    {"name": "Warden", "short": "warden" }, 
+    {"name": "Blacklists", "short": "bl"}, 
+    {"name": "DShield", "short": "dshield"}, 
+    {"name": "OTX", "short": "otx"}, 
+    {"name": "MISP", "short": "misp"}
+]
