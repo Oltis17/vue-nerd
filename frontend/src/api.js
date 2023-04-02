@@ -62,3 +62,9 @@ export async function getIpDetails(ip_address) {
     const response = await axios.get(`/api/ip/${ip_address}/full`, { ip_address });
     return response.data;
 }
+
+// USER MANAGEMENT ENDPOINTS
+export async function login(email, password) {
+    const response = await axios.post('/api/login', {email, password});
+    return response.data;
+}

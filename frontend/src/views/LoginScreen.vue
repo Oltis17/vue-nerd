@@ -29,7 +29,7 @@
                     <span class="forgot">Forgot password?</span>
                     
                 </div>
-                <button>Log in</button>
+                <button class="button_slide slide_right">Log in</button>
             </div>
             
             <div class="providers-login">
@@ -88,6 +88,10 @@ h3 {
     justify-content: space-between;
     width: 70%;
     margin: auto;
+}
+
+.logos span {
+    cursor: pointer;
 }
 
 .providers-login label {
@@ -153,10 +157,11 @@ input:focus {
 button {
     background-color: transparent;
     border:#42b983 2px solid;
-    border-radius: 12px;
-    color: #42b983;
+    border-radius: 0px;
+    color: #fbfbfb;
     height: 30px;
     margin-top: 15px;
+    cursor: pointer;
 }
 
 .black {
@@ -174,6 +179,18 @@ h1 {
 .forgot {
     font-size: small;
     color: #42b983;
+}
+
+
+.button_slide {
+  box-shadow: inset 0 0 0 0 #42b983;
+  -webkit-transition: ease-out 0.4s;
+  -moz-transition: ease-out 0.4s;
+  transition: ease-out 0.4s;
+}
+
+.slide_right:hover {
+  box-shadow: inset 400px 0 0 0 #42b983;
 }
 
 </style>
