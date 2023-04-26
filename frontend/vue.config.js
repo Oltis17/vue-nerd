@@ -3,15 +3,16 @@ const path = require('path')
 module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {
+    "port": 80,
     proxy: {
       // '/api/': {
       //   target: 'https://nerd.cesnet.cz/nerd/api/v1',
       //   pathRewrite: { '^/api': '' },
       //   changeOrigin: true,
       // },
-      '/api/': {
-        target: 'http://localhost:8000/nerd/api/v2',
-        pathRewrite: { '^/api': '' },
+      '/nerd/api/v2/': {
+        target: 'http://localhost/nerd/api/v2',
+        pathRewrite: { '^/api/v2': '/nerd/api/v2' },
         changeOrigin: true,
       },
     },
@@ -23,7 +24,9 @@ module.exports = defineConfig({
             vue: path.resolve('./node_modules/vue')
           }
         }
-      }
+      },
+      publicPath: '/nerd2/',
+
 })
 
 

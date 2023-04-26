@@ -3,7 +3,7 @@ import createPersistedState from 'vuex-persistedstate';
 
 const initialState = {
   userInfo: {
-    loggedIn: null,
+    loggedIn: false,
   },
 };
 
@@ -72,6 +72,7 @@ const store = createStore({
       state.userInfo = {
         ...userInfo
       };
+      state.userInfo.loggedIn = true;
     },
   },
   actions: {

@@ -75,7 +75,7 @@
                                 <i class="fa fa-solid fa-close"></i>
                             </span>
                         </span>
-                        <span> 
+                        <span @click="$router.push('/ip/' + ip + '/warden')"> 
                             <i class="fa fa-solid fa-arrow-up-right-from-square"></i>
                         </span>
                     </div>
@@ -137,27 +137,11 @@
                     <perfect-scrollbar>
                         <div class="warden-inside">
                             <table>
-                                <dt>2023-01-17</dt>
-                                <dd>Number of reports: 2004</dd>
-                                <dd>Distinct targets: 365</dd>
-                                <dt>2023-01-18</dt>
-                                <dd>Number of reports: 1812</dd>
-                                <dd>Distinct targets: 379</dd>
-                                <dt>2023-01-19</dt>
-                                <dd>Number of reports: 1890</dd>
-                                <dd>Distinct targets: 392</dd>
-                                <dt>2023-01-20</dt>
-                                <dd>Number of reports: 1869</dd>
-                                <dd>Distinct targets: 391</dd>
-                                <dt>2023-01-21</dt>
-                                <dd>Number of reports: 2142</dd>
-                                <dd>Distinct targets: 413</dd>
-                                <dt>2023-01-22</dt>
-                                <dd>Number of reports: 2049</dd>
-                                <dd>Distinct targets: 415</dd>
-                                <dt>2023-01-23</dt>
-                                <dd>Number of reports: 2179</dd>
-                                <dd>Distinct targets: 427</dd>
+                                <span v-for="ds in details.dshield" :key="ds">
+                                    <dt>{{ ds.date }}</dt>
+                                    <dd>Number of reports: {{ ds.reports }}</dd>
+                                    <dd>Distinct targets:  {{ ds.targets }}</dd>
+                                </span>
                             </table>
                         </div>
                     </perfect-scrollbar>
@@ -196,166 +180,45 @@
                 <div v-if="otx" class="warden">
                     <perfect-scrollbar>
                         <div class="warden-inside">
-                            <table>
-                                <div><b>[<a href="https://otx.alienvault.com/pulse/602bc528f447d628d41494f2">602bc528f447d628d41494f2</a>] 2021-02-16 13:14:16.945000 | Ka&#39;s Honeypot visitors</b>
-         <table style="padding-left: 30px; padding-bottom: 10px">
-          <tr><td>Author name:</td><td>Kapppppa</td></tr>
-          <tr><td>Pulse modified:</td><td class="time" data-time=1674547056.898>2023-01-24 07:57:36.898000</td></tr>
-          <tr><td>Indicator created:</td><td class="time" data-time=1674546498.0>2023-01-24 07:48:18</td></tr>
-          <tr><td>Indicator role:</td><td>bruteforce</td></tr>
-          <tr><td>Indicator title:</td><td>ssh bruteforce attack (Lu)</td></tr>
-           <tr><td>Indicator expiration:</td><td class="time" data-time=1677135600.0>2023-02-23 07:00:00</td></tr>
-         </table>
-    </div>
-    <div><b>[<a href="https://otx.alienvault.com/pulse/63b6eb269f0a8a60d385b9db">63b6eb269f0a8a60d385b9db</a>] 2023-01-05 15:22:14.634000 | SSH honeypot logs for 2023-01-05</b>
-         <table style="padding-left: 30px; padding-bottom: 10px">
-          <tr><td>Author name:</td><td>jnazario</td></tr>
-          <tr><td>Pulse modified:</td><td class="time" data-time=1672932134.634>2023-01-05 15:22:14.634000</td></tr>
-          <tr><td>Indicator created:</td><td class="time" data-time=1672932135.0>2023-01-05 15:22:15</td></tr>
-          <tr><td>Indicator role:</td><td>None</td></tr>
-          <tr><td>Indicator title:</td><td></td></tr>
-           <tr><td>Indicator expiration:</td><td class="time" data-time=1675522800.0>2023-02-04 15:00:00</td></tr>
-         </table>
-    </div>
-    <div><b>[<a href="https://otx.alienvault.com/pulse/63b98ddcad524ae41017e35d">63b98ddcad524ae41017e35d</a>] 2023-01-07 15:21:00.493000 | SSH honeypot logs for 2023-01-07</b>
-         <table style="padding-left: 30px; padding-bottom: 10px">
-          <tr><td>Author name:</td><td>jnazario</td></tr>
-          <tr><td>Pulse modified:</td><td class="time" data-time=1673104860.493>2023-01-07 15:21:00.493000</td></tr>
-          <tr><td>Indicator created:</td><td class="time" data-time=1673104861.0>2023-01-07 15:21:01</td></tr>
-          <tr><td>Indicator role:</td><td>None</td></tr>
-          <tr><td>Indicator title:</td><td></td></tr>
-           <tr><td>Indicator expiration:</td><td class="time" data-time=1675695600.0>2023-02-06 15:00:00</td></tr>
-         </table>
-    </div>
-    <div><b>[<a href="https://otx.alienvault.com/pulse/63bed43ab29a28763317a879">63bed43ab29a28763317a879</a>] 2023-01-11 15:22:33.996000 | SSH honeypot logs for 2023-01-11</b>
-         <table style="padding-left: 30px; padding-bottom: 10px">
-          <tr><td>Author name:</td><td>jnazario</td></tr>
-          <tr><td>Pulse modified:</td><td class="time" data-time=1673450553.996>2023-01-11 15:22:33.996000</td></tr>
-          <tr><td>Indicator created:</td><td class="time" data-time=1673450554.0>2023-01-11 15:22:34</td></tr>
-          <tr><td>Indicator role:</td><td>None</td></tr>
-          <tr><td>Indicator title:</td><td></td></tr>
-           <tr><td>Indicator expiration:</td><td class="time" data-time=1676041200.0>2023-02-10 15:00:00</td></tr>
-         </table>
-    </div>
-    <div><b>[<a href="https://otx.alienvault.com/pulse/63c0262fdabd87b7ffde78ec">63c0262fdabd87b7ffde78ec</a>] 2023-01-12 15:24:31.353000 | SSH honeypot logs for 2023-01-12</b>
-         <table style="padding-left: 30px; padding-bottom: 10px">
-          <tr><td>Author name:</td><td>jnazario</td></tr>
-          <tr><td>Pulse modified:</td><td class="time" data-time=1673537071.353>2023-01-12 15:24:31.353000</td></tr>
-          <tr><td>Indicator created:</td><td class="time" data-time=1673537072.0>2023-01-12 15:24:32</td></tr>
-          <tr><td>Indicator role:</td><td>None</td></tr>
-          <tr><td>Indicator title:</td><td></td></tr>
-           <tr><td>Indicator expiration:</td><td class="time" data-time=1676127600.0>2023-02-11 15:00:00</td></tr>
-         </table>
-    </div>
-    <div><b>[<a href="https://otx.alienvault.com/pulse/63c1770caf551046850ccef6">63c1770caf551046850ccef6</a>] 2023-01-13 15:21:48.974000 | SSH honeypot logs for 2023-01-13</b>
-         <table style="padding-left: 30px; padding-bottom: 10px">
-          <tr><td>Author name:</td><td>jnazario</td></tr>
-          <tr><td>Pulse modified:</td><td class="time" data-time=1673623308.974>2023-01-13 15:21:48.974000</td></tr>
-          <tr><td>Indicator created:</td><td class="time" data-time=1673623309.0>2023-01-13 15:21:49</td></tr>
-          <tr><td>Indicator role:</td><td>None</td></tr>
-          <tr><td>Indicator title:</td><td></td></tr>
-           <tr><td>Indicator expiration:</td><td class="time" data-time=1676214000.0>2023-02-12 15:00:00</td></tr>
-         </table>
-    </div>
-    <div><b>[<a href="https://otx.alienvault.com/pulse/63c2c86a4731b5e10f72e622">63c2c86a4731b5e10f72e622</a>] 2023-01-14 15:21:14.750000 | SSH honeypot logs for 2023-01-14</b>
-         <table style="padding-left: 30px; padding-bottom: 10px">
-          <tr><td>Author name:</td><td>jnazario</td></tr>
-          <tr><td>Pulse modified:</td><td class="time" data-time=1673709674.75>2023-01-14 15:21:14.750000</td></tr>
-          <tr><td>Indicator created:</td><td class="time" data-time=1673709675.0>2023-01-14 15:21:15</td></tr>
-          <tr><td>Indicator role:</td><td>None</td></tr>
-          <tr><td>Indicator title:</td><td></td></tr>
-           <tr><td>Indicator expiration:</td><td class="time" data-time=1676300400.0>2023-02-13 15:00:00</td></tr>
-         </table>
-    </div>
-    <div><b>[<a href="https://otx.alienvault.com/pulse/63c419f7b7085728330b73d1">63c419f7b7085728330b73d1</a>] 2023-01-15 15:21:27.409000 | SSH honeypot logs for 2023-01-15</b>
-         <table style="padding-left: 30px; padding-bottom: 10px">
-          <tr><td>Author name:</td><td>jnazario</td></tr>
-          <tr><td>Pulse modified:</td><td class="time" data-time=1673796087.409>2023-01-15 15:21:27.409000</td></tr>
-          <tr><td>Indicator created:</td><td class="time" data-time=1673796088.0>2023-01-15 15:21:28</td></tr>
-          <tr><td>Indicator role:</td><td>None</td></tr>
-          <tr><td>Indicator title:</td><td></td></tr>
-           <tr><td>Indicator expiration:</td><td class="time" data-time=1676386800.0>2023-02-14 15:00:00</td></tr>
-         </table>
-    </div>
-    <div><b>[<a href="https://otx.alienvault.com/pulse/63c56b6e0efdc9e841d070b4">63c56b6e0efdc9e841d070b4</a>] 2023-01-16 15:21:18.245000 | SSH honeypot logs for 2023-01-16</b>
-         <table style="padding-left: 30px; padding-bottom: 10px">
-          <tr><td>Author name:</td><td>jnazario</td></tr>
-          <tr><td>Pulse modified:</td><td class="time" data-time=1673882478.245>2023-01-16 15:21:18.245000</td></tr>
-          <tr><td>Indicator created:</td><td class="time" data-time=1673882479.0>2023-01-16 15:21:19</td></tr>
-          <tr><td>Indicator role:</td><td>None</td></tr>
-          <tr><td>Indicator title:</td><td></td></tr>
-           <tr><td>Indicator expiration:</td><td class="time" data-time=1676473200.0>2023-02-15 15:00:00</td></tr>
-         </table>
-    </div>
-    <div><b>[<a href="https://otx.alienvault.com/pulse/63c80e4949274e96318e97de">63c80e4949274e96318e97de</a>] 2023-01-18 15:20:41.248000 | SSH honeypot logs for 2023-01-18</b>
-         <table style="padding-left: 30px; padding-bottom: 10px">
-          <tr><td>Author name:</td><td>jnazario</td></tr>
-          <tr><td>Pulse modified:</td><td class="time" data-time=1674055241.248>2023-01-18 15:20:41.248000</td></tr>
-          <tr><td>Indicator created:</td><td class="time" data-time=1674055242.0>2023-01-18 15:20:42</td></tr>
-          <tr><td>Indicator role:</td><td>None</td></tr>
-          <tr><td>Indicator title:</td><td></td></tr>
-           <tr><td>Indicator expiration:</td><td class="time" data-time=1676646000.0>2023-02-17 15:00:00</td></tr>
-         </table>
-    </div>
-    <div><b>[<a href="https://otx.alienvault.com/pulse/63c95fb7f09e304b5da30491">63c95fb7f09e304b5da30491</a>] 2023-01-19 15:20:23.662000 | SSH honeypot logs for 2023-01-19</b>
-         <table style="padding-left: 30px; padding-bottom: 10px">
-          <tr><td>Author name:</td><td>jnazario</td></tr>
-          <tr><td>Pulse modified:</td><td class="time" data-time=1674141623.662>2023-01-19 15:20:23.662000</td></tr>
-          <tr><td>Indicator created:</td><td class="time" data-time=1674141624.0>2023-01-19 15:20:24</td></tr>
-          <tr><td>Indicator role:</td><td>None</td></tr>
-          <tr><td>Indicator title:</td><td></td></tr>
-           <tr><td>Indicator expiration:</td><td class="time" data-time=1676732400.0>2023-02-18 15:00:00</td></tr>
-         </table>
-    </div>
-    <div><b>[<a href="https://otx.alienvault.com/pulse/606d75c11c08ff94089a9430">606d75c11c08ff94089a9430</a>] 2021-04-07 09:05:05.353000 | Georgs Honeypot</b>
-         <table style="padding-left: 30px; padding-bottom: 10px">
-          <tr><td>Author name:</td><td>georgengelmann</td></tr>
-          <tr><td>Pulse modified:</td><td class="time" data-time=1674491102.079>2023-01-23 16:25:02.079000</td></tr>
-          <tr><td>Indicator created:</td><td class="time" data-time=1674443583.0>2023-01-23 03:13:03</td></tr>
-          <tr><td>Indicator role:</td><td>bruteforce</td></tr>
-          <tr><td>Indicator title:</td><td>SSH intrusion attempt from elate.woinsta.com port 51206</td></tr>
-           <tr><td>Indicator expiration:</td><td class="time" data-time=1677034800.0>2023-02-22 03:00:00</td></tr>
-         </table>
-    </div>
-    <div><b>[<a href="https://otx.alienvault.com/pulse/63cab1393d853acd31e0c77d">63cab1393d853acd31e0c77d</a>] 2023-01-20 15:20:25.932000 | SSH honeypot logs for 2023-01-20</b>
-         <table style="padding-left: 30px; padding-bottom: 10px">
-          <tr><td>Author name:</td><td>jnazario</td></tr>
-          <tr><td>Pulse modified:</td><td class="time" data-time=1674228025.932>2023-01-20 15:20:25.932000</td></tr>
-          <tr><td>Indicator created:</td><td class="time" data-time=1674228027.0>2023-01-20 15:20:27</td></tr>
-          <tr><td>Indicator role:</td><td>None</td></tr>
-          <tr><td>Indicator title:</td><td></td></tr>
-           <tr><td>Indicator expiration:</td><td class="time" data-time=1676818800.0>2023-02-19 15:00:00</td></tr>
-         </table>
-    </div>
-    <div><b>[<a href="https://otx.alienvault.com/pulse/63cd543920260eaa29b9ff3e">63cd543920260eaa29b9ff3e</a>] 2023-01-22 15:20:25.698000 | SSH honeypot logs for 2023-01-22</b>
-         <table style="padding-left: 30px; padding-bottom: 10px">
-          <tr><td>Author name:</td><td>jnazario</td></tr>
-          <tr><td>Pulse modified:</td><td class="time" data-time=1674400825.698>2023-01-22 15:20:25.698000</td></tr>
-          <tr><td>Indicator created:</td><td class="time" data-time=1674400826.0>2023-01-22 15:20:26</td></tr>
-          <tr><td>Indicator role:</td><td>None</td></tr>
-          <tr><td>Indicator title:</td><td></td></tr>
-           <tr><td>Indicator expiration:</td><td class="time" data-time=1676991600.0>2023-02-21 15:00:00</td></tr>
-         </table>
-    </div>
-    <div><b>[<a href="https://otx.alienvault.com/pulse/63cea5b2e37aceeccc3cef2f">63cea5b2e37aceeccc3cef2f</a>] 2023-01-23 15:20:18.985000 | SSH honeypot logs for 2023-01-23</b>
-         <table style="padding-left: 30px; padding-bottom: 10px">
-          <tr><td>Author name:</td><td>jnazario</td></tr>
-          <tr><td>Pulse modified:</td><td class="time" data-time=1674487218.985>2023-01-23 15:20:18.985000</td></tr>
-          <tr><td>Indicator created:</td><td class="time" data-time=1674487220.0>2023-01-23 15:20:20</td></tr>
-          <tr><td>Indicator role:</td><td>None</td></tr>
-          <tr><td>Indicator title:</td><td></td></tr>
-           <tr><td>Indicator expiration:</td><td class="time" data-time=1677078000.0>2023-02-22 15:00:00</td></tr>
-         </table>
-    </div>
-                            </table>
+                            <div v-for="otx_pulse in details.otx_pulses" :key="otx_pulse">
+                                <b>[<a :href="'https://otx.alienvault.com/pulse/' + otx_pulse.pulse_id" target="_blank">{{ otx_pulse.pulse_id }}</a>] {{ otx_pulse.pulse_created }} | {{ otx_pulse.pulse_name }}</b>
+                                <table style="padding-left: 10px; padding-bottom: 10px">
+                                <tr><td>Author name:</td><td>{{ otx_pulse.author_name }}</td></tr>
+                                <tr><td>Pulse modified:</td><td class="time">{{ otx_pulse.pulse_modified }}</td></tr>
+                                <tr><td>Indicator created:</td><td class="time">{{ otx_pulse.indicator_created }}</td></tr>
+                                <tr><td>Indicator role:</td><td>{{ otx_pulse.indicator_role }}</td></tr>
+                                <tr><td>Indicator title:</td><td>{{ otx_pulse.indicator_title }}</td></tr>
+                                <tr v-if="otx_pulse.indicator_expiration"><td>Indicator expiration:</td><td class="time">{{ otx_pulse.indicator_expiration }}</td></tr>
+                                </table>
+                            </div>
                         </div>
                     </perfect-scrollbar>
                 </div>
             </div>
         </div>
+        <div class="sources">
 
-        <div class="source">
-            <WardenChart ></WardenChart>
+            <div class="source">
+                <WardenChart :data="rev_details"></WardenChart>
+            </div>
+
+            <div class="source">
+                <DshieldChart :data="details.dshield"></DshieldChart>
+            </div>
+
+            <div class="source">
+                <OTXChart :data="details.otx_pulses" v-if="false"></OTXChart>
+                <table>
+                    <tr>
+                        <th>Author</th>
+                        <th>Date</th>
+                    </tr>
+                    <tr v-for="pulse in details.otx_pulses" :key="pulse">
+                        <td>{{ pulse.author_name }}</td>
+                        <td>{{ pulse.indicator_created }}</td>
+                    </tr>
+                </table>
+            </div>
         </div>
         
     </div>
@@ -367,6 +230,8 @@ import CountryFlag from 'vue-country-flag-next';
 import TimeStampVue from '@/components/TimeStamp.vue';
 import moment from 'moment';
 import WardenChart from '@/components/WardenChart.vue';
+import DshieldChart from '@/components/DshieldChart.vue';
+import OTXChart from '@/components/OTXChart.vue';
 
 export default {
   data() {
@@ -387,7 +252,9 @@ export default {
     CountryFlag,
     TimeStampVue,
     WardenChart,
-  },
+    DshieldChart,
+    OTXChart
+},
   methods: {
     dateOnly(value) {
         if (this.$store.state.time)

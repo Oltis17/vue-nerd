@@ -2,12 +2,12 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 
-import * as auth from './auth';
 // individual global labraries
 import VTooltip from 'v-tooltip';
 import PerfectScrollbar from 'vue3-perfect-scrollbar';
 import 'vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.css';
 import vueClickOutsideElement from 'vue-click-outside-element';
+import 'charts.css';
 
 // FA icons
 import { library, dom } from "@fortawesome/fontawesome-svg-core";
@@ -20,14 +20,15 @@ import { far } from '@fortawesome/free-regular-svg-icons';
 
 import router from './router';
 import store from './store';
+import * as api from './api'
 
 
 library.add(fas, far, fab)
 dom.watch();
 
 // Read token from local storage and update axios token if exists
-const accessToken = auth.getAccessToken();
-auth.setAxiosAccessToken(accessToken);
+const accessToken = api.getAccessToken();
+api.setAxiosAccessToken(accessToken);
 
 createApp(App)
 .use(VTooltip)

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="padding-top: 70px;">
         <span class="skeleton-box top-of-table"></span>
         <span class="skeleton-box table-row" v-for="index in 13" :key="index"></span>
     </div>

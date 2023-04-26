@@ -6,7 +6,7 @@
           <SearchForm />
         </div>
         <div id="wrapper-results">
-          <ResultsComp v-if="!loading" :results="res"/>
+          <ResultsComp v-if="!loading" :results="res" :number="number"/>
           <SkeletonLoader v-if="loading"></SkeletonLoader>
           <div v-if="!loading" width="100%">
             <div class="darkui2">
@@ -36,6 +36,7 @@
       return {
       res: null,
       loading: true,
+      number: null,
       }
     },
     components: {
@@ -61,6 +62,7 @@
               .join('&')
         )
         this.res = await api.filterResults();
+        this.number = null;
         this.loading = false;
       },
       async clear() {
@@ -73,6 +75,7 @@
         )
         this.$store.dispatch('clearFilterAction');
         this.res = await api.filterResults();
+        this.number = null;
         this.loading = false;
       }
     },

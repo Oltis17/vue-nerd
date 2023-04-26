@@ -21,22 +21,22 @@
                 <h3>Create an account</h3>
                 <div>
                     <label>Email</label>
-                    <input type="email">
+                    <input type="email" v-model="email">
                 </div>
                 <div>
                     <label>Password</label>
                     <div class="password">
-                        <input :type="this.passwordFieldType" v-model="password"> 
+                        <input :type="this.passwordFieldType" v-model="pass1"> 
                         <span @click="switchVisibility()" class="icon">
                             <i class="fa fa-regular fa-eye"></i>
                         </span>   
                     </div>
-                    <password-meter :password="password" />
+                    <password-meter :password="pass1" @score="onScore"/>
                 </div>
                 <div>
                     <label>Confirm password</label>
                     <div class="password">
-                        <input :type="this.passwordFieldType"> 
+                        <input :type="this.passwordFieldType" v-model="pass2"> 
                         <span @click="switchVisibility()" class="icon">
                             <i class="fa fa-regular fa-eye"></i>
                         </span>   
@@ -44,13 +44,13 @@
                 </div>
                 <div>
                     <label>Intended purpose of use</label>
-                    <select>
+                    <select v-model="purpose">
                         <option>Academic</option>
                         <option>Research</option>
                         <option>Security</option>
                     </select>
                 </div>
-                <button class="create">Create an account</button>
+                <button class="create" @click="register()">Create an account</button>
             </div>
             
             <div class="providers-login">
@@ -64,21 +64,44 @@
             </div>
         </div>
     </div>
+    <!-- MODALS -->
+    <vue-modality ref="myRefError" title="Warning" centered error hide-ok @cancel="this.$refs.myRefError.hide()">
+        {{ message }}
+    </vue-modality>
+    <vue-modality ref="myRefSuccess" title="Account created" centered success hide-cancel @ok="this.$refs.myRefSuccess.hide()">
+        {{ message }}
+    </vue-modality>
 </template>
 
 <script>
 import { defineComponent, ref } from 'vue';
+import * as api from '../api';
 import PasswordMeter from 'vue-simple-password-meter';
+import VueModalityV3 from 'vue-modality-v3';
 
 export default defineComponent({
   components: {
     PasswordMeter,
+    VueModality: VueModalityV3,
   },
   setup() {
-    const password = ref('');
+    const pass1 = ref('');
+    const score = ref(null);
+
+    const onScore = (payload) => {
+      score.value = payload.score;
+    };
 
     return {
-      password,
+      email: null,
+      pass1,
+      pass2: null,
+      purpose: null,
+      loading: false,
+      error: false,
+      message: null,
+      onScore,
+      score,
     };
   },
   data() {
@@ -89,6 +112,45 @@ export default defineComponent({
   methods: {
     switchVisibility() {
       this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
+    },
+    async register() {
+        if (this.email === null) {
+            this.message = "Email is required.";
+            this.$refs.myRefError.open();
+            return;
+        }
+        if (this.pass1.length === 0) {
+            this.message = "Password is required.";
+            this.$refs.myRefError.open();
+            return;
+        }
+        if (this.pass1 !== this.pass2) {
+            this.message = "Passwords must match.";
+            this.$refs.myRefError.open();
+            return;
+        }
+        if (this.purpose === null) {
+            this.message = "You must select an intended purpose.";
+            this.$refs.myRefError.open();
+            return;
+        }
+        if (this.score < 3) {
+            this.message = "Provided password is too weak. Use capital letters, numbers and special characters or make your password longer.";
+            this.$refs.myRefError.open();
+            return;
+        }
+
+        try {
+            await api.register(this.email, this.pass1, this.purpose);
+        } catch (e) {
+            this.message = e;
+            this.$refs.myRefError.open();
+            return;
+        }
+
+        this.message = `Account successfully created. Please check yout inbox at: ${this.email} and verify your email address.`;
+        this.$refs.myRefSuccess.open();
+
     }
   },
 });

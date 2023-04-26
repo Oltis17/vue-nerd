@@ -16,20 +16,26 @@
                 <h3>Log in</h3>
                 <div>
                     <label>Email</label>
-                    <input type="email">
+                    <input type="email" v-model="email">
                 </div>
                 <div>
                     <label>Password</label>
                     <div class="password">
-                        <input :type="this.passwordFieldType"> 
+                        <input :type="this.passwordFieldType" v-model="password"> 
                         <span @click="switchVisibility()" class="icon">
                             <i class="fa fa-regular fa-eye"></i>
                         </span>   
                     </div>
-                    <span class="forgot">Forgot password?</span>
+                    <span class="forgot" @click="this.$refs.myRefForgot.open()">Forgot password?</span>
                     
                 </div>
-                <button class="button_slide slide_right">Log in</button>
+                <button class="button_slide slide_right" @click="login()" v-if="!loading">
+                    Log in
+                </button>
+                <div style="width: 100%; height: 45px; display: flex; justify-content: center; align-items: center;" v-if="loading">
+                    <clip-loader :loading="true" :color="color" :size="small"></clip-loader>
+                </div>
+                
             </div>
             
             <div class="providers-login">
@@ -44,18 +50,105 @@
         </div>
     </div>
     
+    <vue-modality ref="myRefForgot" title="Forgotten password" centered :ok-loading="loading2" @cancel="this.$refs.myRefForgot.hide()" @ok="forgotPass()">
+        <div>Please, provide your email address and we will send you a link to reset your password:</div>
+        <div class="forgot">
+            <input type="email" v-model="forgotEmail">
+        </div>
+    </vue-modality>
+    <vue-modality ref="myRefSuccess" title="Email sent" centered success hide-cancel @ok="this.$refs.myRefSuccess.hide()">
+        Email with a link to reset your password was succesfully sent to your email address: {{ forgotEmail }}.
+    </vue-modality>
+    <vue-modality ref="myRefError" title="Warning" centered error hide-ok @cancel="this.$refs.myRefError.hide()">
+        {{ message }}
+    </vue-modality>
 </template>
 
 <script>
+import * as api from '../api';
+import ClipLoader from 'vue-spinner/src/ClipLoader.vue';
+import VueModalityV3 from 'vue-modality-v3';
+
 export default {
   data() {
     return {
         passwordFieldType: "password",
+        email: null,
+        password: null,
+        loading: false,
+        loading2: false,
+        forgotEmail: null,
+        message: null,
     };
+  },
+  components: {
+    ClipLoader,
+    VueModality: VueModalityV3,
   },
   methods: {
     switchVisibility() {
       this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
+    },
+    async login() {
+        if (this.email === null || this.password === null) {
+            this.message = "Bot fields are required!"
+            this.$refs.myRefError.open();
+            return;
+        }
+
+        this.loading = true;
+        let accessToken = null;
+        try {
+            accessToken = await api.login(this.email, this.password);
+        } catch (e) {
+            this.message = e.message;
+            this.$refs.myRefError.open();
+            this.loading = false;
+            return;
+        }
+        // set access token Locally and to API calls
+        api.setAccessToken(accessToken);
+        api.setAxiosAccessToken(accessToken);
+
+        // get user info and store them locally
+        let userInfo = null;
+        try {
+            userInfo = await api.me();
+        } catch (e) {
+            this.message = e;
+            this.$refs.myRefError.open();
+            this.loading = false;
+            return;
+        }
+        console.log(userInfo);
+        this.$store.commit('setUserInfo', userInfo);
+
+        this.loading = false;
+
+        //redirect to main page
+        this.$router.push("/");
+    },
+    async forgotPass() {
+        if (this.forgotEmail === null) {
+            this.message = "Please fill in a valid email address."
+            this.$refs.myRefError.open();
+        }
+        this.loading2 = true;
+
+        try {
+            await api.passReset(this.forgotEmail);
+        } catch (e) {
+            this.message = "User with this email address not found.";
+            this.$refs.myRefError.open();
+            this.loading2 = false;
+            return;
+        }
+
+        this.loading2 = false;
+
+        this.$refs.myRefSuccess.open();
+        this.$refs.myRefForgot.hide();
+
     }
   }
 };
@@ -147,7 +240,7 @@ input {
     border: 1px solid white;
     padding: 4px 10px;
     height: 20px;
-    color: white;
+    color: rgb(255, 255, 255);
 }
 
 input:focus {
@@ -179,6 +272,7 @@ h1 {
 .forgot {
     font-size: small;
     color: #42b983;
+    cursor: pointer;
 }
 
 
@@ -187,10 +281,20 @@ h1 {
   -webkit-transition: ease-out 0.4s;
   -moz-transition: ease-out 0.4s;
   transition: ease-out 0.4s;
+  margin-bottom: 10px;
 }
 
 .slide_right:hover {
   box-shadow: inset 400px 0 0 0 #42b983;
+}
+
+.forgot input {
+    color: #00031c;
+    width: 300px;
+    padding: 6px 12px;
+    font-size: 16px;
+    border: 1px solid black;
+    margin-top: 10px;
 }
 
 </style>

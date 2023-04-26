@@ -25,6 +25,22 @@
   </div> -->
   <div id="res-table-wrapper">
     <perfect-scrollbar>
+      <div style="display: flex; justify-content: space-between; color: white; margin-bottom: 15px; width: 40%; margin-left: auto; margin-right: auto; align-items: center;">
+        <div style="width: 600px;">
+          <div class="nOfRes" v-if="number">
+            <span>Results: {{ number }}</span>
+          </div>
+        </div>
+        
+        <div class="pages">
+          <span>Page: {{ $store.state.filter.page }}</span>
+          <div>
+            <a v-if="$store.state.filter.page != 1" @click="nextPage($store.state.filter.page - 1)"><i class="fa fa-backward"></i></a>
+            <a @click="nextPage($store.state.filter.page + 1)"><i class="fa fa-forward"></i></a>
+          </div>
+        </div>
+      </div>
+      
       <table id="results-table">
         <thead class="result-table-head">
           <!-- <th>IP <span><i class="fa fa-solid fa-arrow-down-wide-short"  v-class="{active: sort === 'ip'}" @click="toggleSort('ip')"></i></span></th>
@@ -104,16 +120,54 @@
             </td>
             <td :title="ip.ts_added" style="cursor: help;">{{ formatDateTime(ip.ts_added) }}</td>
             <td :title="ip.ts_last_update" style="cursor: help;">{{  formatDateTime(ip.ts_last_update) }}</td>
-            <td :style="'color: ' + rep2Color(ip.rep)">{{ ip.rep.toFixed(3) }}</td>
-            <td class="row-more"><i class="fa fa-ellipsis-h"></i></td>
+            <td>
+              <span style="float: left;"><MiniChart :data="[0.1, 0.2, 0.8, 0.5, 0.9]"></MiniChart></span>
+              <div :style="'padding-top: 10px; color: ' + rep2Color(ip.rep)">{{ ip.rep.toFixed(3) }}</div>
+            </td>
+            <td class="row-more">
+              <div class="dropdown">
+                <span><i class="fa fa-ellipsis-h"></i></span>
+                <div class="dropdown-content">
+                  <a :href="'https://www.shodan.io/host/' + ip.ip" target="_blank">
+                    <div>
+                      <img src="../../public/shodan_icon.png">
+                      <span>Shodan</span>
+                    </div>
+                  </a>
+                  <div>
+                    <img src="../../public/censys_icon.png">
+                    <a :href="'https://search.censys.io/hosts/' + ip.ip" target="_blank">Censys</a>
+                  </div>
+                  <div>
+                    <img src="../../public/censys_icon.png">
+                    <a :href="'http://multirbl.valli.org/lookup/' + ip.ip" target="_blank">valli.org</a>
+                  </div>
+                  <div>
+                    <img src="../../public/abuse_ip_db_icon.png">
+                    <a :href="'https://www.abuseipdb.com/check/' + ip.ip" target="_blank">AbuseIPDB</a>
+                  </div>
+                  <div>
+                    <img src="../../public/threat_crowd_icon.png">
+                    <a :href="'https://www.threatcrowd.org/ip.php?ip=' + ip.ip" target="_blank">Threat Crowd</a>
+                  </div>
+                  <div>
+                    <img src="../../public/talos_icon.png">
+                    <a :href="'https://www.talosintelligence.com/reputation_center/lookup?search=' + ip.ip" target="_blank">Talos Intelligence Center</a>
+                  </div>
+                  <div>
+                    <img src="../../public/greynoise-logo.png">
+                    <a :href="'https://viz.greynoise.io/ip/' + ip.ip" target="_blank">Greynoise Visualizer</a>
+                  </div>
+                  <div>
+                    <img src="../../public/dshield_icon.png">
+                    <a :href="'https://isc.sans.edu/ipinfo.html?ip=' + ip.ip" target="_blank">DShield</a>
+                  </div> 
+                </div>
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
-      <div class="pages">
-        <a>{{ $store.state.filter.page }}</a>
-        <a @click="nextPage($store.state.filter.page + 1)">{{ $store.state.filter.page + 1 }}</a>
-        <a @click="nextPage($store.state.filter.page + 2)">{{ $store.state.filter.page + 2 }}</a>
-      </div>
     </perfect-scrollbar>
     <div v-if="results.length == 0" style="position: absolute;  top: 200px;left: 200px; 
   right: 0; 
@@ -129,23 +183,37 @@ import ctry_info from '../assets/ctry_strings.json';
 import CountryFlag from 'vue-country-flag-next';
 import Popper from "vue3-popper";
 import moment from 'moment';
+import MiniChart from './MiniChart.vue';
 //import TimeStampVue from '@/components/TimeStamp.vue';
 
 export default {
-  props: ['results'],
+  props: ['results', 'number'],
   data() {
     return {
       tags: {},
       sort: null,
       desc: false,
+      chartOptions: {
+        type: 'arealine',
+        data: "2,4,0,3",
+      },
+      clicked: null,
     };
   },
   components: {
     CountryFlag,
     Popper,
+    MiniChart,
     //TimeStampVue,
   },
   methods: {
+    open(ip) {
+      this.clicked = ip;
+      console.log('HERE');
+    },
+    close() {
+      this.clicked = null;
+    },
     nextPage(page) {
       this.$store.state.filter.page = page;
       this.$parent.filter();
@@ -289,21 +357,18 @@ export default {
   border-collapse: collapse;
 }
 
-tbody td {
-  border: 5px solid #00031c;
-  padding: 5px;
-  border-right: 0;
-  border-left: 0;
-}
-
-#results-table tr {
+#results-table > tbody > tr {
   height: 40px;
   background-color: rgb(250, 250, 250, 0.08);
 }
 
-#results-table td {
+#results-table > tbody > tr > td {
   padding-left: 10px;
   padding-right: 10px;
+  border: 5px solid #00031c;
+  padding: 5px;
+  border-right: 0;
+  border-left: 0;
 }
 
 .ps {
@@ -471,14 +536,68 @@ a {
 
 .pages {
   display: flex;
-  width: 30%;
+  width: 300px;
   font-size: 20px;
   justify-content: space-around;
-  padding-top: 20px;
-  margin: auto;
+  background-color: #42b983;
+  padding: 10px 20px;
+  border-radius: 20px;
+}
+
+.pages > div{
+  display: flex;
+  width: 70px;
+  font-size: 20px;
+  justify-content: space-between;
 }
 
 .pages a {
   cursor: pointer;
 }
+
+.nOfRes {
+  display: flex;
+  width: 20%;
+  font-size: 20px;
+  justify-content: space-around;
+  border: 2px solid #42b983;
+  padding: 10px 20px;
+  border-radius: 20px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #2c2a2a;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+  right: -10px;
+  text-align: left;
+}
+
+.dropdown-content img {
+  width: 20px;
+  padding-right: 20px;
+}
+
+.dropdown-content div {
+  font-size: 14px;
+  width: 200px;
+  padding: 5px;
+  margin: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
 </style>

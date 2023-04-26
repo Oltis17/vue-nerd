@@ -7,6 +7,7 @@
         <div class="middle">
           <span><a>Data</a></span>
           <span><a>IP map</a></span>
+          <span v-if="$store.state.userInfo.groups && $store.state.userInfo.groups?.includes('admin')"><a href="/admin">Admin controls</a></span>
         </div>
       </div>
       
@@ -21,18 +22,17 @@
             </SettingsComp>
           </span>
         </span>
-        
-        <span v-if="authenticated" class="flex-item" id="username">New User</span>
+        <span v-if="$store.state.userInfo.loggedIn" class="flex-item" id="username" @click="this.$router.push('profile')">{{ $store.state.userInfo.email }}</span>
         <span>
-          <button v-if="authenticated" class="flex-item">Log out</button>
+          <button v-if="$store.state.userInfo.loggedIn" class="flex-item" @click="this.$refs.myRef.open()">Log out</button>
         </span>
 
         <span>
-          <button v-if="!authenticated" class="create" @click="this.$router.push('create-account')">Create an account</button>
+          <button v-if="!$store.state.userInfo.loggedIn" class="create" @click="this.$router.push('create-account')">Create an account</button>
         </span>
         
         <span>
-          <button v-if="!authenticated" class="login" @click="this.$router.push('login')">Log in</button>
+          <button v-if="!$store.state.userInfo.loggedIn" class="login" @click="this.$router.push('login')">Log in</button>
         </span>
         
       </div>
@@ -41,10 +41,16 @@
       </div>
     </div>
   </div>
+  <!-- MODALS -->
+  <vue-modality ref="myRef" title="Logging out" centered @ok="logout()" @cancel="this.$refs.myRef.hide()">
+        Are you sure you want to log out?
+    </vue-modality>
 </template>
 
 <script>
 import SettingsComp from './SettingsComp.vue';
+import * as api from '../api';
+import VueModalityV3 from 'vue-modality-v3';
 
 export default {
   name: 'TopBar',
@@ -56,6 +62,7 @@ export default {
   },
   components: {
     SettingsComp,
+    VueModality: VueModalityV3,
   },
   methods: {
     open() {
@@ -63,6 +70,12 @@ export default {
     },
     close() {
         this.visible = false;
+    },
+    logout() {
+      this.$store.commit('clearState');
+      api.removeAccessToken();
+      this.$refs.myRef.hide();
+      this.$router.push('/');
     }
   }
 };
@@ -116,7 +129,7 @@ export default {
 #right-bar {
   height: 50px;
   justify-content: right;
-  width: 400px;
+  min-width: 400px;
   align-items: baseline;
 }
 
@@ -125,7 +138,7 @@ export default {
 }
 
 .flex-item {
-  margin-left: 25px;
+  margin-left: 10px;
   color: #ffffff9f;
   cursor: pointer;
 }
@@ -187,7 +200,7 @@ a {
   padding-left: 35px;
   display: flex;
   justify-content: space-between;
-  width: 150px;
+  width: 270px;
   letter-spacing: 1px;
   color: rgba(255, 255, 255, 0.43);
   border-left: solid 1px #42b983;
@@ -195,6 +208,7 @@ a {
 
 .middle span {
   border-bottom: 1px solid white;
+  cursor: pointer;
 }
 
 .left-bar {

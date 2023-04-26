@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import axios from 'axios';
+import * as api from './api';
 
 import MainScreen from './views/MainScreen.vue';
 import LoginScreen from './views/LoginScreen.vue';
@@ -9,9 +10,14 @@ import NotFound from './views/NotFound.vue';
 import UnAuthorized from './views/UnAuthorized.vue';
 import AboutScreen from './views/AboutScreen.vue';
 import CreateAccountScreen from './views/CreateAccountScreen.vue';
+import IpWarden from './views/IpWarden.vue';
+import IpDshield from './views/IpDshield.vue';
+import IpOTX from './views/IpOTX.vue';
+import AdminScreen from './views/AdminScreen.vue';
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory('/nerd2'),
+    base: '/nerd2',
     routes: [
         {
             path: '/login',
@@ -45,13 +51,46 @@ const router = createRouter({
             component: ProfileScreen,
             meta: {
                 title: 'NERD - Profile'
-            }
-            // beforeEnter: auth.ifAuthenticated,
+            },
+            beforeEnter: api.ifAuthenticated,
+        },
+        {
+            path: '/admin',
+            name: 'admin',
+            component: AdminScreen,
+            meta: {
+                title: 'NERD - Admin Console'
+            },
+            beforeEnter: api.ifAuthenticated,
         },
         {
             path: '/ip/:addr',
             name: '/ip/:addr',
             component: IpDetailsScreen,
+            meta: {
+                title: 'NERD - IP details'
+            }
+        },
+        {
+            path: '/ip/:addr/warden',
+            name: '/ip/:addr/warden',
+            component: IpWarden,
+            meta: {
+                title: 'NERD - Warden'
+            }
+        },
+        {
+            path: '/ip/:addr/dshield',
+            name: '/ip/:addr/dshield',
+            component: IpDshield,
+            meta: {
+                title: 'NERD - IP details'
+            }
+        },
+        {
+            path: '/ip/:addr/otx',
+            name: '/ip/:addr/otx',
+            component: IpOTX,
             meta: {
                 title: 'NERD - IP details'
             }
