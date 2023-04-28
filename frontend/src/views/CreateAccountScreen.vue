@@ -26,8 +26,8 @@
                 <div>
                     <label>Password</label>
                     <div class="password">
-                        <input :type="this.passwordFieldType" v-model="pass1"> 
-                        <span @click="switchVisibility()" class="icon">
+                        <input :type="this.passwordFieldType1" v-model="pass1"> 
+                        <span @click="switchVisibility1()" class="icon">
                             <i class="fa fa-regular fa-eye"></i>
                         </span>   
                     </div>
@@ -36,8 +36,8 @@
                 <div>
                     <label>Confirm password</label>
                     <div class="password">
-                        <input :type="this.passwordFieldType" v-model="pass2"> 
-                        <span @click="switchVisibility()" class="icon">
+                        <input :type="this.passwordFieldType2" v-model="pass2"> 
+                        <span @click="switchVisibility2()" class="icon">
                             <i class="fa fa-regular fa-eye"></i>
                         </span>   
                     </div>
@@ -106,12 +106,16 @@ export default defineComponent({
   },
   data() {
     return {
-        passwordFieldType: "password",
+        passwordFieldType1: "password",
+        passwordFieldType2: "password",
     };
   },
   methods: {
-    switchVisibility() {
-      this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
+    switchVisibility1() {
+      this.passwordFieldType1 = this.passwordFieldType1 === "password" ? "text" : "password";
+    },
+    switchVisibility2() {
+      this.passwordFieldType2 = this.passwordFieldType2 === "password" ? "text" : "password";
     },
     async register() {
         if (this.email === null) {
@@ -143,7 +147,7 @@ export default defineComponent({
         try {
             await api.register(this.email, this.pass1, this.purpose);
         } catch (e) {
-            this.message = e;
+            this.message = e.message;
             this.$refs.myRefError.open();
             return;
         }
@@ -258,6 +262,10 @@ select {
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 1em;
+}
+
+option {
+    color: black;
 }
 
 input:focus {

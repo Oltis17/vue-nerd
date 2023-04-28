@@ -69,7 +69,7 @@
                     <country-flag :country="toLower(ip.geo.ctry)" size='normal' rounded/>
                   </span>
                 </div>
-                <a class="result-ip-white" :href="`/ip/${ip.ip}`">{{ ip.ip }}</a>
+                <a class="result-ip-white" @click="this.$router.push(`ip/${ip.ip}`)">{{ ip.ip }}</a>
               </div>
               
             </td>

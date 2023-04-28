@@ -11,7 +11,7 @@ module.exports = defineConfig({
       //   changeOrigin: true,
       // },
       '/nerd/api/v2/': {
-        target: 'http://localhost/nerd/api/v2',
+        target: 'http://localhost:8000/',
         pathRewrite: { '^/api/v2': '/nerd/api/v2' },
         changeOrigin: true,
       },

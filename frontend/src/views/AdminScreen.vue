@@ -1,6 +1,6 @@
 <template>
     <div class="main" v-if="$store.state.userInfo.groups.includes('admin')">
-        <h1>Admin screen</h1>
+        <h1>Admin screen <span @click="addUserModal()"><i class="fa fa-solid fa-plus"></i>Add user</span></h1>
         <div class="table-wrapped">
             <perfect-scrollbar>
                 <div class="wrapper">
@@ -50,9 +50,10 @@
                                 <td>{{ user[6] ? formatDateTime(user[6]) : '' }}</td>
                                 <td>{{ user[7] ? formatDateTime(user[7]) : '' }}</td>
                                 <td class="controls">
-                                    <span @click="editUserModal(user[0])"><i class="fa fa-solid fa-gear green"></i></span>
-                                    <span @click="blockUserModal(user[0])"><i class="fa fa-solid fa-cancel orange"></i> </span>
-                                    <span @click="deleteUserModal(user[0])"><i class="fa fa-solid fa-trash red"></i></span>
+                                    <span @click="editUserModal(user)"><i class="fa fa-solid fa-gear green"></i></span>
+                                    <span v-if="user[1].includes('registered')" @click="blockUserModal(user)"><i class="fa fa-solid fa-cancel orange"></i> </span>
+                                    <span v-else @click="unblockUserModal(user)"><i class="fa fa-solid fa-check green"></i> </span>
+                                    <span @click="deleteUserModal(user)"><i class="fa fa-solid fa-trash red"></i></span>
                                 </td>
                             </tr>
                         </tbody>
@@ -60,28 +61,67 @@
                 </div>
             </perfect-scrollbar>
         </div>
-    <vue-modality ref="myRefDelete" title="Deleting user" centered @cancel="this.$refs.myRefDelete.hide()">
-        Do you really want to delete user <b>{{ selectedUser }}</b>?
+    <vue-modality :ok-loading="loading" ref="myRefDelete" title="Deleting user" centered @cancel="this.$refs.myRefDelete.hide()" ok-title="Delete user" @ok="this.delete()">
+        Do you really want to delete user <b>{{ selectedUser[0] }}</b>?
     </vue-modality>
-    <vue-modality ref="myRefBlock" title="Blocking user" centered @cancel="this.$refs.myRefBlock.hide()">
-        Do you really want to block user <b>{{ selectedUser }}</b>?
+    <vue-modality :ok-loading="loading" ref="myRefBlock" title="Blocking user" centered @cancel="this.$refs.myRefBlock.hide()" ok-title="Block user" @ok="this.block()">
+        Do you really want to block user <b>{{ selectedUser[0] }}</b>?<br>
+        By blocking a user their role "registered" will be removed, resulting in the user's inability to log in.
     </vue-modality>
-    <vue-modality ref="myRefEdit" title="Editing user" centered @cancel="this.$refs.myRefEdit.hide()" ok-title="Save roles">
-        Editing roles of user: <b>{{ selectedUser }}</b>
-        <div v-for="role in getRoles()" :key="role" class="roles">
-            <input type="checkbox" v-if="$store.state.userInfo.groups.includes(role)" checked>
-            <input type="checkbox" v-else>
+    <vue-modality :ok-loading="loading" ref="myRefUnBlock" title="Unblocking user" centered @cancel="this.$refs.myRefUnBlock.hide()" ok-title="Unblock user" @ok="this.unblock()">
+        Do you really want to unblock user <b>{{ selectedUser[0] }}</b>?<br>
+        By unblocking a user role "registered" will be added, resulting in the user's ability to log in.
+    </vue-modality>
+    <vue-modality :ok-loading="loading" ref="myRefEdit" title="Editing user" centered @cancel="this.$refs.myRefEdit.hide()" ok-title="Save roles" @ok="this.editRoles()">
+        Editing roles of user: <b>{{ selectedUser[0] }}</b>
+        <div v-for="role in allRoles" :key="role" class="roles">
+            <input type="checkbox" v-if="selectedUser[1].includes(role)" checked v-model="roles" :value="role">
+            <input type="checkbox" v-else v-model="roles" :value="role">
             <span>
                 {{ role }}
             </span>
         </div>
+    </vue-modality>
+    <vue-modality ref="myRefError" title="Warning" centered error hide-ok @cancel="this.$refs.myRefError.hide()">
+        {{ message }}
+    </vue-modality>
+    <vue-modality ref="myRefAdd" title="Add user" centered @cancel="this.$refs.myRefAdd.hide()" ok-title="Add user" class="add-user" @ok="this.add()">
+        <div>
+            <label>Email</label>
+            <input type="email" v-model="email">
+        </div>
+        <div style="flex-direction: row !important;">
+            <input type="checkbox" v-model="verify"> 
+            Mark email as verified (if not verif. email will be sent)
+        </div>
+        <div>
+            <label>Password</label>
+            <input type="text" v-model="password">
+        </div>
+        
+        <div>
+            <label>Organization</label>
+            <input type="text" v-model="organization">
+        </div>
+        
+        <div>
+            <label>Roles</label>
+            <div v-for="role in allRoles" :key="role" class="roles">
+                <input type="checkbox" v-model="roles" :value="role">
+                <span>
+                    {{ role }}
+                </span>
+            </div>
+        </div>
+        
+        
             
     </vue-modality>
     </div>
 </template>
 
 <script>
-import roles from '../assets/roles.json';
+import possibleRoles from '../assets/roles.json';
 import * as api from '../api';
 import moment from 'moment';
 import VueModalityV3 from 'vue-modality-v3';
@@ -92,14 +132,121 @@ export default {
         return {
             users: null,
             selectedUser: null,
+            roles: [],
+            loading: false,
+            message: null,
+            verify: false,
+            email: null,
+            organization: null,
+            password: null,
         }
     },
     components: {
         VueModality: VueModalityV3,
     },
+    computed: {
+        allRoles() {
+            return possibleRoles;
+        }
+    },
     methods: {
         getRoles() {
+            const roles = [];
+            possibleRoles.forEach((r) => {
+                if (this.selectedUser[1].includes(r))
+                {
+                    roles.push(r);
+                }
+                
+            })
             return roles;
+        },
+        async editRoles() {
+            this.loading = true;
+            try {
+                await api.editRoles(this.selectedUser[0], this.roles);
+            }
+            catch (e) {
+                this.$refs.myRefEdit.hide();
+                this.message = e.message;
+                this.$refs.myRefError.open();
+                this.loading = false;
+                return;
+            }
+            this.users = await api.getUsers();
+            this.loading = false;
+            this.$refs.myRefEdit.hide()
+        },
+        async block() {
+            this.loading = true;
+            if (this.selectedUser[1].includes("registered")) {
+                this.selectedUser[1].splice(this.selectedUser[1].indexOf("registered"), 1);
+                try {
+                    await api.editRoles(this.selectedUser[0], this.selectedUser[1]);
+                }
+                catch (e) {
+                    this.$refs.myRefBlock.hide();
+                    this.message = e.message;
+                    this.$refs.myRefError.open();
+                    this.loading = false;
+                    return;
+                }
+            }
+            this.users = await api.getUsers();
+            this.loading = false;
+            this.$refs.myRefBlock.hide()
+        },
+        async unblock() {
+            this.loading = true;
+            if (!this.selectedUser[1].includes("registered")) {
+                this.selectedUser[1].push("registered");
+                try {
+                    await api.editRoles(this.selectedUser[0], this.selectedUser[1]);
+                }
+                catch (e) {
+                    this.$refs.myRefUnBlock.hide();
+                    this.message = e.message;
+                    this.$refs.myRefError.open();
+                    this.loading = false;
+                    return;
+                }
+            }
+            this.users = await api.getUsers();
+            this.loading = false;
+            this.$refs.myRefUnBlock.hide()
+        },
+        async delete() {
+            this.loading = true;
+            try {
+                await api.deleteUser(this.selectedUser[0]);
+            }
+            catch (e) {
+                this.$refs.myRefDelete.hide();
+                this.message = e.message;
+                this.$refs.myRefError.open();
+                this.loading = false;
+                return;
+            }
+            this.users = await api.getUsers();
+            this.loading = false;
+            this.$refs.myRefDelete.hide()
+        },
+        async add() {
+            this.loading = true;
+            console.log(this.email, this.password, this.organization, this.roles, this.verify);
+            try {
+                await api.addUser(this.email, this.password, this.organization, this.roles, this.verify);
+            }
+            catch (e) {
+                this.$refs.myRefAdd.hide();
+                this.message = e.message;
+                this.$refs.myRefError.open();
+                this.loading = false;
+                return;
+            }
+            this.users = await api.getUsers();
+            this.loading = false;
+            this.$refs.myRefAdd.hide()
         },
         deleteUserModal(user) {
             this.selectedUser = user;
@@ -109,9 +256,17 @@ export default {
             this.selectedUser = user;
             this.$refs.myRefBlock.open();
         },
+        unblockUserModal(user) {
+            this.selectedUser = user;
+            this.$refs.myRefUnBlock.open();
+        },
         editUserModal(user) {
             this.selectedUser = user;
+            this.roles = this.selectedUser[1];
             this.$refs.myRefEdit.open();
+        },
+        addUserModal() {
+            this.$refs.myRefAdd.open();
         },
         formatDateTime(ts) {
             if (this.$store.state.time) {
@@ -167,6 +322,11 @@ table tr td {
     text-align: left;
 }
 
+table tr:nth-child(odd) {
+  background-color: #ffffff16;
+  color: #fff;
+}
+
 .controls {
     width: 90px;
     display: flex;
@@ -192,5 +352,36 @@ table tr td {
 .roles {
     padding: 5px;
     text-align: left;
+}
+
+.add-user .vm-body > div {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    justify-content: left;
+    align-items: flex-start;
+}
+
+.add-user .vm-body > div input[type=text], .add-user .vm-body > div input[type=email] {
+    width: 300px;
+    height: 25px;
+    border-radius: 7px;
+    border: 1px solid black;
+    padding: 0px 5px;
+}
+
+h1 span {
+    font-size: 16px;
+    font-weight: 100;
+    padding: 10px;
+    border: 1px #42b983 solid;
+    border-radius: 12px;
+    color: #42b983;
+    cursor: pointer;
+    float: right;
+    margin-right: 45px;
+    width: 100px;
+    display: flex;
+    justify-content: space-around;
 }
 </style>

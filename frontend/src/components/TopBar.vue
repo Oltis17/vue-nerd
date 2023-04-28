@@ -2,12 +2,12 @@
   <div id="top-bar-wrapper">
     <div id="top-bar">
       <div class="left-bar">
-        <div id="title"><a href="/">NERD</a><sub>by <a href="https://cesnet.cz">CESNET</a></sub></div>
+        <div id="title"><a @click="this.$router.push('/')">NERD</a><sub>by <a href="https://cesnet.cz">CESNET</a></sub></div>
 
         <div class="middle">
           <span><a>Data</a></span>
           <span><a>IP map</a></span>
-          <span v-if="$store.state.userInfo.groups && $store.state.userInfo.groups?.includes('admin')"><a href="/admin">Admin controls</a></span>
+          <span v-if="$store.state.userInfo.groups && $store.state.userInfo.groups?.includes('admin')"><a @click="this.$router.push('admin')">Admin controls</a></span>
         </div>
       </div>
       
@@ -22,17 +22,17 @@
             </SettingsComp>
           </span>
         </span>
-        <span v-if="$store.state.userInfo.loggedIn" class="flex-item" id="username" @click="this.$router.push('profile')">{{ $store.state.userInfo.email }}</span>
+        <span v-if="$store.state.userInfo.loggedIn" class="flex-item" id="username" @click="this.$router.push('/profile')">{{ $store.state.userInfo.email }}</span>
         <span>
           <button v-if="$store.state.userInfo.loggedIn" class="flex-item" @click="this.$refs.myRef.open()">Log out</button>
         </span>
 
         <span>
-          <button v-if="!$store.state.userInfo.loggedIn" class="create" @click="this.$router.push('create-account')">Create an account</button>
+          <button v-if="!$store.state.userInfo.loggedIn" class="create" @click="this.$router.push('/create-account')">Create an account</button>
         </span>
         
         <span>
-          <button v-if="!$store.state.userInfo.loggedIn" class="login" @click="this.$router.push('login')">Log in</button>
+          <button v-if="!$store.state.userInfo.loggedIn" class="login" @click="this.$router.push('/login')">Log in</button>
         </span>
         
       </div>
@@ -179,6 +179,7 @@ button:hover {
   letter-spacing: 4px;
   width: 245px;
   text-align: left;
+  cursor: pointer;
 }
 
 #title sub {

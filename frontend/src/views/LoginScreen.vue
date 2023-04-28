@@ -29,7 +29,7 @@
                     <span class="forgot" @click="this.$refs.myRefForgot.open()">Forgot password?</span>
                     
                 </div>
-                <button class="button_slide slide_right" @click="login()" v-if="!loading">
+                <button class="login" @click="login()" v-if="!loading">
                     Log in
                 </button>
                 <div style="width: 100%; height: 45px; display: flex; justify-content: center; align-items: center;" v-if="loading">
@@ -97,9 +97,9 @@ export default {
         }
 
         this.loading = true;
-        let accessToken = null;
+        let tokens = null;
         try {
-            accessToken = await api.login(this.email, this.password);
+            tokens = await api.login(this.email, this.password);
         } catch (e) {
             this.message = e.message;
             this.$refs.myRefError.open();
@@ -107,8 +107,9 @@ export default {
             return;
         }
         // set access token Locally and to API calls
-        api.setAccessToken(accessToken);
-        api.setAxiosAccessToken(accessToken);
+        api.setAccessToken(tokens[0]);
+        api.setAxiosAccessToken(tokens[0]);
+        api.setRefreshToken(tokens[1]);
 
         // get user info and store them locally
         let userInfo = null;
@@ -250,17 +251,41 @@ input:focus {
 button {
     background-color: transparent;
     border:#42b983 2px solid;
-    border-radius: 0px;
-    color: #fbfbfb;
-    height: 30px;
+    border-radius: 12px;
+    color: #42b983;
+    height: 35px;
     margin-top: 15px;
+
     cursor: pointer;
+}
+
+.login {
+    background: black; /* default color */
+
+    /* "to left" / "to right" - affects initial color */
+    background: linear-gradient(to left, transparent 50%, #42b9833b 50%) right;
+    background-size: 200%;
+    transition: .5s ease-out;
+}
+
+.login:hover {
+    background-position: left;
 }
 
 .black {
     border: #00031c 2px solid;
     color: #00031c;
     width: 50%;
+    background: black; /* default color */
+
+    /* "to left" / "to right" - affects initial color */
+    background: linear-gradient(to left, #42b983 50%, rgba(255, 255, 255, 0.658) 50%) right;
+    background-size: 200%;
+    transition: .5s ease-out;
+}
+
+.black:hover {
+    background-position: left;
 }
 
 h1 {

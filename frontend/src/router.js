@@ -14,6 +14,7 @@ import IpWarden from './views/IpWarden.vue';
 import IpDshield from './views/IpDshield.vue';
 import IpOTX from './views/IpOTX.vue';
 import AdminScreen from './views/AdminScreen.vue';
+import VerifyScreen from './views/VerifyScreen.vue';
 
 const router = createRouter({
     history: createWebHistory('/nerd2'),
@@ -65,7 +66,7 @@ const router = createRouter({
         },
         {
             path: '/ip/:addr',
-            name: '/ip/:addr',
+            name: 'ip/:addr',
             component: IpDetailsScreen,
             meta: {
                 title: 'NERD - IP details'
@@ -73,7 +74,7 @@ const router = createRouter({
         },
         {
             path: '/ip/:addr/warden',
-            name: '/ip/:addr/warden',
+            name: 'ip/:addr/warden',
             component: IpWarden,
             meta: {
                 title: 'NERD - Warden'
@@ -81,7 +82,7 @@ const router = createRouter({
         },
         {
             path: '/ip/:addr/dshield',
-            name: '/ip/:addr/dshield',
+            name: 'ip/:addr/dshield',
             component: IpDshield,
             meta: {
                 title: 'NERD - IP details'
@@ -89,7 +90,7 @@ const router = createRouter({
         },
         {
             path: '/ip/:addr/otx',
-            name: '/ip/:addr/otx',
+            name: 'ip/:addr/otx',
             component: IpOTX,
             meta: {
                 title: 'NERD - IP details'
@@ -101,6 +102,14 @@ const router = createRouter({
             component: AboutScreen,
             meta: {
                 title: 'NERD - About'
+            }
+        },
+        {
+            path: '/verify',
+            name: 'verify',
+            component: VerifyScreen,
+            meta: {
+                title: 'NERD - Verification'
             }
         },
         {

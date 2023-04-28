@@ -208,7 +208,10 @@
 
             <div class="source">
                 <OTXChart :data="details.otx_pulses" v-if="false"></OTXChart>
-                <table>
+                <div v-if="details.otx_pulses.length == 0">
+                    No OTX data for this IP
+                </div>
+                <table v-else>
                     <tr>
                         <th>Author</th>
                         <th>Date</th>

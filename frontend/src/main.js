@@ -9,6 +9,7 @@ import 'vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.css';
 import vueClickOutsideElement from 'vue-click-outside-element';
 import 'charts.css';
 
+
 // FA icons
 import { library, dom } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import store from './store';
+//import router from './router';
 
 // AUTH PART
 const LOCAL_STORAGE_ACCESS_TOKEN_KEY = 'access_token';
@@ -20,12 +21,24 @@ export function setAccessToken(accessToken) {
   }
 }
 
+export function setRefreshToken(refreshToken) {
+  if (refreshToken) {
+    localStorage.setItem("refreshToken", refreshToken);
+  } else {
+    localStorage.removeItem("refreshToken");
+  }
+}
+
 export function removeAccessToken() {
   localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
 }
 
 export function getAccessToken() {
   return localStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
+}
+
+export function getRefreshToken() {
+  return localStorage.getItem("refreshToken") ? localStorage.getItem("refreshToken") : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7ImxvZ2luX3R5cGUiOiJsb2NhbCIsImlkIjoibG9jYWw6b2x0bWFub3ZhLmtyaXN0aW5hQGdtYWlsLmNvbSIsImVtYWlsIjoib2x0bWFub3ZhLmtyaXN0aW5hQGdtYWlsLmNvbSJ9LCJleHAiOjE2ODI2ODIzNzF9.owWJb2z5Gg3ypVomremp9xNSRuOseLLBIk5XoHBGhHI";
 }
 
 export function isLoggedIn() {
@@ -49,6 +62,35 @@ export const ifAuthenticated = async (to, from, next) => {
 };
 
 // ENDPOINT ACCESS
+
+axios.interceptors.response.use(
+  res => res,
+  err => {
+    const statusCode = err.response.status;
+    if (statusCode === 401 && err.response.data.error === 'Signature has expired') {
+      console.log("HERE");
+      const token = getRefreshToken();
+      return axios.post('/nerd/api/v2/refreshToken', { token })
+      .then(function (success) {
+        console.log(success);
+        if (success === undefined) {
+          console.log("HERE2");
+          store.commit('clearState');
+          removeAccessToken();
+          return;
+        }
+        setAccessToken(success);
+      })
+      .catch(function (error) {
+        console.log("HERE2");
+        this.$store.commit('clearState');
+        removeAccessToken();
+        this.$router.push('/');
+        throw error;
+      });
+    }
+  }
+);
 
 
 export async function getResults() {
@@ -112,7 +154,7 @@ export async function getIpDetails(ip_address) {
 
 // USER MANAGEMENT ENDPOINTS
 export async function login(email, password) {
-    const response = await axios.post('api/v2/login', {email, password})
+    const response = await axios.post('/nerd/api/v2/login', {email, password})
     .catch(function (error) {
       if (error.response) {
         return Promise.reject(error.response.data);
@@ -122,22 +164,32 @@ export async function login(email, password) {
 }
 
 export async function me() {
-    const response = await axios.get('/nerd/api/v2/me');
+    const response = await axios.get('/nerd/api/v2/me').
+    catch(function (error) {
+      if (error.response) {
+        return Promise.reject(error.response.data);
+      }
+    });
     return response.data;
 }
 
 export async function register(email, password, organization) {
-    const response = await axios.post('api/v2/register', {email, password, name: "NoNamev2", organization});
+    const response = await axios.post('/nerd/api/v2/register', {email, password, name: "NoNamev2", organization}).
+    catch(function (error) {
+      if (error.response) {
+        return Promise.reject(error.response.data);
+      }
+    });
     return response.data;
 }
 
 export async function passReset(email) {
-    const response = await axios.post('api/v2/reset_password', {email});
+    const response = await axios.post('/nerd/api/v2/reset_password', {email});
     return response.data;
 }
 
 export async function passChange(passOld, password) {
-  const response = await axios.post('api/v2/change_password', {passOld, password});
+  const response = await axios.post('/nerd/api/v2/change_password', {passOld, password});
   return response.data;
 }
 
@@ -183,7 +235,47 @@ export async function nOfResults() {
   return response.data;
 }
 
+export async function verifyEmail(accessToken) {
+  const response = await axios.post('/nerd/api/v2/verify', { accessToken }).
+  catch(function (error) {
+    if (error.response) {
+      return Promise.reject(error.response.data);
+    }
+  });
+  return response.data;
+}
+
 export async function getUsers() {
   const response = await axios.get('/nerd/api/v2/users');
+  return response.data;
+}
+
+export async function editRoles(email, roles) {
+  const response = await axios.put('/nerd/api/v2/roles', { email, roles}).
+  catch(function (error) {
+    if (error.response) {
+      return Promise.reject(error.response.data);
+    }
+  });
+  return response.data;
+}
+
+export async function deleteUser(email) {
+  const response = await axios.delete(`/nerd/api/v2/delete-user/${email}`).
+  catch(function (error) {
+    if (error.response) {
+      return Promise.reject(error.response.data);
+    }
+  });
+  return response.data;
+}
+
+export async function addUser(email, password, organization, roles, verify) {
+  const response = await axios.post('/nerd/api/v2/add-user', { email, name: "NoNamev2", password, organization, roles, verify }).
+  catch(function (error) {
+    if (error.response) {
+      return Promise.reject(error.response.data);
+    }
+  });
   return response.data;
 }
