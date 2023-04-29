@@ -67,7 +67,7 @@ axios.interceptors.response.use(
   res => res,
   err => {
     const statusCode = err.response.status;
-    if (statusCode === 401 && err.response.data.error === 'Signature has expired') {
+    if (statusCode === 401 && err.response.data.error === 'AuthToken wrong') {
       console.log("HERE");
       const token = getRefreshToken();
       return axios.post('/nerd/api/v2/refreshToken', { token })
@@ -79,7 +79,8 @@ axios.interceptors.response.use(
           removeAccessToken();
           return;
         }
-        setAccessToken(success);
+        setAccessToken(success.data[0]);
+        setRefreshToken(success.data[1]);
       })
       .catch(function (error) {
         console.log("HERE2");
@@ -94,48 +95,31 @@ axios.interceptors.response.use(
 
 
 export async function getResults() {
-    const response = await axios.get('/nerd/api/v2/search/ip/');
+    const response = await axios.post('/nerd/api/v2/search/ip');
     return response.data;
 }
 
 export async function filterResults() {
-    const subnet = store.state.filter.subnet ? encodeURIComponent(store.state.filter.subnet.join(",")) : null;
-    const hostname = store.state.filter.hostname ? encodeURIComponent(store.state.filter.hostname.join(",")) : null;
-    const country = store.state.filter.country ? store.state.filter.country[0].split('(')[1].split('/')[0] : null;
-    const asn = store.state.filter.asn ? encodeURIComponent(store.state.filter.asn.join(",")) : null;
-    const cat = store.state.filter.cat ? store.state.filter.cat[0] : null;
-    const blacklist = store.state.filter.blacklist ? store.state.filter.blacklist[0] : null;
-    const source = store.state.filter.source ? encodeURIComponent(store.state.filter.source.map(source => source.short).join(",")) : null;
-    const tag = store.state.filter.tag ? encodeURIComponent(store.state.filter.tag.map(tag => tag.short).join(",")) : null;
-    const sortby = store.state.filter.sort;
-    const asc = store.state.filter.desc ? store.state.filter.desc : null;
-    const asn_value = store.state.filter.asn_value ? store.state.filter.asn_value : null;
-    const source_value = store.state.filter.source_value ? store.state.filter.source_value : null;
-    const cat_value = store.state.filter.cat_value ? store.state.filter.cat_value : null;
-    const bl_value = store.state.filter.bl_value ? store.state.filter.bl_value : null;
-    const tag_value = store.state.filter.tag_value ? store.state.filter.tag_value : null;
-    const whitelisted = store.state.filter.whitelisted ? store.state.filter.whitelisted : null;
-    const page = store.state.filter.page ? store.state.filter.page : null;
-    const response = await axios.get('/nerd/api/v2/search/ip/',
-    { params: { 
-        subnet,
-        hostname,
-        country,
-        asn,
-        cat,
-        blacklist,
-        source,
-        tag,
-        sortby,
-        asc,
-        asn_value,
-        source_value,
-        cat_value,
-        bl_value,
-        tag_value,
-        whitelisted,
-        page
-    } },
+    const response = await axios.post('/nerd/api/v2/search/ip',
+    { 
+        subnet: store.state.filter.subnet ,
+        hostname: store.state.filter.hostname,
+        country: store.state.filter.country,
+        asn: store.state.filter.asn,
+        cat: store.state.filter.cat,
+        blacklist: store.state.filter.blacklist,
+        source: store.state.filter.source,
+        tag: store.state.filter.tag,
+        sortby: store.state.filter.sort,
+        asc: store.state.filter.desc,
+        asn_op: store.state.filter.asn_value,
+        source_op: store.state.filter.source_value,
+        cat_op: store.state.filter.cat_value,
+        bl_op: store.state.filter.bl_value,
+        tag_op: store.state.filter.tag_value,
+        whitelisted: store.state.whitelisted,
+        page: store.state.filter.page
+    },
     );
     return response.data;
 }

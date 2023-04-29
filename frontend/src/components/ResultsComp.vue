@@ -61,7 +61,7 @@
           <th></th>
         </thead>
         <tbody>
-          <tr v-for="ip in results" :key="ip">
+          <tr v-for="ip in results" :key="ip" style="min-width: 180px">
             <td class="result-ip-row">
               <div class="wide">
                 <div class="flag" :title="getCountInfo(ip.geo.ctry)" style="border: none">
