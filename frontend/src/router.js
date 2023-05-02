@@ -34,7 +34,7 @@ const router = createRouter({
             name: 'create-account',
             component: CreateAccountScreen,
             meta: {
-                title: 'Login'
+                title: 'Create Account'
             }
             // beforeEnter: auth.ifNotAuthenticated,
         },

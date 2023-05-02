@@ -1,6 +1,7 @@
 <template>
-    <div v-if="!loading">   
-    {{  loading }}
+    <div v-if="!loading">
+      <h2>Raw IP details for IP: {{ ip }}</h2>   
+    {{ details.events }}
     </div>
 </template>
 
@@ -15,14 +16,11 @@ export default {
         details: null,
     };
   },
-  methods: {
-    async created() {
-        console.log("HERE");
-        this.details = await api.getIpDetails(this.ip);
-        console.log(this.details);
-        this.rev_details = this.details.events.reverse();
-        this.loading = false;
-    },
+  async mounted() {
+      this.details = await api.getIpDetails(this.ip);
+      console.log(this.details);
+      this.rev_details = this.details.events.reverse();
+      this.loading = false;
     }
 }
 </script>

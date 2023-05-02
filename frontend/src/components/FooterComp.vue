@@ -1,8 +1,10 @@
 <template>
-  <div id="footer-wrapper">
-    <span><a href="/">NERD by CESNET 2022</a></span>
-    <span><a href="/about">About</a></span>
-    <span><a href="/">Privacy Policy</a></span>
+  <div>
+    <div id="footer-wrapper">
+      <span><a href="/">NERD by CESNET 2022</a></span>
+      <span><a href="/about">About</a></span>
+      <span><a href="/">Privacy Policy</a></span>
+    </div>
   </div>
 </template>
 
@@ -11,11 +13,20 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+@media (max-width: 800px) {
+
+}
+
+template {
+  background-color: #00031c;
+}
 #footer-wrapper {
   padding: 20px;
   display: flex;
   justify-content: space-between;
   color: rgba(255, 255, 255, 0.462);
+  max-width: 420px;
+  margin: auto;
 }
 
 #footer-wrapper span {

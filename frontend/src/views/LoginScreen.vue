@@ -7,7 +7,7 @@
             </div>
             <div>
                 <span>Don't have an account yet?</span>
-                <button class="black">Create an account</button>
+                <button class="black" @click="$router.push('/create-account')">Create an account</button>
             </div>
             
         </div>
@@ -156,6 +156,30 @@ export default {
 </script>
 
 <style scoped>
+
+@media (max-width: 800px) {
+    .outer {
+        flex-direction: column;
+        align-items: center;
+        padding-top: 3vh !important;
+        height: 80vh;
+        overflow: scroll !important;
+    }
+
+    .left {
+       border-radius: 12px 12px 0 0 !important;
+       width: 90% !important;
+    }
+    .wrapper {
+       border-radius: 0 0 12px 12px !important;
+       width: 90% !important;
+    }
+}
+
+.wrapper input {
+        height: 30px;
+    }
+
 h3 {
     color: white;
     text-align: center;

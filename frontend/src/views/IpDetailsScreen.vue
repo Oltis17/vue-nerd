@@ -5,7 +5,7 @@
                 <div class="ip-badge">
                     <span class="ctr-ip">
                         <span class="flag">
-                            <country-flag :country="toLower(details.geo.ctry)"/>
+                            <country-flag v-if="details.geo" :country="toLower(details.geo.ctry)"/>
                         </span>
                         {{ ip }}
                     </span>
@@ -43,186 +43,227 @@
 
 
         <h2>ASN: 
-            <span v-for="asn in details.asn" :key="asn">ASN{{ asn._id }}</span>
         </h2>
+        <div style="width: 100%; display: flex; flex-wrap: wrap;">
+            <span v-for="asn in details.asn" :key="asn">ASN{{ asn._id }}</span>
+        </div>
 
         <h2>Blacklists: 
-            <span v-for="bl in details.bl" :key="bl" class="blacklist-badge">{{ bl.name }}</span>
         </h2>
+
+        <div style="width: 100%; display: flex; flex-wrap: wrap;">
+            <div v-for="bl in details.bl" :key="bl" @click="showingBl = bl" style="display: flex; align-items: center;  margin: 5px; position: relative;">
+                <span class="blacklist-badge">{{ bl.name }}</span>
+                <span class="change"><i class="fa fa-solid fa-arrow-down"></i></span>
+            </div>
+
+            <div v-if="showingBl" class="hover">
+                <div @click="showingBl = null" style="float: right; padding: 10px;"><i class="fa fa-solid fa-close"></i></div>
+                <p>{{ ip }} is on  {{ showingBl.name }} blacklist</p>
+                <p>Last checked at: {{showingBl.last_check}}</p>
+                <p>Was present on blacklist at: {{ showingBl.history.join(', ') }}</p>
+            </div>
+
+        </div>
 
         <div class="sources">
             <div class="source" :class="{active: wardenfull}" v-if="!dshieldfull && !otxfull">
-                <div class="top">
-                    <span @click="warden = !warden" class="title">
-                        Warden ({{ details.events_meta.total }}): 
-                        <span v-if="!warden"> 
+                <div class="info">
+                    <div class="top">
+                        <span @click="warden = !warden" class="title">
+                            Warden ({{ details.events_meta.total }}): 
+                            <span v-if="!warden"> 
+                                <i class="fa fa-solid fa-caret-down"></i>
+                            </span>
+
+                            <span v-if="warden"> 
+                                <i class="fa fa-solid fa-caret-up"></i>
+                            </span>
+                        </span>
+                        <div v-if="warden">
+                            <span @click="download(rev_details,'warden')"> 
+                                <i class="fa fa-solid fa-download"></i>
+                            </span>
+                            <span @click="wardenfull = !wardenfull"> 
+                                <span v-if="!wardenfull">
+                                    <i class="fa fa-solid fa-expand"></i>
+                                </span>
+                                <span v-else>
+                                    <i class="fa fa-solid fa-close"></i>
+                                </span>
+                            </span>
+                            <span @click="$router.push('/ip/' + ip + '/warden')"> 
+                                <i class="fa fa-solid fa-arrow-up-right-from-square"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div v-if="details.events_meta.total == 0">
+                        No data in the last 30 days
+                    </div>
+                    <div  v-if="warden" class="warden">
+                        <perfect-scrollbar>
+                            <div class="warden-inside">
+                                <table>
+                                    <span v-for="e in rev_details" :key="e">
+                                        <dt>
+                                            {{ dateOnly(e.date) }}
+                                        </dt>
+                                        <dd v-for="(value, key) in e.categories" :key="key">
+                                            {{ key }}: {{ value.n_sum }}
+                                        </dd>
+                                    </span>
+                                </table>
+                            </div>
+                        </perfect-scrollbar>
+                    </div>
+                    <div class="chart">
+                        <WardenChart :data="rev_details"></WardenChart>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="source" :class="{active: dshieldfull}" v-if="!wardenfull && !otxfull">
+                <div class="info">
+                    <div class="top">
+                        <span @click="dshield = !dshield" class="title">
+                        Dshield: 
+                        <span v-if="!dshield"> 
                             <i class="fa fa-solid fa-caret-down"></i>
                         </span>
 
-                        <span v-if="warden"> 
+                        <span v-if="dshield"> 
                             <i class="fa fa-solid fa-caret-up"></i>
                         </span>
-                    </span>
-                    <div v-if="warden">
-                        <span> 
-                            <i class="fa fa-solid fa-download"></i>
                         </span>
-                        <span @click="wardenfull = !wardenfull"> 
-                            <span v-if="!wardenfull">
-                                <i class="fa fa-solid fa-expand"></i>
+                        <div v-if="dshield">
+                            <span  @click="download(details.dshield,'dshield')"> 
+                                <i class="fa fa-solid fa-download"></i>
                             </span>
-                            <span v-else>
-                                <i class="fa fa-solid fa-close"></i>
-                            </span>
-                        </span>
-                        <span @click="$router.push('/ip/' + ip + '/warden')"> 
-                            <i class="fa fa-solid fa-arrow-up-right-from-square"></i>
-                        </span>
-                    </div>
-                </div>
-                <div v-if="details.events_meta.total == 0">
-                    No data in the last 30 days
-                </div>
-                <div  v-if="warden" class="warden">
-                    <perfect-scrollbar>
-                        <div class="warden-inside">
-                            <table>
-                                <tr v-for="e in rev_details" :key="e">
-                                    <td>
-                                        {{ dateOnly(e.date) }}
-                                    </td>
-                                    <td>
-                                        {{ e.cat }}
-                                    </td>
-                                    <td class="numbers">
-                                        {{ e.n }}
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </perfect-scrollbar>
-                </div>
-            </div>
-            <div class="source" :class="{active: dshieldfull}" v-if="!wardenfull && !otxfull">
-                <div class="top">
-                    <span @click="dshield = !dshield" class="title">
-                    Dshield: 
-                    <span v-if="!dshield"> 
-                        <i class="fa fa-solid fa-caret-down"></i>
-                    </span>
-
-                    <span v-if="dshield"> 
-                        <i class="fa fa-solid fa-caret-up"></i>
-                    </span>
-                    </span>
-                    <div v-if="dshield">
-                        <span> 
-                            <i class="fa fa-solid fa-download"></i>
-                        </span>
-                        <span @click="dshieldfull = !dshieldfull"> 
-                            <span v-if="!dshieldfull">
-                                <i class="fa fa-solid fa-expand"></i>
-                            </span>
-                            <span v-else>
-                                <i class="fa fa-solid fa-close"></i>
-                            </span>
-                        </span>
-                        <span> 
-                            <i class="fa fa-solid fa-arrow-up-right-from-square"></i>
-                        </span>
-                    </div>
-                </div>
-        
-                <div v-if="dshield" class="warden">
-                    <perfect-scrollbar>
-                        <div class="warden-inside">
-                            <table>
-                                <span v-for="ds in details.dshield" :key="ds">
-                                    <dt>{{ ds.date }}</dt>
-                                    <dd>Number of reports: {{ ds.reports }}</dd>
-                                    <dd>Distinct targets:  {{ ds.targets }}</dd>
+                            <span @click="dshieldfull = !dshieldfull"> 
+                                <span v-if="!dshieldfull">
+                                    <i class="fa fa-solid fa-expand"></i>
                                 </span>
-                            </table>
+                                <span v-else>
+                                    <i class="fa fa-solid fa-close"></i>
+                                </span>
+                            </span>
+                            <span> 
+                                <i class="fa fa-solid fa-arrow-up-right-from-square"></i>
+                            </span>
                         </div>
-                    </perfect-scrollbar>
+                    </div>
+            
+                    <div v-if="dshield" class="warden">
+                        <perfect-scrollbar>
+                            <div class="warden-inside">
+                                <table>
+                                    <span v-for="ds in details.dshield" :key="ds">
+                                        <dt>{{ dateOnly(ds.date) }}</dt>
+                                        <dd>Number of reports: {{ ds.reports }}</dd>
+                                        <dd>Distinct targets:  {{ ds.targets }}</dd>
+                                    </span>
+                                </table>
+                            </div>
+                        </perfect-scrollbar>
+                    </div>
+                </div>
+                <div class="chart">
+                    <DshieldChart :data="details.dshield"></DshieldChart>
                 </div>
             </div>
             <div class="source" :class="{active: otxfull}" v-if="!wardenfull && !dshieldfull">
-                <div class="top">
-                    <span @click="otx = !otx" class="title">
-                    OTX: 
-                    <span v-if="!otx"> 
-                        <i class="fa fa-solid fa-caret-down"></i>
-                    </span>
+                <div class="info">
+                    <div class="top">
+                        <span @click="otx = !otx" class="title">
+                        OTX: 
+                        <span v-if="!otx"> 
+                            <i class="fa fa-solid fa-caret-down"></i>
+                        </span>
 
-                    <span v-if="otx"> 
-                        <i class="fa fa-solid fa-caret-up"></i>
-                    </span>
-                    </span>
-                    <div v-if="otx">
-                        <span> 
-                            <i class="fa fa-solid fa-download"></i>
+                        <span v-if="otx"> 
+                            <i class="fa fa-solid fa-caret-up"></i>
                         </span>
-                        <span @click="otxfull = !otxfull"> 
-                            <span v-if="!otxfull">
-                                <i class="fa fa-solid fa-expand"></i>
+                        </span>
+                        <div v-if="otx">
+                            <span  @click="download(details.otx_pulses,'otx')"> 
+                                <i class="fa fa-solid fa-download"></i>
                             </span>
-                            <span v-else>
-                                <i class="fa fa-solid fa-close"></i>
+                            <span @click="otxfull = !otxfull"> 
+                                <span v-if="!otxfull">
+                                    <i class="fa fa-solid fa-expand"></i>
+                                </span>
+                                <span v-else>
+                                    <i class="fa fa-solid fa-close"></i>
+                                </span>
                             </span>
-                        </span>
-                        <span> 
-                            <i class="fa fa-solid fa-arrow-up-right-from-square"></i>
-                        </span>
-                    </div>
-                </div>
-        
-                <div v-if="otx" class="warden">
-                    <perfect-scrollbar>
-                        <div class="warden-inside">
-                            <div v-for="otx_pulse in details.otx_pulses" :key="otx_pulse">
-                                <b>[<a :href="'https://otx.alienvault.com/pulse/' + otx_pulse.pulse_id" target="_blank">{{ otx_pulse.pulse_id }}</a>] {{ otx_pulse.pulse_created }} | {{ otx_pulse.pulse_name }}</b>
-                                <table style="padding-left: 10px; padding-bottom: 10px">
-                                <tr><td>Author name:</td><td>{{ otx_pulse.author_name }}</td></tr>
-                                <tr><td>Pulse modified:</td><td class="time">{{ otx_pulse.pulse_modified }}</td></tr>
-                                <tr><td>Indicator created:</td><td class="time">{{ otx_pulse.indicator_created }}</td></tr>
-                                <tr><td>Indicator role:</td><td>{{ otx_pulse.indicator_role }}</td></tr>
-                                <tr><td>Indicator title:</td><td>{{ otx_pulse.indicator_title }}</td></tr>
-                                <tr v-if="otx_pulse.indicator_expiration"><td>Indicator expiration:</td><td class="time">{{ otx_pulse.indicator_expiration }}</td></tr>
-                                </table>
-                            </div>
+                            <span> 
+                                <i class="fa fa-solid fa-arrow-up-right-from-square"></i>
+                            </span>
                         </div>
-                    </perfect-scrollbar>
+                    </div>
+            
+                    <div v-if="otx" class="warden">
+                        <perfect-scrollbar>
+                            <div class="warden-inside">
+                                <div v-for="otx_pulse in details.otx_pulses" :key="otx_pulse">
+                                    <b>[<a :href="'https://otx.alienvault.com/pulse/' + otx_pulse.pulse_id" target="_blank">{{ otx_pulse.pulse_id }}</a>] {{ otx_pulse.pulse_created }} | {{ otx_pulse.pulse_name }}</b>
+                                    <table style="padding-left: 10px; padding-bottom: 10px">
+                                    <tr><td>Author name:</td><td>{{ otx_pulse.author_name }}</td></tr>
+                                    <tr><td>Pulse modified:</td><td class="time">{{ otx_pulse.pulse_modified }}</td></tr>
+                                    <tr><td>Indicator created:</td><td class="time">{{ otx_pulse.indicator_created }}</td></tr>
+                                    <tr><td>Indicator role:</td><td>{{ otx_pulse.indicator_role }}</td></tr>
+                                    <tr><td>Indicator title:</td><td>{{ otx_pulse.indicator_title }}</td></tr>
+                                    <tr v-if="otx_pulse.indicator_expiration"><td>Indicator expiration:</td><td class="time">{{ otx_pulse.indicator_expiration }}</td></tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </perfect-scrollbar>
+                    </div>
+
                 </div>
-            </div>
-        </div>
-        <div class="sources">
-
-            <div class="source">
-                <WardenChart :data="rev_details"></WardenChart>
-            </div>
-
-            <div class="source">
-                <DshieldChart :data="details.dshield"></DshieldChart>
-            </div>
-
-            <div class="source">
-                <OTXChart :data="details.otx_pulses" v-if="false"></OTXChart>
-                <div v-if="details.otx_pulses.length == 0">
-                    No OTX data for this IP
+                <div class="chart">
+                    <OTXChart :data="details.otx_pulses" v-if="false"></OTXChart>
+                    <div v-if="details.otx_pulses.length == 0">
+                        No OTX data for this IP
+                    </div>
+                    <table v-else>
+                        <tr>
+                            <th>Author</th>
+                            <th>Date</th>
+                        </tr>
+                        <tr v-for="pulse in details.otx_pulses" :key="pulse">
+                            <td>{{ pulse.author_name }}</td>
+                            <td>{{ pulse.indicator_created }}</td>
+                        </tr>
+                    </table>
                 </div>
-                <table v-else>
-                    <tr>
-                        <th>Author</th>
-                        <th>Date</th>
-                    </tr>
-                    <tr v-for="pulse in details.otx_pulses" :key="pulse">
-                        <td>{{ pulse.author_name }}</td>
-                        <td>{{ pulse.indicator_created }}</td>
-                    </tr>
-                </table>
+                
             </div>
+
         </div>
+        <div>
+                <h2>Presence on Blacklists</h2>
+                <BlacklistPresence :bl="details.bl"></BlacklistPresence>
+            </div>
+        <vue-modality :ok-loading="loading" ref="myRefDown" title="Download data" centered @cancel="this.$refs.myRefDown.hide()" hide-ok>
+            <p>Download <b>{{ name }}</b> data:</p>
+            <download-excel :data="down" type="csv" :name="`${name}.csv`">
+            <button class="download">
+                <i class="fa fa-solid fa-download"></i>
+                <span>Download CSV</span>
+            </button>
+            </download-excel>
+            <download-excel :data="down" :name="`${name}.xls`">
+                <button class="download">
+                <i class="fa fa-solid fa-download"></i>
+                <span>Download XLS</span>
+            </button>
+            </download-excel>
+            <button @click="downloadJSON(down, `${name}.json`)" class="download">
+                <i class="fa fa-solid fa-download"></i>
+                <span>Download JSON</span>
+            </button>
+    </vue-modality>
         
     </div>
 </template>
@@ -235,6 +276,8 @@ import moment from 'moment';
 import WardenChart from '@/components/WardenChart.vue';
 import DshieldChart from '@/components/DshieldChart.vue';
 import OTXChart from '@/components/OTXChart.vue';
+import VueModalityV3 from 'vue-modality-v3';
+import BlacklistPresence from '@/components/BlacklistPresence.vue';
 
 export default {
   data() {
@@ -249,6 +292,9 @@ export default {
         wardenfull: false,
         dshieldfull: false,
         otxfull: false,
+        down: null,
+        name: null,
+        showingBl: null,
     };
   },
   components: {
@@ -256,9 +302,33 @@ export default {
     TimeStampVue,
     WardenChart,
     DshieldChart,
-    OTXChart
+    OTXChart,
+    VueModality: VueModalityV3,
+    BlacklistPresence
 },
   methods: {
+    close() {
+        console.log(this.showingBl);
+        this.showingBl = null;
+        console.log(this.showingBl);
+    },
+    download(data, source) {
+        this.down = data;
+        this.name = `${this.ip.replaceAll('.', '-')}_${source}`;
+        this.$refs.myRefDown.open();
+    },
+    downloadJSON(data, name) {
+        let text = JSON.stringify(data);
+        let element = document.createElement('a');
+        element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', name);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+        document.body.removeChild(element);     
+    },
     dateOnly(value) {
         if (this.$store.state.time)
         {
@@ -284,10 +354,57 @@ export default {
 </script>
 
 <style scoped>
+
+@media (max-width: 800px) {
+
+    .wrapper {
+        overflow-y: scroll;
+        height: 90vh;
+    }
+    .top-part {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    .sources {
+        padding-top: 15px;
+        flex-direction: column;
+    }
+
+    .source { 
+        width: 100% !important;
+    }
+
+    .badges {
+        margin-bottom: 20px;
+        align-items: flex-start !important;
+    }
+
+    .ip-badge {
+        flex-direction: column;
+        align-items: flex-start !important;
+        padding: 10px !important;
+        height: auto !important;
+        border-radius: 12px 0 12px 12px !important;
+    }
+
+    .rep-badge {
+        height: inherit !important;
+        padding: 10px !important;
+    }
+
+    .times span {
+        flex-direction: column;
+        padding-bottom: 7px;
+    }
+}
+
 .wrapper {
     padding: 20px;
     color: rgba(255, 255, 255, 0.836);
     text-align: left;
+    overflow-y: scroll;
+    height: 90vh;
 }
 
 .badges {
@@ -304,6 +421,7 @@ export default {
     border-radius: 12px 0px 0px 12px;
     border: 2px solid rgba(240, 248, 255, 0.207);
     height: 20px;
+    align-items: center;
 }
 
 .ip-badge > span {
@@ -315,6 +433,8 @@ export default {
     background-color: rgba(240, 248, 255, 0.207);
     border-radius: 0px 12px 12px 0px;
     height: 20px;
+    display: flex;
+    align-items: center;
 }
 
 .ctr-ip {
@@ -325,7 +445,8 @@ export default {
 .times {
     display: flex;
     flex-direction: column;
-    width: 40%;
+    max-width: 500px;
+    min-width: 360px;
 }
 
 .times span {
@@ -337,7 +458,6 @@ export default {
 .top-part {
     display: flex;
     justify-content: space-between;
-    width: 60%;
     align-items: center;
 }
 
@@ -365,8 +485,24 @@ export default {
 .blacklist-badge {
     padding: 3px 6px;
     border-radius: 7px;
-    margin: 5px;
     background-color: rgba(21, 190, 133, 0.732);
+    cursor: pointer;
+}
+
+.blacklist-badge:hover {
+    border-radius: 7px 0 0 7px;
+}
+
+.change {
+    display: none;
+    color: white;
+    background-color: rgba(21, 190, 133, 0.732);
+    border-radius: 0px 7px 7px 0;
+    padding: 3px 6px 3px 0px;
+}
+
+.blacklist-badge:hover + .change {
+    display: block;
 }
 
 .top {
@@ -390,10 +526,11 @@ export default {
     border: 2px solid gray;
     border-radius: 14px;
     padding: 10px 10px 0px 10px;
-    width: 30%
+    width: 33%
 }
 
 .sources {
+    padding-top: 15px;
     display: flex;
     justify-content: space-between;
 }
@@ -404,20 +541,55 @@ a {
 }
 
 .active {
-    position: absolute;
-    z-index: 2;
-    top: 50;
+    padding-top: 70px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
     left: 0;
     right: 0;
     margin-left: auto;
     margin-right: auto;
-    width: 95%;
-    height: 65%;
+    width: 100%;
+    height: 90vh;
     background-color: #00031c;
+    border: none;
+}
+
+.active .chart { 
+    display: none;
 }
 
 .active .warden-inside {
-    height: 570px;
+    height: 78vh;
+}
+
+.download {
+    padding: 5px 8px;
+    background-color: transparent;
+    color: #42b983;
+    border-radius: 7px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #42b983;
+    display: flex;
+    justify-content: left;
+    width: 150px;
+}
+
+.download .fa-download {
+    margin-right: 15px;
+    margin-left: 5px;
+}
+
+.hover {
+    position: absolute;
+    bottom: 20;
+    left: 0;
+    background-color: rgb(84, 80, 80);
+    z-index: 2;
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 12px;
 }
 
 </style>

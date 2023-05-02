@@ -1,6 +1,6 @@
 <template>
     <div>
-        <button @click="$emit('update:modelValue', 'OR')" :class="{'selected': modelValue == 'OR'}" class="or">
+        <button @click="$emit('update:modelValue', 'OR')" :class="{'selected': modelValue != 'AND'}" class="or">
             OR
         </button>
         <button @click="$emit('update:modelValue', 'AND')" :class="{'selected': modelValue == 'AND'}" class="and">

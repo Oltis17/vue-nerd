@@ -1,6 +1,6 @@
 <template>
   <div id="top-bar-wrapper">
-    <div id="top-bar">
+    <div id="top-bar" class="is-desktop">
       <div class="left-bar">
         <div id="title"><a @click="this.$router.push('/')">NERD</a><sub>by <a href="https://cesnet.cz">CESNET</a></sub></div>
 
@@ -36,11 +36,58 @@
         </span>
         
       </div>
+    </div>
+    <div id="top-bar" class="is-mobile">
+      <div class="left-bar">
+        <div id="title"><a @click="this.$router.push('/')">NERD</a><sub>by <a href="https://cesnet.cz">CESNET</a></sub></div>
+      </div>
       <div id="top-bar-hamburger">
-        <p class="flex-item"><i class="fa fa-solid fa-bars"></i></p>
+        <span v-if="!mobileMenu && !$store.state.mobileSearch && this.$route.name == 'home'" @click="$store.state.mobileSearch = !$store.state.mobileSearch" style="margin-right: 20px;"><i class="fa fa-solid fa-search"></i></span>
+        <span @click="$store.state.mobileSearch = !$store.state.mobileSearch" v-if="!mobileMenu && $store.state.mobileSearch"><i class="fa fa-solid fa-close"></i></span>
+
+        <span @click="mobileMenu = !mobileMenu" v-if="mobileMenu && !$store.state.mobileSearch"><i class="fa fa-solid fa-close"></i></span>
+        <span @click="mobileMenu = !mobileMenu" v-if="!mobileMenu && !$store.state.mobileSearch"><i class="fa fa-solid fa-bars"></i></span>
       </div>
     </div>
   </div>
+
+  <!-- MOBILE MENU -->
+  <div v-if="mobileMenu" class="mobile-menu is-mobile">
+    <div style="display: flex; flex-direction: column;">
+        <span><a @click="goTo('/')">Home</a></span>
+        <span><a>Data</a></span>
+        <span><a>IP map</a></span>
+        <span v-if="$store.state.userInfo.groups && $store.state.userInfo.groups?.includes('admin')"><a @click="goTo('/admin')">Admin controls</a></span>
+      </div>
+
+      <div style="display: flex; flex-direction: column;">
+        <span v-if="$store.state.userInfo.loggedIn" class="flex-item" id="username" @click="goTo('/profile')">{{ $store.state.userInfo.email }}</span>
+        <span>
+          <button v-if="$store.state.userInfo.loggedIn" class="flex-item" @click="this.$refs.myRef.open()">Log out</button>
+        </span>
+        <span>
+          <button v-if="!$store.state.userInfo.loggedIn" class="create" @click="goTo('/create-account')">Create an account</button>
+        </span>
+        <span>
+          <button v-if="!$store.state.userInfo.loggedIn" class="login" @click="goTo('/login')">Log in</button>
+        </span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <span style="color: white">Settings</span>
+        <span style="position: relative;">
+            <SettingsComp >
+            </SettingsComp>
+          </span>
+      </div>    
+
+      <div class="footer-wrapper">
+          <span><a href="/">NERD by CESNET 2023</a></span>
+          <span><a href="/about">About</a></span>
+          <span><a href="/">Privacy Policy</a></span>
+        </div>
+  </div>
+
   <!-- MODALS -->
   <vue-modality ref="myRef" title="Logging out" centered @ok="logout()" @cancel="this.$refs.myRef.hide()">
         Are you sure you want to log out?
@@ -58,12 +105,13 @@ export default {
     return {
       authenticated: false,
       visible: false,
+      mobileMenu: false,
     };
   },
   components: {
     SettingsComp,
     VueModality: VueModalityV3,
-  },
+},
   methods: {
     open() {
         this.visible = true;
@@ -75,8 +123,13 @@ export default {
       this.$store.commit('clearState');
       api.removeAccessToken();
       this.$refs.myRef.hide();
+      this.mobileMenu = false;
       this.$router.push('/');
-    }
+    },
+    goTo(path) {
+      this.mobileMenu = false;
+      this.$router.push(path);
+    },
   }
 };
 </script>
@@ -92,16 +145,37 @@ export default {
     display: flex;
     color: white;
     align-items: baseline;
+    font-size: 22px;
+    border: none;
+    color: #ffffff9f;
+    cursor: pointer;
+  }
+
+  #top-bar-hamburger span:hover {
+    color: #ffffffe7;
+  }
+
+  #top-bar-hamburger span {
+    display: block;
+  }
+
+  .is-desktop {
+    display: none !important;
+  }
+
+  .vue-modality-dialog {
+    width: 90% !important;
+    height: 40% !important;
   }
 }
 
 @media (min-width: 801px) {
-  #top-bar-hamburger {
-    display: none;
-  }
-
   .top-bar-control {
     display: flex;
+  }
+
+  .is-mobile {
+    display: none  !important;
   }
 }
 
@@ -200,7 +274,7 @@ a {
 .middle {
   padding-left: 35px;
   display: flex;
-  justify-content: space-between;
+  justify-content: left;
   width: 270px;
   letter-spacing: 1px;
   color: rgba(255, 255, 255, 0.43);
@@ -209,6 +283,7 @@ a {
 
 .middle span {
   border-bottom: 1px solid white;
+  margin-right: 30px;
   cursor: pointer;
 }
 
@@ -216,5 +291,34 @@ a {
   display: flex;
   justify-content: left;
   align-items: baseline;
+}
+
+.mobile-menu {
+  height: 100vh;
+  background-color: #00031C;
+  z-index: 3;
+}
+
+.mobile-menu div {
+  align-items: flex-start;
+  padding: 25px;
+}
+
+.mobile-menu span {
+  font-size: 20px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.footer-wrapper {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-wrapper span {
+  font-size: 12px !important;
 }
 </style>

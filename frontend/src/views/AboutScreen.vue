@@ -169,6 +169,12 @@
 </template>
 
 <style scoped>
+
+@media (max-width: 800px) {
+    .wrapper { 
+    width: 98% !important;
+}
+}
 .wrapper { 
     color: white;
     padding: 40px;

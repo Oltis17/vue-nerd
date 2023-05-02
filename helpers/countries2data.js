@@ -10,7 +10,14 @@ for (country in data.names) {
     var cont_code = data.continets[country];
     var cont = data.continet_names[cont_code];
     var code = data.codes[country];
-    out[country] = `${name} (${country}/${code}) in ${cont}`;
+    if (cont in out) {
+        out[cont].items.push({label: `${name} (${country}/${code})`, value: `${country}`})
+    }
+    else {
+        out[cont] = {
+            items: [{label: `${name} (${country}/${code})`, value: `${code}`}]
+        }
+    }
 }
 
 fs.writeFileSync('ctry_strings.json', JSON.stringify(out));

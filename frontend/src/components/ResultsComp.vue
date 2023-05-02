@@ -23,12 +23,12 @@
       </div>
     </div>
   </div> -->
-  <div id="res-table-wrapper">
+  <div id="res-table-wrapper" class="is-desktop">
     <perfect-scrollbar>
-      <div style="display: flex; justify-content: space-between; color: white; margin-bottom: 15px; width: 40%; margin-left: auto; margin-right: auto; align-items: center;">
+      <div style="display: flex; justify-content: space-between; color: white; margin-bottom: 15px; width: 70%; margin-left: auto; margin-right: auto; align-items: center;">
         <div style="width: 600px;">
-          <div class="nOfRes" v-if="number">
-            <span>Results: {{ number }}</span>
+          <div class="nOfRes" >
+            <span>Results: TBA</span>
           </div>
         </div>
         
@@ -113,10 +113,13 @@
                 </template>
               </Popper>
             </td>
-            <td style="text-align: left">
-              <span v-for="t in getTags(ip.tags)" :key="t" :class="`tag ${t.color}`">
-                {{ t.name }}
-              </span>
+            <td >
+              <div style="display: flex; align-items: flex-start; flex-wrap: wrap;">
+                <span v-for="t in getTags(ip.tags)" :key="t" :class="`tag ${t.color}`">
+                  {{ t.name }}
+                </span>
+              </div>
+              
             </td>
             <td :title="ip.ts_added" style="cursor: help;">{{ formatDateTime(ip.ts_added) }}</td>
             <td :title="ip.ts_last_update" style="cursor: help;">{{  formatDateTime(ip.ts_last_update) }}</td>
@@ -169,11 +172,56 @@
         </tbody>
       </table>
     </perfect-scrollbar>
+    
     <div v-if="results.length == 0" style="position: absolute;  top: 200px;left: 200px; 
   right: 0; 
   margin-left: auto; 
   margin-right: auto; 
   width: 200px; /* Need a specific value to work */; color: white;">No results found.</div>
+  </div>
+
+  <div class="is-mobile">
+      <div class="tab" v-for="ip in results" :key="ip">
+        <span class="result-ip-row mobile-ip-row">
+          <div>
+            <div class="flag" :title="getCountInfo(ip.geo.ctry)" style="border: none">
+              <span>
+                <country-flag :country="toLower(ip.geo.ctry)" size='normal' rounded/>
+              </span>
+            </div>
+            <a class="result-ip-white" @click="this.$router.push(`ip/${ip.ip}`)">{{ ip.ip }}</a>
+          </div>
+          <div style="display: flex; align-items: flex-end; flex-direction: column; justify-content: space-between; min-width: 200px;">
+            <label>REP. SCORE</label>
+            <div style="display: flex; align-items: center;"> 
+              <span><MiniChart :data="[0.1, 0.2, 0.8, 0.5, 0.9]"></MiniChart></span>
+              <div :style="'color: ' + rep2Color(ip.rep)">{{ ip.rep.toFixed(3) }}</div>
+            </div>
+            
+          </div>   
+          </span>
+          <div>
+            <label>HOSTNAME</label>
+            <span>{{ ip.hostname || "-" }}</span>
+          </div>
+          <div>
+            <label>ASN ({{ ip.asn.length }})</label>
+            <span>{{ ip.asn.join(", ") }}</span>
+          </div>
+          <div>
+            <label>BLACKLISTS ({{ ip.bl.length }})</label>
+            <span style="text-align: left;">{{ ip.bl.join(", ") }}</span>
+          </div>
+          <div>
+            <label>TIME ADDED</label>
+            <span>{{ formatDateTime(ip.ts_added) }}</span>
+          </div>
+          <div>
+            <label>LAST ACTIVITY</label>
+            <span>{{ formatDateTime(ip.ts_last_update) }}</span>
+          </div>
+          <button @click="this.$router.push(`ip/${ip.ip}`)">More details</button>
+      </div>
   </div>
   
 </template>
@@ -241,7 +289,11 @@ export default {
       return this.$store.state.filter.sort === what && this.$store.state.filter.desc;
     },
     toLower(str) {
-      return str.toLowerCase();
+      if (str !== undefined)
+      {
+        return str.toLowerCase();
+      }
+     
     },
     rep2Color(value) {
     var hue = ((1-value)*130).toString(10);
@@ -307,9 +359,16 @@ export default {
   #results-control {
     width: 90%;
   }
+
+  .is-desktop {
+    display: none;
+  }
 }
 
 @media (min-width: 801px) {
+  .is-mobile {
+    display: none;
+  }
   #results-sorting {
     width: 50%;
   }
@@ -319,6 +378,11 @@ export default {
     max-width: 350px;
   }
 }
+.is-mobile {
+    overflow-y: scroll;
+    padding-bottom: 80px;
+  }
+
 #wrapper-res {
   display: flex;
   justify-content: space-evenly;
@@ -355,6 +419,7 @@ export default {
   margin-left: 20px;
   margin-right: 20px;
   border-collapse: collapse;
+  font-size: 14px;
 }
 
 #results-table > tbody > tr {
@@ -493,7 +558,7 @@ a {
 }
 
 .wide {
-  min-width: 150%;
+  min-width: 180px;
 }
 
 .tag {
@@ -501,6 +566,7 @@ a {
   background-color: #42b983;
   border-radius: 4px;
   margin-left: 6px;
+  margin-bottom: 2px;
 }
 
 .white {
@@ -536,8 +602,8 @@ a {
 
 .pages {
   display: flex;
-  width: 300px;
-  font-size: 20px;
+  min-width: 200px;
+  font-size: 18px;
   justify-content: space-around;
   background-color: #42b983;
   padding: 10px 20px;
@@ -557,7 +623,7 @@ a {
 
 .nOfRes {
   display: flex;
-  width: 20%;
+  width: 200px;
   font-size: 20px;
   justify-content: space-around;
   border: 2px solid #42b983;
@@ -598,6 +664,43 @@ a {
 
 .dropdown:hover .dropdown-content {
   display: block;
+}
+
+.tab {
+  margin: 15px;
+  padding: 15px;
+  background-color: #2c2a2a74;
+  border: 1px solid rgba(255, 255, 255, 0.501);
+  color: #fff;
+  width: calc(100% - 30px);
+}
+
+.tab > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 25px;
+}
+
+.tab label { 
+  letter-spacing: 1px;
+  color: #ffffffa0;
+  margin-bottom: 3px;
+}
+
+.tab button {
+  background-color: transparent;
+  border: 1px solid#42b983;
+  padding: 7px 12px;
+  font-size: 20px;
+  color: #42b983;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.mobile-ip-row {
+  display: flex;
+  justify-content: space-between;
 }
 
 </style>

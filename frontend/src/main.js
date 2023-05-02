@@ -8,6 +8,14 @@ import PerfectScrollbar from 'vue3-perfect-scrollbar';
 import 'vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.css';
 import vueClickOutsideElement from 'vue-click-outside-element';
 import 'charts.css';
+import JsonExcel from "vue-json-excel3";
+
+// PrimeVue
+import PrimeVue from "primevue/config";
+import MultiSelect from "primevue/multiselect";
+import InputText from 'primevue/inputtext';
+import "primevue/resources/themes/vela-green/theme.css";     
+import "primevue/resources/primevue.min.css";
 
 
 // FA icons
@@ -38,4 +46,8 @@ createApp(App)
 .use(router)
 .use(store)
 .use(vueClickOutsideElement)
+.use(PrimeVue)
+.component("MultiSelect", MultiSelect)
+.component("InputText", InputText)
+.component("downloadExcel", JsonExcel)
 .mount('#app');

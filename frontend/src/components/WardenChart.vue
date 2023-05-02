@@ -24,8 +24,8 @@ export default {
     return {
       chartData: {
         datasets: [ 
-          { data: this.data?.reduce((res, d) => { if (d.cat === "ReconScanning") {res.push({ x: d.date, y: d.n })} return res; }, []), backgroundColor: 'rgba(21, 190, 133, 0.732)', label: 'ReconScanning'},
-          { data: this.data?.reduce((res, d) => { if (d.cat === "AnomalyTraffic") {res.push({ x: d.date, y: d.n })} return res;}, []), backgroundColor: 'rgba(100, 100, 200, 0.732)', label: 'AnomalyTraffic'},
+          { data: this.data?.reduce((res, d) => { if (d.categories["ReconScanning"]) {res.push({ x: d.date, y: d.categories["ReconScanning"].n_sum })} return res; }, []), backgroundColor: 'rgba(21, 190, 133, 0.732)', label: 'ReconScanning'},
+          { data: this.data?.reduce((res, d) => { if (d.categories["AnomalyTraffic"]) {res.push({ x: d.date, y: d.categories["AnomalyTraffic"].n_sum })} return res;}, []), backgroundColor: 'rgba(100, 100, 200, 0.732)', label: 'AnomalyTraffic'},
          ]
       },
       chartOptions: {

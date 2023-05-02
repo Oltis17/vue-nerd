@@ -1,27 +1,39 @@
 <template>
     <div>
-      
-      <div id="wrapper">
+      <!-- MOBILE SEARCH -->
+      <div v-if="$store.state.mobileSearch" class="mobile-search is-mobile">
+        <SearchForm></SearchForm>
+      </div>
+      <div id="wrapper" v-if="!$store.state.mobileSearch">
         <div id="wrapper-search">
           <SearchForm />
         </div>
         <div id="wrapper-results">
           <ResultsComp v-if="!loading" :results="res" :number="number"/>
-          <SkeletonLoader v-if="loading"></SkeletonLoader>
-          <div v-if="!loading" width="100%">
-            <div class="darkui2">
-              <div class="darkui2-shimmer">
-                <div width="100%" height="20px" style="margin-top: 20px"></div>
-                <div width="100%" height="20px" style="margin-top: 40px"></div>
-                <div width="100%" height="20px" style="margin-top: 60px"></div>
-                <div width="100%" height="20px" style="margin-top: 80px"></div>
-              </div>
-            </div>
-        </div>
+          <div v-if="loading">
+            <SkeletonLoader class="is-desktop"></SkeletonLoader>
+            <clip-loader :loading="true" :color="color" :size="large" class="is-mobile spinner"></clip-loader>
+          </div>
         </div>
       </div>
+      </div>
+
+      <vue-modality ref="myRefIpMulti" title="Multiple IPs" centered @cancel="clearMultiIp()" ok-title="Add multiple IPs" class="on-top" @ok="addMultiIp()" cancel-title="Clear">
+        <p>You can provide multiple IP addresses (comma separated)</p>
+        <textarea v-model="multiIp" class="multiField">
+        </textarea>
+      </vue-modality>
+      <vue-modality ref="myRefHostMulti" title="Multiple Hostnames" centered @cancel="clearMultiHost()" ok-title="Add multiple Hostnames" class="on-top" @ok="addMultiHost()" cancel-title="Clear">
+        <p>You can provide multiple Hostnames (comma separated)</p>
+        <textarea v-model="multiHost" class="multiField">
+        </textarea>
+      </vue-modality>
+      <vue-modality ref="myRefASNMulti" title="Multiple ASNs" centered @cancel="clearMultiASN()" ok-title="Add multiple ASNs" class="on-top" @ok="addMultiASN()" cancel-title="Clear">
+        <p>You can provide multiple ASNs (comma separated)</p>
+        <textarea v-model="multiASN" class="multiField">
+        </textarea>
+      </vue-modality>
       
-    </div>
   </template>
   
   <script>
@@ -29,6 +41,8 @@
   import ResultsComp from '../components/ResultsComp.vue';
   import SkeletonLoader from '../components/SkeletonLoader.vue';
   import * as api from '../api';
+  import VueModalityV3 from 'vue-modality-v3';
+  import ClipLoader from 'vue-spinner/src/ClipLoader.vue';
   
   export default {
     name: 'App',
@@ -37,92 +51,104 @@
       res: null,
       loading: true,
       number: null,
+      multiIp: null,
+      multiHost: null,
       }
     },
     components: {
-      SearchForm,
-      ResultsComp,
-      SkeletonLoader,
+    SearchForm,
+    ResultsComp,
+    SkeletonLoader,
+    VueModality: VueModalityV3,
+    ClipLoader,
+},
+    computed: {
+      getFilter() {
+        return this.$store.state.filter;
+      }
     },
     methods: {
       async filter() {
+        this.$store.state.mobileSearch = false;
         this.loading = true;
+        if (!Array.isArray(this.$store.state.filter.subnet) && this.$store.state.filter.subnet?.length > 5) {
+          this.$store.state.filter.subnet = [this.$store.state.filter.subnet];
+        }
+        if (!Array.isArray(this.$store.state.filter.hostname) && this.$store.state.filter.hostname?.length > 2) {
+          this.$store.state.filter.hostname = [this.$store.state.filter.hostname];
+        }
+        if (!Array.isArray(this.$store.state.filter.asn) && this.$store.state.filter.asn?.length > 2) {
+          this.$store.state.filter.asn = [this.$store.state.filter.asn];
+        }
         // add search params to query
         history.pushState(
           {},
           null,
           this.$route.path +
-            '?' +
-            Object.keys(this.$store.state.filter)
-              .map(key => {
-                return (
-                  key + '=' + encodeURIComponent(this.$store.state.filter[key] === null ? '' : this.$store.state.filter[key])
-                )
-              })
-              .join('&')
+            '?' + JSON.stringify(this.$store.state.filter),
         )
         this.res = await api.filterResults();
         this.number = null;
         this.loading = false;
       },
       async clear() {
+        this.$store.state.mobileSearch = false;
         this.loading = true;
         // add search params to query
-        history.pushState(
-          {},
-          null,
-          this.$route.path
-        )
+        this.$router.push({ path: "/" });
         this.$store.dispatch('clearFilterAction');
         this.res = await api.filterResults();
         this.number = null;
         this.loading = false;
-      }
+      },
+      multiIpOpen() {
+        this.$refs.myRefIpMulti.open();
+      },
+      addMultiIp() {
+        this.$store.state.filter.subnet = this.multiIp.replaceAll(" ", "").replaceAll("\n", "").split(",");
+        this.$refs.myRefIpMulti.hide();
+      },
+      clearMultiIp() {
+        this.$store.state.filter.subnet = null;
+        this.$refs.myRefIpMulti.hide();
+      },
+      multiHostOpen() {
+        this.$refs.myRefHostMulti.open();
+      },
+      addMultiHost() {
+        this.$store.state.filter.hostname = this.multiHost.replaceAll(" ", "").replaceAll("\n", "").split(",");
+        this.$refs.myRefHostMulti.hide();
+      },
+      clearMultiHost() {
+        this.$store.state.filter.hostname = null;
+        this.$refs.myRefHostMulti.hide();
+      },
+      multiASNOpen() {
+        this.$refs.myRefASNMulti.open();
+      },
+      addMultiASN() {
+        this.$store.state.filter.asn = this.multiASN.replaceAll(" ", "").replaceAll("\n", "").split(",");
+        this.$refs.myRefASNMulti.hide();
+      },
+      clearMultiASN() {
+        this.$store.state.filter.asn = null;
+        this.$refs.myRefASNMulti.hide();
+      },
     },
     async mounted() {
-      if (this.$route.query.subnet) {
-        console.log(this.$route.query.subnet);
-        this.$store.state.filter.subnet = this.$route.query.subnet.split(',');
-        console.log(this.$store.state.filter.subnet);
+      if (Object.keys(this.$route.query)[0] !== undefined) {
+        this.$store.state.filter = JSON.parse(Object.keys(this.$route.query)[0]);
+        this.multiIp = this.$store.state.filter.subnet?.join(', ');
+        this.multiHost = this.$store.state.filter.hostname?.join(', ');
+        this.multiASN = this.$store.state.filter.asn?.join(', ');
       }
-      if (this.$route.query.hostname) {
-        this.$store.state.filter.hostname = this.$route.query.hostname.split(',');
-      }
-      if (this.$route.query.asn) {
-        this.$store.state.filter.asn = this.$route.query.asn.split(',');
-      }
-      if (this.$route.query.country) {
-        this.$store.state.filter.country = this.$route.query.country.split(',');
-      }
-      if (this.$route.query.cat) {
-        this.$store.state.filter.cat = this.$route.query.cat.split(',');
-      }
-      if (this.$route.query.blacklist) {
-        this.$store.state.filter.blacklist = this.$route.query.blacklist.split(',');
-      }
-      if (this.$route.query.tag) {
-        this.$store.state.filter.tag = this.$route.query.tag.split(',');
-      }
-      if (this.$route.query.desc) {
-        this.$store.state.filter.desc = this.$route.query.desc;
-      }
-      if (this.$route.query.asn_value) {
-        this.$store.state.filter.asn_value = this.$route.query.asn_value;
-      }
-      if (this.$route.query.country_value) {
-        this.$store.state.filter.country_value = this.$route.query.country_value;
-      }
-      if (this.$route.query.cat_value) {
-        this.$store.state.filter.cat_value = this.$route.query.cat_value;
-      }
-      if (this.$route.query.bl_value) {
-        this.$store.state.filter.bl_value = this.$route.query.bl_value;
-      }
-      if (this.$route.query.tag_value) {
-        this.$store.state.filter.tag_value = this.$route.query.tag_value;
-      }
-      if (this.$route.query.whitelisted) {
-        this.$store.state.filter.whitelisted = this.$route.query.whitelisted;
+      else {
+        history.pushState(
+          {},
+          null,
+          this.$route.path +
+            '?' + JSON.stringify(this.$store.state.filter),
+        )
       }
       
       this.res = await api.filterResults();
@@ -144,8 +170,16 @@
   
     #wrapper-results {
       width: 100%;
-      height: 90vh;
+      height: 95vh;
       overflow: scroll;
+    }
+
+    .is-desktop {
+      display: none !important;
+    }
+
+    .spinner {
+      margin-top: 35vh;
     }
   }
   
@@ -157,7 +191,14 @@
     #wrapper-results {
       width: calc(100% - 290px);
     }
+
+    
+  .is-mobile {
+      display: none !important;
+    }
+
   }
+
   
   body {
     background-color: #00031c;
@@ -175,7 +216,16 @@
     margin-top: 200px;
   }
 
+.multiField {
+  width: 100%;
+  height: 200px;
+  padding: 15px;
+  resize: none;
+}
 
+.mobile-search {
+  z-index: 3;
+}
 
   </style>
   

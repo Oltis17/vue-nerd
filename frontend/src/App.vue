@@ -26,14 +26,16 @@ export default {
 </script>
 
 <style>
+@media (max-width: 800px) {
+  .footer {
+    display: none;
+  }
+}
+
 .footer {
-  position: absolute;
-  bottom: 0px;
-  width: 30%;
-  left: 0; 
-  right: 0; 
-  margin-left: auto; 
-  margin-right: auto; 
+  background-color: #00031c;
+  width: 100% !important;
+  margin-left: 100px;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -50,5 +52,23 @@ body {
   margin: 0;
   overflow: hidden;
   height: 100vh;
+}
+
+.vue-modality-dialog {
+  background-color: #2c3e50;
+  color: white;
+}
+
+.vm-btn {
+  border-radius: 7px;
+}
+
+.vm-close-btn::before, .vm-close-btn::after {
+  background: white;
+}
+
+.vm-ok-btn {
+  background-color: #42B983;
+  color: #00031c;
 }
 </style>

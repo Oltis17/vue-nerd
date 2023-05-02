@@ -37,8 +37,8 @@
         <div class="passHolder">
             <label>New password</label>
             <div class="password">
-                <input :type="this.passwordFieldType" v-model="pass1"> 
-                <span @click="switchVisibility()" class="icon">
+                <input :type="this.passwordFieldType2" v-model="pass1"> 
+                <span @click="switchVisibility2()" class="icon">
                     <i class="fa fa-regular fa-eye"></i>
                 </span>   
         </div>
@@ -50,8 +50,8 @@
         <div class="passHolder">
             <label>Confirm new password</label>
             <div class="password">
-                <input :type="this.passwordFieldType" v-model="pass2"> 
-                <span @click="switchVisibility()" class="icon">
+                <input :type="this.passwordFieldType3" v-model="pass2"> 
+                <span @click="switchVisibility3()" class="icon">
                     <i class="fa fa-regular fa-eye"></i>
                 </span>   
             </div>
@@ -89,6 +89,8 @@ export default defineComponent({
   data() {
     return {
         passwordFieldType: "password",
+        passwordFieldType2: "password",
+        passwordFieldType3: "password",
         message: null,
         passOld: null,
         pass2: null,
@@ -102,6 +104,12 @@ export default defineComponent({
   methods: {
     switchVisibility() {
       this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
+    },
+    switchVisibility2() {
+      this.passwordFieldType2 = this.passwordFieldType2 === "password" ? "text" : "password";
+    },
+    switchVisibility3() {
+      this.passwordFieldType3 = this.passwordFieldType3 === "password" ? "text" : "password";
     },
     logout() {
       this.$store.commit('clearState');
@@ -141,6 +149,12 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+@media (max-width: 800px) {
+    input {
+        height: 35px;
+    }
+}
 .main {
     padding-top: 30px;
     color: white !important;
@@ -174,19 +188,20 @@ export default defineComponent({
 .password .icon {
     position: absolute;
     top: 5px;
-    right: -10px;
+    right: 10px;
     cursor: pointer;
     z-index: 1;
 }
 
 input {
-    background-color: transparent;
+    background-color: #00031c96;
     border-radius: 7px;
     border: 1px solid rgb(0, 0, 0);
     padding: 4px 10px;
-    height: 20px;
-    color: rgb(0, 0, 0);
+    height: 30px;
+    color: white;
     width: 100%;
+    padding-right: 30px;
 }
 
 .passHolder {

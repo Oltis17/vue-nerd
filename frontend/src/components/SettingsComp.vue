@@ -31,7 +31,7 @@ export default {
 .wrapper {
     position: absolute;
     top: 0px;
-    right: -100px;
+    right: -80px;
     background-color: rgb(77, 77, 77);
 
     padding: 10px;

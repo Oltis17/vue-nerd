@@ -1,6 +1,13 @@
 <template>
     <div class="main" v-if="$store.state.userInfo.groups.includes('admin')">
-        <h1>Admin screen <span @click="addUserModal()"><i class="fa fa-solid fa-plus"></i>Add user</span></h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 500px; margin: auto; padding: 15px;">
+            <span><h1>Admin screen</h1> </span>
+            <div style="display: flex; justify-content: right;">
+                <span @click="addUserModal()" class="add-user"><i class="fa fa-solid fa-plus"></i>Add user</span>
+            </div>
+            
+        </div>
+        
         <div class="table-wrapped">
             <perfect-scrollbar>
                 <div class="wrapper">
@@ -282,10 +289,6 @@ export default {
 </script>
 
 <style scoped>
-
-h1 {
-    padding-top: 20px;
-}
 .ps-container > .ps-scrollbar-x-rail,
     .ps-container > .ps-scrollbar-y-rail {   opacity: 0.6; }
 
@@ -370,7 +373,7 @@ table tr:nth-child(odd) {
     padding: 0px 5px;
 }
 
-h1 span {
+.add-user {
     font-size: 16px;
     font-weight: 100;
     padding: 10px;
@@ -378,9 +381,7 @@ h1 span {
     border-radius: 12px;
     color: #42b983;
     cursor: pointer;
-    float: right;
-    margin-right: 45px;
-    width: 100px;
+    width: 140px;
     display: flex;
     justify-content: space-around;
 }

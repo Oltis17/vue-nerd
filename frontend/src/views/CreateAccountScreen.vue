@@ -1,66 +1,68 @@
 <template>
-    <div class="outer">
-        <div class="left">
-            <div>
-                <h1>NERD</h1>
-                <span>Network Entity Reputation Database</span>
-            </div>
-            <div>
-                <span>
-                    Information about creating an account...
-                </span>
-            </div>
-            <div>
-                <span>Already have an account?</span>
-                <button class="black">Log in</button>
-            </div>
-            
-        </div>
-        <div class="wrapper">
-            <div class="normal-login">
-                <h3>Create an account</h3>
+    <div class="outer-wrapper">
+        <div class="outer">
+            <div class="left">
                 <div>
-                    <label>Email</label>
-                    <input type="email" v-model="email">
+                    <h1>NERD</h1>
+                    <span>Network Entity Reputation Database</span>
                 </div>
                 <div>
-                    <label>Password</label>
-                    <div class="password">
-                        <input :type="this.passwordFieldType1" v-model="pass1"> 
-                        <span @click="switchVisibility1()" class="icon">
-                            <i class="fa fa-regular fa-eye"></i>
-                        </span>   
+                    <span>
+                        Information about creating an account...
+                    </span>
+                </div>
+                <div>
+                    <span>Already have an account?</span>
+                    <button class="black" @click="$router.push('/login')">Log in</button>
+                </div>
+                
+            </div>
+            <div class="wrapper">
+                <div class="normal-login">
+                    <h3>Create an account</h3>
+                    <div>
+                        <label>Email</label>
+                        <input type="email" v-model="email">
                     </div>
-                    <password-meter :password="pass1" @score="onScore"/>
-                </div>
-                <div>
-                    <label>Confirm password</label>
-                    <div class="password">
-                        <input :type="this.passwordFieldType2" v-model="pass2"> 
-                        <span @click="switchVisibility2()" class="icon">
-                            <i class="fa fa-regular fa-eye"></i>
-                        </span>   
+                    <div>
+                        <label>Password</label>
+                        <div class="password">
+                            <input :type="this.passwordFieldType1" v-model="pass1"> 
+                            <span @click="switchVisibility1()" class="icon">
+                                <i class="fa fa-regular fa-eye"></i>
+                            </span>   
+                        </div>
+                        <password-meter :password="pass1" @score="onScore"/>
                     </div>
+                    <div>
+                        <label>Confirm password</label>
+                        <div class="password">
+                            <input :type="this.passwordFieldType2" v-model="pass2"> 
+                            <span @click="switchVisibility2()" class="icon">
+                                <i class="fa fa-regular fa-eye"></i>
+                            </span>   
+                        </div>
+                    </div>
+                    <div>
+                        <label>Intended purpose of use</label>
+                        <select v-model="purpose">
+                            <option>Academic</option>
+                            <option>Research</option>
+                            <option>Security</option>
+                        </select>
+                    </div>
+                    <button class="create" @click="register()">Create an account</button>
                 </div>
-                <div>
-                    <label>Intended purpose of use</label>
-                    <select v-model="purpose">
-                        <option>Academic</option>
-                        <option>Research</option>
-                        <option>Security</option>
-                    </select>
+                
+                <div class="providers-login">
+                    <label>or use providers:</label>
+                    <span class="logos">
+                        <span><i class="fa fa-brands fa-google"></i></span>
+                        <span><i class="fa fa-brands fa-twitter"></i></span>
+                        <span><i class="fa fa-brands fa-github"></i></span>
+                        <span><b>EduGain</b></span>
+                    </span>
                 </div>
-                <button class="create" @click="register()">Create an account</button>
-            </div>
-            
-            <div class="providers-login">
-                <label>or use providers:</label>
-                <span class="logos">
-                    <span><i class="fa fa-brands fa-google"></i></span>
-                    <span><i class="fa fa-brands fa-twitter"></i></span>
-                    <span><i class="fa fa-brands fa-github"></i></span>
-                    <span><b>EduGain</b></span>
-                </span>
             </div>
         </div>
     </div>
@@ -83,7 +85,7 @@ export default defineComponent({
   components: {
     PasswordMeter,
     VueModality: VueModalityV3,
-  },
+},
   setup() {
     const pass1 = ref('');
     const score = ref(null);
@@ -161,6 +163,42 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+@media (max-width: 800px) {
+    .outer {
+        flex-direction: column;
+        align-items: center;
+        padding-top: 3vh !important;
+    }
+
+    .outer-wrapper {
+        height: 80vh;
+        overflow: scroll !important;
+    }
+
+    .left {
+       border-radius: 12px 12px 0 0 !important;
+       width: 90% !important;
+    }
+    .wrapper {
+       border-radius: 0 0 12px 12px !important;
+       width: 90% !important;
+    }
+
+    .wrapper > div {
+        max-width: 400px;
+    }
+
+    h1 {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+.wrapper input {
+        height: 30px;
+    }
+
 h3 {
     color: white;
     text-align: center;

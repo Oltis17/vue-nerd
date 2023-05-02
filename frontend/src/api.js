@@ -1,6 +1,5 @@
 import axios from 'axios';
 import store from './store';
-//import router from './router';
 
 // AUTH PART
 const LOCAL_STORAGE_ACCESS_TOKEN_KEY = 'access_token';
@@ -67,28 +66,34 @@ axios.interceptors.response.use(
   res => res,
   err => {
     const statusCode = err.response.status;
-    if (statusCode === 401 && err.response.data.error === 'AuthToken wrong') {
+    if (statusCode === 401 && err.response.data.data === 'Signature verification failed') {
       console.log("HERE");
       const token = getRefreshToken();
       return axios.post('/nerd/api/v2/refreshToken', { token })
       .then(function (success) {
         console.log(success);
         if (success === undefined) {
-          console.log("HERE2");
+          window.location.href = '/login';
           store.commit('clearState');
           removeAccessToken();
           return;
         }
         setAccessToken(success.data[0]);
         setRefreshToken(success.data[1]);
+        window.location.reload();
       })
       .catch(function (error) {
-        console.log("HERE2");
         this.$store.commit('clearState');
         removeAccessToken();
-        this.$router.push('/');
+        window.location.href = '/';
         throw error;
       });
+    }
+    else if (statusCode === 401 && err.response.data.error === 'AuthToken wrong') {
+      window.location.href = '/login';
+      store.commit('clearState');
+      removeAccessToken();
+      return;
     }
   }
 );
@@ -101,25 +106,7 @@ export async function getResults() {
 
 export async function filterResults() {
     const response = await axios.post('/nerd/api/v2/search/ip',
-    { 
-        subnet: store.state.filter.subnet ,
-        hostname: store.state.filter.hostname,
-        country: store.state.filter.country,
-        asn: store.state.filter.asn,
-        cat: store.state.filter.cat,
-        blacklist: store.state.filter.blacklist,
-        source: store.state.filter.source,
-        tag: store.state.filter.tag,
-        sortby: store.state.filter.sort,
-        asc: store.state.filter.desc,
-        asn_op: store.state.filter.asn_value,
-        source_op: store.state.filter.source_value,
-        cat_op: store.state.filter.cat_value,
-        bl_op: store.state.filter.bl_value,
-        tag_op: store.state.filter.tag_value,
-        whitelisted: store.state.whitelisted,
-        page: store.state.filter.page
-    },
+      store.state.filter
     );
     return response.data;
 }

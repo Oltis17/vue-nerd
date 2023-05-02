@@ -1,7 +1,6 @@
 <template>
-    <div style="padding-top: 70px;">
-        <span class="skeleton-box top-of-table"></span>
-        <span class="skeleton-box table-row" v-for="index in 13" :key="index"></span>
+    <div style="padding-top: 40px;">
+        <span class="skeleton-box table-row" v-for="index in 4" :key="index"></span>
     </div>
 </template>
 
@@ -35,16 +34,10 @@
   }
 }
 
-.top-of-table {
-    margin-top: 20px;
-    width: 98%;
-    height: 40px;
-    background-color: #dddbdda9;
-}
 .table-row {
-    margin-top: 3px;
-    width: 98%;
-    height: 50px;
+    margin-top: 5px;
+    width: 90%;
+    height: 350px;
     background-color: #dddbdd2e;
 }
 

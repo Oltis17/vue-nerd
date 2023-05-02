@@ -15,20 +15,18 @@ const store = createStore({
   strict: false,
   state: { ...initialState,
     filter: {
-        asn_value: 'OR',
-        source_value: 'OR',
-        cat_value: 'OR',
-        bl_value: 'OR',
-        tag_value: 'OR',
+        asn_op: 'OR',
+        source_op: 'OR',
+        cat_op: 'OR',
+        bl_op: 'OR',
+        tag_op: 'OR',
         subnet: null,
         hostname: null,
         country: null,
         asn: null,
         cat: null,
         source: null,
-        cat_op: null,
         blacklist: null,
-        bl_op: null,
         tag: null,
         sort: null,
         desc: false,
@@ -36,9 +34,12 @@ const store = createStore({
         page: 1,
     },
     time: false,
-
+    mobileSearch: false,
   },
   getters: {
+    filter(state) {
+      return state.filter;
+    }
   },
   mutations: {
     clearState(state) {
@@ -46,21 +47,19 @@ const store = createStore({
     },
     clearFilter(state) {
       Object.assign(state.filter, {
-        asn_value: 'OR',
-        country_value: 'OR',
-        source_value: 'OR',
-        cat_value: 'OR',
-        bl_value: 'OR',
-        tag_value: 'OR',
+        asn_op: 'OR',
+        country_op: 'OR',
+        source_op: 'OR',
+        cat_op: 'OR',
+        bl_op: 'OR',
+        tag_op: 'OR',
         subnet: null,
         hostname: null,
         country: null,
         asn: null,
         cat: null,
         source: null,
-        cat_op: null,
         blacklist: null,
-        bl_op: null,
         tag: null,
         sort: null,
         desc: false,
