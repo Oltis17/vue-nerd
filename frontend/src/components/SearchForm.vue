@@ -516,12 +516,6 @@ h2 {
   color: red;
 }
 
-::v-global(.p-dropdown-label),
-::v-global(.p-dropdown-item) {
-  font-size: 12px !important;
-  color: red;
-}
-
 .title > div {
   display: block;
   cursor: pointer !important;

@@ -14,30 +14,30 @@ export function setAxiosAccessToken(accessToken) {
 
 export function setAccessToken(accessToken) {
   if (accessToken) {
-    localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY, accessToken);
+    window.localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY, accessToken);
   } else {
-    localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
+    window.localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
   }
 }
 
 export function setRefreshToken(refreshToken) {
   if (refreshToken) {
-    localStorage.setItem("refreshToken", refreshToken);
+    window.localStorage.setItem("refreshToken", refreshToken);
   } else {
-    localStorage.removeItem("refreshToken");
+    window.localStorage.removeItem("refreshToken");
   }
 }
 
 export function removeAccessToken() {
-  localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
+  window.localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
 }
 
 export function getAccessToken() {
-  return localStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
+  return window.localStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN_KEY);
 }
 
 export function getRefreshToken() {
-  return localStorage.getItem("refreshToken") ? localStorage.getItem("refreshToken") : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7ImxvZ2luX3R5cGUiOiJsb2NhbCIsImlkIjoibG9jYWw6b2x0bWFub3ZhLmtyaXN0aW5hQGdtYWlsLmNvbSIsImVtYWlsIjoib2x0bWFub3ZhLmtyaXN0aW5hQGdtYWlsLmNvbSJ9LCJleHAiOjE2ODI2ODIzNzF9.owWJb2z5Gg3ypVomremp9xNSRuOseLLBIk5XoHBGhHI";
+  return window.localStorage.getItem("refreshToken") ? window.localStorage.getItem("refreshToken") : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7ImxvZ2luX3R5cGUiOiJsb2NhbCIsImlkIjoibG9jYWw6b2x0bWFub3ZhLmtyaXN0aW5hQGdtYWlsLmNvbSIsImVtYWlsIjoib2x0bWFub3ZhLmtyaXN0aW5hQGdtYWlsLmNvbSJ9LCJleHAiOjE2ODI2ODIzNzF9.owWJb2z5Gg3ypVomremp9xNSRuOseLLBIk5XoHBGhHI";
 }
 
 export function isLoggedIn() {
@@ -221,8 +221,8 @@ export async function getUsers() {
   return response.data;
 }
 
-export async function editRoles(email, roles) {
-  const response = await axios.put('/nerd/api/v2/roles', { email, roles}).
+export async function editRoles(id, roles) {
+  const response = await axios.put('/nerd/api/v2/roles', { id, roles}).
   catch(function (error) {
     if (error.response) {
       return Promise.reject(error.response.data);
@@ -231,8 +231,8 @@ export async function editRoles(email, roles) {
   return response.data;
 }
 
-export async function deleteUser(email) {
-  const response = await axios.delete(`/nerd/api/v2/delete-user/${email}`).
+export async function deleteUser(ide) {
+  const response = await axios.delete(`/nerd/api/v2/delete-user/${ide}`).
   catch(function (error) {
     if (error.response) {
       return Promise.reject(error.response.data);
@@ -250,3 +250,4 @@ export async function addUser(email, password, organization, roles, verify) {
   });
   return response.data;
 }
+

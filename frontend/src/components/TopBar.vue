@@ -52,7 +52,7 @@
   </div>
 
   <!-- MOBILE MENU -->
-  <div v-if="mobileMenu" class="mobile-menu is-mobile">
+  <div v-if="mobileMenu" class="mobile-menu is-mobile">  
     <div style="display: flex; flex-direction: column;">
         <span><a @click="goTo('/')">Home</a></span>
         <span><a>Data</a></span>
@@ -71,20 +71,18 @@
         <span>
           <button v-if="!$store.state.userInfo.loggedIn" class="login" @click="goTo('/login')">Log in</button>
         </span>
-      </div>
+      </div> 
 
-      <div style="display: flex; flex-direction: column; align-items: center;">
-        <span style="color: white">Settings</span>
-        <span style="position: relative;">
-            <SettingsComp >
-            </SettingsComp>
-          </span>
-      </div>    
-
-      <div class="footer-wrapper">
+      <div class="footer-cols">
+        <div class="footer-wrapper">
           <span><a href="/">NERD by CESNET 2023</a></span>
           <span><a href="/about">About</a></span>
           <span><a href="/">Privacy Policy</a></span>
+        </div>   
+          <div>
+            <SettingsComp >
+            </SettingsComp>
+           </div>
         </div>
   </div>
 
@@ -130,6 +128,21 @@ export default {
       this.mobileMenu = false;
       this.$router.push(path);
     },
+  },
+  async mounted() {
+    if (api.isLoggedIn() && this.$store.state.userInfo.loggedIn == false) {
+      let userInfo = null;
+        try {
+            userInfo = await api.me();
+        } catch (e) {
+            this.message = e;
+            this.$refs.myRefError.open();
+            this.loading = false;
+            return;
+        }
+        this.$store.commit('setUserInfo', userInfo);
+
+    }
   }
 };
 </script>
@@ -275,7 +288,7 @@ a {
   padding-left: 35px;
   display: flex;
   justify-content: left;
-  width: 270px;
+  width: 360px !important;
   letter-spacing: 1px;
   color: rgba(255, 255, 255, 0.43);
   border-left: solid 1px #42b983;
@@ -299,7 +312,7 @@ a {
   z-index: 3;
 }
 
-.mobile-menu div {
+.mobile-menu > div {
   align-items: flex-start;
   padding: 25px;
 }
@@ -312,10 +325,19 @@ a {
 }
 
 .footer-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: flex-start;
+}
+
+.footer-cols {
+  width: 100%;
   position: absolute;
   bottom: 0;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end !important;
 }
 
 .footer-wrapper span {

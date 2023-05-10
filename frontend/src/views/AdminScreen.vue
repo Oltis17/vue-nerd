@@ -8,7 +8,7 @@
             
         </div>
         
-        <div class="table-wrapped">
+        <div class="table-wrapped" v-if="!loading">
             <perfect-scrollbar>
                 <div class="wrapper">
                     <table>
@@ -68,19 +68,23 @@
                 </div>
             </perfect-scrollbar>
         </div>
+        <div v-else class="table-wrapped" style="overflow: hidden;">
+                <div><span class="skeleton-box top-of-table"></span></div>
+                <div v-for="index in 14" :key="index"><span class="skeleton-box table-row" ></span></div>
+        </div>
     <vue-modality :ok-loading="loading" ref="myRefDelete" title="Deleting user" centered @cancel="this.$refs.myRefDelete.hide()" ok-title="Delete user" @ok="this.delete()">
-        Do you really want to delete user <b>{{ selectedUser[0] }}</b>?
+        Do you really want to delete user <b>{{ selectedUser[2] }}</b>?
     </vue-modality>
     <vue-modality :ok-loading="loading" ref="myRefBlock" title="Blocking user" centered @cancel="this.$refs.myRefBlock.hide()" ok-title="Block user" @ok="this.block()">
-        Do you really want to block user <b>{{ selectedUser[0] }}</b>?<br>
+        Do you really want to block user <b>{{ selectedUser[2] }}</b>?<br>
         By blocking a user their role "registered" will be removed, resulting in the user's inability to log in.
     </vue-modality>
     <vue-modality :ok-loading="loading" ref="myRefUnBlock" title="Unblocking user" centered @cancel="this.$refs.myRefUnBlock.hide()" ok-title="Unblock user" @ok="this.unblock()">
-        Do you really want to unblock user <b>{{ selectedUser[0] }}</b>?<br>
+        Do you really want to unblock user <b>{{ selectedUser[2] }}</b>?<br>
         By unblocking a user role "registered" will be added, resulting in the user's ability to log in.
     </vue-modality>
     <vue-modality :ok-loading="loading" ref="myRefEdit" title="Editing user" centered @cancel="this.$refs.myRefEdit.hide()" ok-title="Save roles" @ok="this.editRoles()">
-        Editing roles of user: <b>{{ selectedUser[0] }}</b>
+        Editing roles of user: <b>{{ selectedUser[2] }}</b>
         <div v-for="role in allRoles" :key="role" class="roles">
             <input type="checkbox" v-if="selectedUser[1].includes(role)" checked v-model="roles" :value="role">
             <input type="checkbox" v-else v-model="roles" :value="role">
@@ -92,7 +96,7 @@
     <vue-modality ref="myRefError" title="Warning" centered error hide-ok @cancel="this.$refs.myRefError.hide()">
         {{ message }}
     </vue-modality>
-    <vue-modality ref="myRefAdd" title="Add user" centered @cancel="this.$refs.myRefAdd.hide()" ok-title="Add user" class="add-user" @ok="this.add()">
+    <vue-modality ref="myRefAdd" title="Add user" centered @cancel="this.$refs.myRefAdd.hide()" ok-title="Add user" @ok="this.add()" class="add-user-modal">
         <div>
             <label>Email</label>
             <input type="email" v-model="email">
@@ -140,7 +144,7 @@ export default {
             users: null,
             selectedUser: null,
             roles: [],
-            loading: false,
+            loading: true,
             message: null,
             verify: false,
             email: null,
@@ -171,7 +175,7 @@ export default {
         async editRoles() {
             this.loading = true;
             try {
-                await api.editRoles(this.selectedUser[0], this.roles);
+                await api.editRoles(this.selectedUser[2], this.roles);
             }
             catch (e) {
                 this.$refs.myRefEdit.hide();
@@ -189,7 +193,7 @@ export default {
             if (this.selectedUser[1].includes("registered")) {
                 this.selectedUser[1].splice(this.selectedUser[1].indexOf("registered"), 1);
                 try {
-                    await api.editRoles(this.selectedUser[0], this.selectedUser[1]);
+                    await api.editRoles(this.selectedUser[2], this.selectedUser[1]);
                 }
                 catch (e) {
                     this.$refs.myRefBlock.hide();
@@ -208,7 +212,7 @@ export default {
             if (!this.selectedUser[1].includes("registered")) {
                 this.selectedUser[1].push("registered");
                 try {
-                    await api.editRoles(this.selectedUser[0], this.selectedUser[1]);
+                    await api.editRoles(this.selectedUser[2], this.selectedUser[1]);
                 }
                 catch (e) {
                     this.$refs.myRefUnBlock.hide();
@@ -225,7 +229,7 @@ export default {
         async delete() {
             this.loading = true;
             try {
-                await api.deleteUser(this.selectedUser[0]);
+                await api.deleteUser(this.selectedUser[2]);
             }
             catch (e) {
                 this.$refs.myRefDelete.hide();
@@ -284,6 +288,7 @@ export default {
     },
     async mounted() {
         this.users = await api.getUsers();
+        this.loading = false;
     }
 }
 </script>
@@ -316,7 +321,7 @@ table {
 .table-wrapped {
     margin: auto;
     width: 95%;
-    height: 70vh;
+    height: 71vh;
     border: 2px solid rgba(255, 255, 255, 0.448);
 }
 
@@ -357,7 +362,7 @@ table tr:nth-child(odd) {
     text-align: left;
 }
 
-.add-user .vm-body > div {
+.add-user-modal .vm-body > div {
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
@@ -365,7 +370,7 @@ table tr:nth-child(odd) {
     align-items: flex-start;
 }
 
-.add-user .vm-body > div input[type=text], .add-user .vm-body > div input[type=email] {
+.add-user-modal .vm-body > div input[type=text], .add-user .vm-body > div input[type=email] {
     width: 300px;
     height: 25px;
     border-radius: 7px;
@@ -385,4 +390,47 @@ table tr:nth-child(odd) {
     display: flex;
     justify-content: space-around;
 }
+
+.skeleton-box {
+  display: inline-block;
+  height: 1em;
+  position: relative;
+  overflow: hidden;
+}
+.skeleton-box::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.5) 60%, rgba(255, 255, 255, 0));
+  -webkit-animation: shimmer 2s infinite;
+          animation: shimmer 2s infinite;
+  content: "";
+}
+@-webkit-keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.table-row {
+    margin-top: 3px;
+    width: 100%;
+    height: 35px;
+    background-color: #dddbdd2e;
+}
+
+.top-of-table {
+    width: 100%;
+    height: 50px;
+    background-color: #dddbdda9;
+}
+
 </style>

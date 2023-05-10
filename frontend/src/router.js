@@ -15,6 +15,8 @@ import IpDshield from './views/IpDshield.vue';
 import IpOTX from './views/IpOTX.vue';
 import AdminScreen from './views/AdminScreen.vue';
 import VerifyScreen from './views/VerifyScreen.vue';
+import AuthScreen from './views/AuthScreen.vue';
+import AccountCreated from './views/AccountCreated.vue';
 
 const router = createRouter({
     history: createWebHistory('/nerd2'),
@@ -35,6 +37,15 @@ const router = createRouter({
             component: CreateAccountScreen,
             meta: {
                 title: 'Create Account'
+            }
+            // beforeEnter: auth.ifNotAuthenticated,
+        },
+        {
+            path: '/account-created',
+            name: 'account-created',
+            component: AccountCreated,
+            meta: {
+                title: 'Account Created'
             }
             // beforeEnter: auth.ifNotAuthenticated,
         },
@@ -110,6 +121,14 @@ const router = createRouter({
             component: VerifyScreen,
             meta: {
                 title: 'NERD - Verification'
+            }
+        },
+        {
+            path: '/auth',
+            name: 'auth',
+            component: AuthScreen,
+            meta: {
+                title: 'NERD - Auth'
             }
         },
         {

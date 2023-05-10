@@ -1,10 +1,11 @@
 <template>
     <div class="wrapper">
         <div>
-            <Toggle v-model="$store.state.time" onLabel="UTC" offLabel="local" class="toggle-time"/> 
-            <span>
-                Time
+            <span style="padding-right: 20px;">
+                Time:
             </span>
+            <Toggle v-model="$store.state.time" onLabel="UTC" offLabel="local" class="toggle-time"/> 
+
         </div>
         
     </div>
@@ -28,6 +29,13 @@ export default {
 
 <style src="@vueform/toggle/themes/default.css"></style>
 <style scoped>
+@media (max-width: 800px) {
+    .wrapper {
+        background-color: transparent !important;
+        border-radius: 0px !important;
+        position: inherit !important;
+    }
+}
 .wrapper {
     position: absolute;
     top: 0px;

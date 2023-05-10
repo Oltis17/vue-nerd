@@ -80,12 +80,13 @@
         if (!Array.isArray(this.$store.state.filter.asn) && this.$store.state.filter.asn?.length > 2) {
           this.$store.state.filter.asn = [this.$store.state.filter.asn];
         }
+        console.log(this.$route.path);
         // add search params to query
         history.pushState(
           {},
           null,
           this.$route.path +
-            '?' + JSON.stringify(this.$store.state.filter),
+            'nerd2/?' + JSON.stringify(this.$store.state.filter),
         )
         this.res = await api.filterResults();
         this.number = null;
@@ -147,7 +148,7 @@
           {},
           null,
           this.$route.path +
-            '?' + JSON.stringify(this.$store.state.filter),
+            'nerd2/?' + JSON.stringify(this.$store.state.filter),
         )
       }
       

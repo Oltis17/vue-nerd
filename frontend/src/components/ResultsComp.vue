@@ -36,6 +36,7 @@
           <span>Page: {{ $store.state.filter.page }}</span>
           <div>
             <a v-if="$store.state.filter.page != 1" @click="nextPage($store.state.filter.page - 1)"><i class="fa fa-backward"></i></a>
+            <a v-else><i class="fa fa-backward disabled"></i></a>
             <a @click="nextPage($store.state.filter.page + 1)"><i class="fa fa-forward"></i></a>
           </div>
         </div>
@@ -129,43 +130,65 @@
             </td>
             <td class="row-more">
               <div class="dropdown">
+                <Popper
+                class="tooltip"
+                click
+                placement="bottom"
+                >
                 <span><i class="fa fa-ellipsis-h"></i></span>
-                <div class="dropdown-content">
-                  <a :href="'https://www.shodan.io/host/' + ip.ip" target="_blank">
-                    <div>
-                      <img src="../../public/shodan_icon.png">
-                      <span>Shodan</span>
-                    </div>
-                  </a>
-                  <div>
-                    <img src="../../public/censys_icon.png">
-                    <a :href="'https://search.censys.io/hosts/' + ip.ip" target="_blank">Censys</a>
+                <template #content >
+                  <div class="dropdown-content">
+                    <a :href="'https://www.shodan.io/host/' + ip.ip" target="_blank">
+                      <div>
+                        <img src="../../public/shodan_icon.png">
+                        <span>Shodan</span>
+                      </div>
+                    </a>
+                    <a :href="'https://search.censys.io/hosts/' + ip.ip" target="_blank">
+                      <div>
+                        <img src="../../public/censys_icon.png">
+                        <span>Censys</span>
+                      </div>
+                    </a>
+                    <a :href="'http://multirbl.valli.org/lookup/' + ip.ip" target="_blank">
+                      <div>
+                        <img src="../../public/valli_icon.png">
+                        <span>valli.org</span>
+                      </div>
+                    </a>
+                    <a :href="'https://www.abuseipdb.com/check/' + ip.ip" target="_blank">
+                      <div>
+                        <img src="../../public/abuse_ip_db_icon.png">
+                        <span>AbuseIPDB</span>
+                      </div>
+                    </a>
+                    <a :href="'https://www.threatcrowd.org/ip.php?ip=' + ip.ip" target="_blank">
+                      <div>
+                        <img src="../../public/threat_crowd_icon.png">
+                        <span>Threat Crowd</span>
+                      </div>
+                    </a>
+                    <a :href="'https://www.talosintelligence.com/reputation_center/lookup?search=' + ip.ip" target="_blank">
+                      <div>
+                        <img src="../../public/talos_icon.png">
+                        <span>Talos Intelligence Center</span>
+                      </div>
+                    </a>
+                    <a :href="'https://viz.greynoise.io/ip/' + ip.ip" target="_blank">
+                      <div>
+                        <img src="../../public/greynoise-logo.png">
+                        <span>Greynoise Visualizer</span>
+                      </div>
+                    </a>
+                    <a :href="'https://isc.sans.edu/ipinfo.html?ip=' + ip.ip" target="_blank">
+                      <div>
+                        <img src="../../public/dshield_icon.png">
+                        <span>DShield</span>
+                      </div> 
+                    </a>
                   </div>
-                  <div>
-                    <img src="../../public/censys_icon.png">
-                    <a :href="'http://multirbl.valli.org/lookup/' + ip.ip" target="_blank">valli.org</a>
-                  </div>
-                  <div>
-                    <img src="../../public/abuse_ip_db_icon.png">
-                    <a :href="'https://www.abuseipdb.com/check/' + ip.ip" target="_blank">AbuseIPDB</a>
-                  </div>
-                  <div>
-                    <img src="../../public/threat_crowd_icon.png">
-                    <a :href="'https://www.threatcrowd.org/ip.php?ip=' + ip.ip" target="_blank">Threat Crowd</a>
-                  </div>
-                  <div>
-                    <img src="../../public/talos_icon.png">
-                    <a :href="'https://www.talosintelligence.com/reputation_center/lookup?search=' + ip.ip" target="_blank">Talos Intelligence Center</a>
-                  </div>
-                  <div>
-                    <img src="../../public/greynoise-logo.png">
-                    <a :href="'https://viz.greynoise.io/ip/' + ip.ip" target="_blank">Greynoise Visualizer</a>
-                  </div>
-                  <div>
-                    <img src="../../public/dshield_icon.png">
-                    <a :href="'https://isc.sans.edu/ipinfo.html?ip=' + ip.ip" target="_blank">DShield</a>
-                  </div> 
-                </div>
+                </template>
+              </Popper>
               </div>
             </td>
           </tr>
@@ -181,6 +204,28 @@
   </div>
 
   <div class="is-mobile">
+    <label>Sort by: </label>
+    <Dropdown 
+    v-model="this.$store.state.filter.sort" 
+    :options="sortOptions" 
+    optionLabel="name" 
+    optionValue="code" 
+    class="w-full md:w-14rem" 
+    @change="mobileSort()"
+    style="width: 150px; text-align: left;"/>
+    <label>Order: </label>
+    <!-- <select @change="mobileSort()" v-model="orderVal">
+      <option :value="false">Descending ↓</option>
+      <option :value="true">Ascending ↑</option>
+    </select> -->
+    <Dropdown 
+    v-model="this.$store.state.filter.order" 
+    :options="orderOptions" 
+    optionLabel="name" 
+    optionValue="code" 
+    class="w-full md:w-14rem" 
+    @change="mobileSort()"
+    style="width: 150px; text-align: left;"/>
       <div class="tab" v-for="ip in results" :key="ip">
         <span class="result-ip-row mobile-ip-row">
           <div>
@@ -213,6 +258,14 @@
             <span style="text-align: left;">{{ ip.bl.join(", ") }}</span>
           </div>
           <div>
+            <label>TAGS ({{ ip.tags.length }})</label>
+            <span style="margin-top: 5px; display: flex; flex-wrap: wrap;">
+              <span v-for="t in getTags(ip.tags)" :key="t" :class="`tag ${t.color}`">
+                  {{ t.name }}
+              </span>
+            </span>
+          </div>
+          <div>
             <label>TIME ADDED</label>
             <span>{{ formatDateTime(ip.ts_added) }}</span>
           </div>
@@ -221,6 +274,16 @@
             <span>{{ formatDateTime(ip.ts_last_update) }}</span>
           </div>
           <button @click="this.$router.push(`ip/${ip.ip}`)">More details</button>
+      </div>
+      <div>
+        <div class="pages">
+          <span>Page: {{ $store.state.filter.page }}</span>
+          <div>
+            <a v-if="$store.state.filter.page != 1" @click="nextPage($store.state.filter.page - 1)"><i class="fa fa-backward"></i></a>
+            <a v-else><i class="fa fa-backward disabled"></i></a>
+            <a @click="nextPage($store.state.filter.page + 1)"><i class="fa fa-forward"></i></a>
+          </div>
+        </div>
       </div>
   </div>
   
@@ -246,6 +309,16 @@ export default {
         data: "2,4,0,3",
       },
       clicked: null,
+      sortOptions: [
+        { name: 'Rep. socre', code: 'rep' },
+        { name: 'IP', code: '_id' },
+        { name: 'Time added', code: 'ts_added' },
+        { name: 'Last activity', code: 'last_activity' },
+      ],
+      orderOptions: [
+        { name: 'Descending ↓', code: 'desc' },
+        { name: 'Ascending ↑', code: 'asc' },
+    ],
     };
   },
   components: {
@@ -255,6 +328,9 @@ export default {
     //TimeStampVue,
   },
   methods: {
+    mobileSort() {
+      this.$parent.filter();
+    },
     open(ip) {
       this.clicked = ip;
       console.log('HERE');
@@ -273,11 +349,11 @@ export default {
       return moment.utc(ts).local().format('DD MMM YYYY HH:mm');
     },
     toggleSort(what) {
-      if (what === this.$store.state.filter.sort && !this.$store.state.filter.desc) {
-        this.$store.state.filter.desc = true;
+      if (what === this.$store.state.filter.sort && !this.$store.state.filter.order) {
+        this.$store.state.filter.order = "asc";
       }
       else {
-        this.$store.state.filter.desc = false;
+        this.$store.state.filter.order = "desc";
       }
       this.$store.state.filter.sort = what;
       this.$parent.filter();
@@ -565,7 +641,7 @@ a {
   padding: 3px 5px;
   background-color: #42b983;
   border-radius: 4px;
-  margin-left: 6px;
+  margin-right: 6px;
   margin-bottom: 2px;
 }
 
@@ -630,27 +706,9 @@ a {
   padding: 10px 20px;
   border-radius: 20px;
 }
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #2c2a2a;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  padding: 12px 16px;
-  z-index: 1;
-  right: -10px;
-  text-align: left;
-}
-
 .dropdown-content img {
   width: 20px;
-  padding-right: 20px;
+  margin-right: 10px;
 }
 
 .dropdown-content div {
@@ -661,6 +719,10 @@ a {
   display: flex;
   align-items: center;
 }
+
+.dropdown-content a:hover div {
+  background-color: #00031c;
+} 
 
 .dropdown:hover .dropdown-content {
   display: block;
@@ -701,6 +763,11 @@ a {
 .mobile-ip-row {
   display: flex;
   justify-content: space-between;
+}
+
+.disabled {
+  color: rgb(179, 179, 179);
+  cursor: not-allowed;
 }
 
 </style>

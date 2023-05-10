@@ -7,10 +7,16 @@
                 <td>Email</td>
                 <td>{{ this.$store.state.userInfo.email }}</td>
             </tr>
-            <tr>
+            <tr v-if="this.$store.state.userInfo.type == 'local'">
                 <td>Password</td>
                 <td>
                     <span style="color: #42b983; cursor: pointer;" @click="this.$refs.myRefPass.open()">Change password</span>
+                </td>
+            </tr>
+            <tr v-else>
+                <td>Log in Provider</td>
+                <td>
+                    {{ this.$store.state.userInfo.type }}
                 </td>
             </tr>
             <tr>

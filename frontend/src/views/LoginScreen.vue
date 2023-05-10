@@ -41,10 +41,10 @@
             <div class="providers-login">
                 <label>or use providers:</label>
                 <span class="logos">
-                    <span><i class="fa fa-brands fa-google"></i></span>
-                    <span><i class="fa fa-brands fa-twitter"></i></span>
-                    <span><i class="fa fa-brands fa-github"></i></span>
-                    <span><b>EduGain</b></span>
+                    <a :href="getG('/')"><i class="fa fa-brands fa-google"></i></a>
+                    <a href="/nerd/api/v2/oauth/twitter/url"><i class="fa fa-brands fa-twitter"></i></a>
+                    <a :href="getGit()"><i class="fa fa-brands fa-github"></i></a>
+                    <a href="/nerd/api/v2/oauth/edugain/url"><b>EduGain</b></a>
                 </span>
             </div>
         </div>
@@ -68,6 +68,8 @@
 import * as api from '../api';
 import ClipLoader from 'vue-spinner/src/ClipLoader.vue';
 import VueModalityV3 from 'vue-modality-v3';
+import { getGoogleUrl } from '../utils/getGoogleUrl';
+import { getGitHubUrl } from '../utils/getGitHubUrl';
 
 export default {
   data() {
@@ -86,6 +88,16 @@ export default {
     VueModality: VueModalityV3,
   },
   methods: {
+    async twitter() {
+        const twitterUrl = await api.getTwitterUrl();
+        window.location.href = twitterUrl;
+    },
+    getG(from) {
+        return getGoogleUrl(from);
+    },
+    getGit() {
+        return getGitHubUrl();
+    },
     switchVisibility() {
       this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
     },
@@ -344,6 +356,10 @@ h1 {
     font-size: 16px;
     border: 1px solid black;
     margin-top: 10px;
+}
+
+a {
+    color: #42b983;
 }
 
 </style>

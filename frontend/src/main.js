@@ -14,6 +14,7 @@ import JsonExcel from "vue-json-excel3";
 import PrimeVue from "primevue/config";
 import MultiSelect from "primevue/multiselect";
 import InputText from 'primevue/inputtext';
+import Dropdown from 'primevue/dropdown';
 import "primevue/resources/themes/vela-green/theme.css";     
 import "primevue/resources/primevue.min.css";
 
@@ -49,5 +50,6 @@ createApp(App)
 .use(PrimeVue)
 .component("MultiSelect", MultiSelect)
 .component("InputText", InputText)
+.component("Dropdown", Dropdown)
 .component("downloadExcel", JsonExcel)
 .mount('#app');

@@ -56,6 +56,7 @@ body {
 
 .vue-modality-dialog {
   background-color: #2c3e50;
+  background: #2c3e50 !important;
   color: white;
 }
 
