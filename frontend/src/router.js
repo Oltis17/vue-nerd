@@ -17,6 +17,9 @@ import AdminScreen from './views/AdminScreen.vue';
 import VerifyScreen from './views/VerifyScreen.vue';
 import AuthScreen from './views/AuthScreen.vue';
 import AccountCreated from './views/AccountCreated.vue';
+import PrivacyPolicy from './views/PrivacyPolicy.vue';
+import DataScreen from './views/DataScreen.vue';
+import PasswordReset from './views/PasswordReset.vue';
 
 const router = createRouter({
     history: createWebHistory('/nerd2'),
@@ -121,6 +124,30 @@ const router = createRouter({
             component: VerifyScreen,
             meta: {
                 title: 'NERD - Verification'
+            }
+        },
+        {
+            path: '/privacy-policy',
+            name: 'privacy-policy',
+            component: PrivacyPolicy,
+            meta: {
+                title: 'NERD - Privacy Policy'
+            }
+        },
+        {
+            path: '/data',
+            name: 'data',
+            component: DataScreen,
+            meta: {
+                title: 'NERD - Data'
+            }
+        },
+        {
+            path: '/password-reset',
+            name: 'password-reset',
+            component: PasswordReset,
+            meta: {
+                title: 'NERD - Password reset'
             }
         },
         {

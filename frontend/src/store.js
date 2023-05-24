@@ -32,6 +32,7 @@ const store = createStore({
         order: "desc",
         whitelisted: false,
         page: 1,
+        limit: 20,
     },
     time: false,
     mobileSearch: false,
@@ -65,6 +66,7 @@ const store = createStore({
         order: "desc",
         whitelisted: false,
         page: 1,
+        limit: 20,
       });
     },
     setUserInfo(state, userInfo) {

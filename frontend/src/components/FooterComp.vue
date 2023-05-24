@@ -2,8 +2,8 @@
   <div>
     <div id="footer-wrapper">
       <span><a href="/">NERD by CESNET 2022</a></span>
-      <span><a href="/about">About</a></span>
-      <span><a href="/">Privacy Policy</a></span>
+      <span><a href="about">About</a></span>
+      <span><a href="privacy-policy">Privacy Policy</a></span>
     </div>
   </div>
 </template>

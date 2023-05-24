@@ -1,0 +1,13 @@
+{
+        "ReconScanning": "66,185,131",
+        "AttemptLogin": "111,217,46",
+        "AbusiveSpam": "102,51,14",
+        "AnomalyTraffic": "73,74,105",
+        "AttemptExploit": "218,112,214",
+        "AvailabilityDDoS": "169,0,0",
+        "AvailabilityDoS": "229,46,46",
+        "IntrusionBotnet": "255,140,0",
+        "IntrusionUserCompromise": "204,42,20",
+        "VulnerableConfig": "255,228,181",
+        "VulnerableOpen": "238,232,170"
+}

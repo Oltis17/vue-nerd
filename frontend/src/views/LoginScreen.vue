@@ -88,10 +88,6 @@ export default {
     VueModality: VueModalityV3,
   },
   methods: {
-    async twitter() {
-        const twitterUrl = await api.getTwitterUrl();
-        window.location.href = twitterUrl;
-    },
     getG(from) {
         return getGoogleUrl(from);
     },

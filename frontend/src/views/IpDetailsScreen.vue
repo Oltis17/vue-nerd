@@ -52,18 +52,47 @@
         </h2>
 
         <div style="width: 100%; display: flex; flex-wrap: wrap;">
+
             <div v-for="bl in details.bl" :key="bl" @click="showingBl = bl" style="display: flex; align-items: center;  margin: 5px; position: relative;">
-                <span class="blacklist-badge">{{ bl.name }}</span>
-                <span class="change"><i class="fa fa-solid fa-arrow-down"></i></span>
+                <Popper
+                class="tooltip"
+                click
+                arrow
+                placement="bottom"
+                >
+                    <span class="blacklist-badge">{{ bl.name }}</span>
+                    <template #content >
+                        <div class="hover">
+                            <p>{{ ip }} is on  {{ bl.name }} blacklist</p>
+                            <p>Last checked at: {{bl.last_check}}</p>
+                            <p>Was present on blacklist at: {{ bl.history.join(', ') }}</p>
+                        </div>
+                    </template>
+                </Popper>
             </div>
 
-            <div v-if="showingBl" class="hover">
-                <div @click="showingBl = null" style="float: right; padding: 10px;"><i class="fa fa-solid fa-close"></i></div>
-                <p>{{ ip }} is on  {{ showingBl.name }} blacklist</p>
-                <p>Last checked at: {{showingBl.last_check}}</p>
-                <p>Was present on blacklist at: {{ showingBl.history.join(', ') }}</p>
-            </div>
 
+
+        </div>
+        <h2>Tags: </h2>
+        <div style="width: 100%; display: flex; flex-wrap: wrap;">
+            <div v-for="tag in Object.keys(details.tags)" :key="tag" style="display: flex; align-items: center;  margin: 5px; position: relative;">
+                <Popper
+                    class="tooltip"
+                    click
+                    arrow
+                    placement="bottom"
+                    >
+                    <span :class="`blacklist-badge ${getTag(tag).color}`" :style="`background-color: ${getTag(tag).color}`">{{ getTag(tag).name }}</span>
+                    <template #content >
+                        <div class="hoverTag">
+                            <p>Confidence: {{ details.tags[tag].confidence }}</p>
+                            <p>Time added: {{ details.tags[tag].time_added }}</p>
+                            <p>Time modified: {{ details.tags[tag].time_modified }}</p>
+                        </div>
+                    </template>
+                </Popper>
+            </div>
         </div>
 
         <div class="sources">
@@ -92,15 +121,15 @@
                                     <i class="fa fa-solid fa-close"></i>
                                 </span>
                             </span>
-                            <span @click="$router.push('/ip/' + ip + '/warden')"> 
+                            <a :href="`${ip}/warden`" target="_blank"> 
                                 <i class="fa fa-solid fa-arrow-up-right-from-square"></i>
-                            </span>
+                            </a>
                         </div>
                     </div>
-                    <div v-if="details.events_meta.total == 0">
+                    <div v-if="details.events_meta.total == 0" style="display: flex; justify-content: center; align-items: center;">
                         No data in the last 30 days
                     </div>
-                    <div  v-if="warden" class="warden">
+                    <div v-if="warden && details.events_meta.total > 0" class="warden">
                         <perfect-scrollbar>
                             <div class="warden-inside">
                                 <table>
@@ -116,7 +145,7 @@
                             </div>
                         </perfect-scrollbar>
                     </div>
-                    <div class="chart">
+                    <div class="chart" v-if="details.events_meta.total > 0">
                         <WardenChart :data="rev_details"></WardenChart>
                     </div>
                 </div>
@@ -147,13 +176,16 @@
                                     <i class="fa fa-solid fa-close"></i>
                                 </span>
                             </span>
-                            <span> 
+                            <a :href="`${ip}/dshield`" target="_blank"> 
                                 <i class="fa fa-solid fa-arrow-up-right-from-square"></i>
-                            </span>
+                            </a>
                         </div>
                     </div>
+                    <div v-if="details.dshield.length == 0" style="display: flex; justify-content: center; align-items: center;">
+                        No data in the last 30 days
+                    </div>
             
-                    <div v-if="dshield" class="warden">
+                    <div v-if="dshield && details.dshield.length > 0" class="warden">
                         <perfect-scrollbar>
                             <div class="warden-inside">
                                 <table>
@@ -167,7 +199,7 @@
                         </perfect-scrollbar>
                     </div>
                 </div>
-                <div class="chart">
+                <div class="chart" v-if="details.dshield.length > 0">
                     <DshieldChart :data="details.dshield"></DshieldChart>
                 </div>
             </div>
@@ -196,13 +228,13 @@
                                     <i class="fa fa-solid fa-close"></i>
                                 </span>
                             </span>
-                            <span> 
+                            <a :href="`${ip}/otx`" target="_blank"> 
                                 <i class="fa fa-solid fa-arrow-up-right-from-square"></i>
-                            </span>
+                            </a>
                         </div>
                     </div>
             
-                    <div v-if="otx" class="warden">
+                    <div v-if="otx && details.otx_pulses.length > 0" class="warden">
                         <perfect-scrollbar>
                             <div class="warden-inside">
                                 <div v-for="otx_pulse in details.otx_pulses" :key="otx_pulse">
@@ -223,7 +255,7 @@
                 </div>
                 <div class="chart">
                     <OTXChart :data="details.otx_pulses" v-if="false"></OTXChart>
-                    <div v-if="details.otx_pulses.length == 0">
+                    <div v-if="details.otx_pulses.length == 0" style="display: flex; justify-content: center;">
                         No OTX data for this IP
                     </div>
                     <table v-else>
@@ -278,6 +310,8 @@ import DshieldChart from '@/components/DshieldChart.vue';
 import OTXChart from '@/components/OTXChart.vue';
 import VueModalityV3 from 'vue-modality-v3';
 import BlacklistPresence from '@/components/BlacklistPresence.vue';
+import tags from '../assets/tags.json';
+import Popper from "vue3-popper";
 
 export default {
   data() {
@@ -295,6 +329,7 @@ export default {
         down: null,
         name: null,
         showingBl: null,
+        showingTag: null,
     };
   },
   components: {
@@ -304,13 +339,18 @@ export default {
     DshieldChart,
     OTXChart,
     VueModality: VueModalityV3,
-    BlacklistPresence
+    BlacklistPresence,
+    Popper,
 },
   methods: {
+    getTag(tag) {
+      return tags[tag];
+    },
     close() {
-        console.log(this.showingBl);
         this.showingBl = null;
-        console.log(this.showingBl);
+    },
+    closeTag() {
+        this.showingTag = null;
     },
     download(data, source) {
         this.down = data;
@@ -342,7 +382,7 @@ export default {
     rep2Color(value) {
     var hue = ((1-value)*130).toString(10);
     return ["hsl(",hue,",100%,50%)"].join("");
-    },
+    }
   },
   async mounted() {
     this.details = await api.getIpDetails(this.ip);
@@ -385,12 +425,14 @@ export default {
         align-items: flex-start !important;
         padding: 10px !important;
         height: auto !important;
-        border-radius: 12px 0 12px 12px !important;
+        border-radius: 12px !important;
     }
 
     .rep-badge {
         height: inherit !important;
         padding: 10px !important;
+        margin-left: 10px;
+        border-radius: 10px !important;
     }
 
     .times span {
@@ -404,7 +446,8 @@ export default {
     color: rgba(255, 255, 255, 0.836);
     text-align: left;
     overflow-y: scroll;
-    height: 90vh;
+    height: 95vh;
+    padding-bottom: 100px;
 }
 
 .badges {
@@ -489,17 +532,13 @@ export default {
     cursor: pointer;
 }
 
-.blacklist-badge:hover {
-    border-radius: 7px 0 0 7px;
+.tag-badge {
+    padding: 3px 6px;
+    border-radius: 7px;
+    background-color: rgba(21, 190, 133, 0.732);
+    cursor: pointer;
 }
 
-.change {
-    display: none;
-    color: white;
-    background-color: rgba(21, 190, 133, 0.732);
-    border-radius: 0px 7px 7px 0;
-    padding: 3px 6px 3px 0px;
-}
 
 .blacklist-badge:hover + .change {
     display: block;
@@ -582,14 +621,28 @@ a {
 }
 
 .hover {
-    position: absolute;
-    bottom: 20;
-    left: 0;
     background-color: rgb(84, 80, 80);
-    z-index: 2;
     padding: 10px;
     border-radius: 12px;
     font-size: 12px;
+    width: 70vw;
+}
+
+.hoverTag {
+    background-color: rgb(84, 80, 80);
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    width: 300px;
+}
+
+.white {
+  background-color: #fff;
+  color: black;
+}
+
+h2 {
+    font-size: 16px;
 }
 
 </style>

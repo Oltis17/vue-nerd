@@ -1,7 +1,6 @@
 <template>
     <div class="main">
         <h1>Profile</h1>
-
         <table>
             <tr>
                 <td>Email</td>
@@ -23,6 +22,12 @@
                 <td style="display: flex;" @click="this.$refs.myRef.open()"><span style="padding-right: 10px;">Groups</span> <i class="fa fa-solid fa-question-circle"></i></td>
                 <td>
                     <div v-for="group in this.$store.state.userInfo.groups" :key="group" style="padding-bottom: 7px;">{{ group }}</div>
+                </td>
+            </tr>
+            <tr v-if="this.$store.state.api_v1_token">
+                <td style="display: flex;" @click="this.$refs.myRef.open()">Token (API v1)</td>
+                <td>
+                    {{ this.$store.state.api_v1_token }}
                 </td>
             </tr>
         </table>

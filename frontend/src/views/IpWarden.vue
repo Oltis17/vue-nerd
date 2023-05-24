@@ -1,7 +1,10 @@
 <template>
-    <div v-if="!loading">
-      <h2>Raw IP details for IP: {{ ip }}</h2>   
-    {{ details.events }}
+    <div v-if="!loading" class="wrapper">
+      <h2>Raw IP details for IP: {{ ip }}</h2> 
+      <div class="code">
+        {{ details.events }}
+      </div>  
+
     </div>
 </template>
 
@@ -24,3 +27,23 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+
+.wrapper {
+  color: white;
+  width: 90%;
+  margin: auto;
+  padding-top: 20px;
+  text-align: left;
+  padding-bottom: 20px;
+}
+
+.code {
+  background-color: rgba(128, 128, 128, 0.781);
+  border-radius: 12px;
+  padding: 10px;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+}
+</style>

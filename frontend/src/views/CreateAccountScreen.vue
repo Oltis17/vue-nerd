@@ -8,7 +8,7 @@
                 </div>
                 <div>
                     <span>
-                        Information about creating an account...
+                        By creating an account you can gain access to additional data.
                     </span>
                 </div>
                 <div>
@@ -51,16 +51,19 @@
                             <option>Security</option>
                         </select>
                     </div>
-                    <button class="create" @click="register()">Create an account</button>
+                    <button class="create" @click="create()" v-if="!loading">Create an account</button>
+                    <div style="width: 100%; height: 45px; display: flex; justify-content: center; align-items: center;" v-if="loading">
+                        <clip-loader :loading="true" :color="color" :size="small"></clip-loader>
+                    </div>
                 </div>
                 
                 <div class="providers-login">
                     <label>or use providers:</label>
                     <span class="logos">
-                        <span><i class="fa fa-brands fa-google"></i></span>
-                        <span><i class="fa fa-brands fa-twitter"></i></span>
-                        <span><i class="fa fa-brands fa-github"></i></span>
-                        <span><b>EduGain</b></span>
+                        <a :href="getG('/')"><i class="fa fa-brands fa-google"></i></a>
+                        <a href="/nerd/api/v2/oauth/twitter/url"><i class="fa fa-brands fa-twitter"></i></a>
+                        <a :href="getGit()"><i class="fa fa-brands fa-github"></i></a>
+                        <a href="/nerd/api/v2/oauth/edugain/url"><b>EduGain</b></a>
                     </span>
                 </div>
             </div>
@@ -80,11 +83,15 @@ import { defineComponent, ref } from 'vue';
 import * as api from '../api';
 import PasswordMeter from 'vue-simple-password-meter';
 import VueModalityV3 from 'vue-modality-v3';
+import { getGoogleUrl } from '../utils/getGoogleUrl';
+import { getGitHubUrl } from '../utils/getGitHubUrl';
+import ClipLoader from 'vue-spinner/src/ClipLoader.vue';
 
 export default defineComponent({
   components: {
     PasswordMeter,
     VueModality: VueModalityV3,
+    ClipLoader,
 },
   setup() {
     const pass1 = ref('');
@@ -99,7 +106,6 @@ export default defineComponent({
       pass1,
       pass2: null,
       purpose: null,
-      loading: false,
       error: false,
       message: null,
       onScore,
@@ -110,39 +116,52 @@ export default defineComponent({
     return {
         passwordFieldType1: "password",
         passwordFieldType2: "password",
+        loading: false,
     };
   },
   methods: {
+    getG(from) {
+        return getGoogleUrl(from);
+    },
+    getGit() {
+        return getGitHubUrl();
+    },
     switchVisibility1() {
       this.passwordFieldType1 = this.passwordFieldType1 === "password" ? "text" : "password";
     },
     switchVisibility2() {
       this.passwordFieldType2 = this.passwordFieldType2 === "password" ? "text" : "password";
     },
-    async register() {
+    async create() {
+        this.loading = true;
         if (this.email === null) {
             this.message = "Email is required.";
             this.$refs.myRefError.open();
+            this.loading = false;
             return;
         }
         if (this.pass1.length === 0) {
             this.message = "Password is required.";
             this.$refs.myRefError.open();
+            this.loading = false;
             return;
         }
         if (this.pass1 !== this.pass2) {
             this.message = "Passwords must match.";
             this.$refs.myRefError.open();
+            this.loading = false;
             return;
         }
         if (this.purpose === null) {
             this.message = "You must select an intended purpose.";
             this.$refs.myRefError.open();
+            this.loading = false;
             return;
         }
         if (this.score < 3) {
             this.message = "Provided password is too weak. Use capital letters, numbers and special characters or make your password longer.";
             this.$refs.myRefError.open();
+            this.loading = false;
             return;
         }
 
@@ -156,6 +175,7 @@ export default defineComponent({
 
         this.message = `Account successfully created. Please check yout inbox at: ${this.email} and verify your email address.`;
         this.$refs.myRefSuccess.open();
+        this.loading = false;
 
     }
   },
@@ -354,5 +374,9 @@ h1 {
     font-weight: 100;
     font-size: 40px;
     letter-spacing: 4px;
+}
+
+a {
+    color: #42b983;
 }
 </style>

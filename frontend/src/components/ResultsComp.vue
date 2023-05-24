@@ -25,21 +25,30 @@
   </div> -->
   <div id="res-table-wrapper" class="is-desktop">
     <perfect-scrollbar>
-      <div style="display: flex; justify-content: space-between; color: white; margin-bottom: 15px; width: 70%; margin-left: auto; margin-right: auto; align-items: center;">
-        <div style="width: 600px;">
-          <div class="nOfRes" >
-            <span>Results: TBA</span>
+      <div style="display: flex; justify-content: space-between; color: white; margin-bottom: 15px; padding-left: 20px; padding-right: 20px; align-items: center;">
+        <div class="results">
+            <label>Results:</label>
+            <SelectButton 
+            v-model="this.$store.state.filter.limit" 
+            :options="resOptions" 
+            optionLabel="name" 
+            optionValue="code" 
+            @change="$parent.filter()"></SelectButton>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <div class="pages">
+            <span>Page: {{ $store.state.filter.page }}</span>
+            <div>
+              <a v-if="$store.state.filter.page != 1" @click="nextPage($store.state.filter.page - 1)" style="color: #212529c6 !important"><i class="fa fa-backward"></i></a>
+              <a v-else style="color: #21252982 !important"><i class="fa fa-backward disabled"></i></a>
+              <a @click="nextPage($store.state.filter.page + 1)" style="color: #212529c6 !important"><i class="fa fa-forward"></i></a>
+            </div>
+          </div>
+          <div class="down" @click="this.$refs.myRefDown.open()">
+            <i class="fa fa-solid fa-download"></i>
           </div>
         </div>
-        
-        <div class="pages">
-          <span>Page: {{ $store.state.filter.page }}</span>
-          <div>
-            <a v-if="$store.state.filter.page != 1" @click="nextPage($store.state.filter.page - 1)"><i class="fa fa-backward"></i></a>
-            <a v-else><i class="fa fa-backward disabled"></i></a>
-            <a @click="nextPage($store.state.filter.page + 1)"><i class="fa fa-forward"></i></a>
-          </div>
-        </div>
+
       </div>
       
       <table id="results-table">
@@ -52,12 +61,12 @@
           <th>Rep. score <span><i class="fa fa-solid fa-arrow-down-wide-short" v-class="{active: sort === 'rep'}" @click="toggleSort('rep')"></i></span></th>
           <th></th> -->
           <th>IP <span @click="toggleSort('ip')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('ip'), desc: isDesc('ip')}"></i></span></th>
-          <th>Hostname <span @click="toggleSort('host')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('host')}"></i></span></th>
-          <th>ASN <span @click="toggleSort('asn')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('asn')}"></i></span></th>
-          <th>Blacklists <span @click="toggleSort('bl')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('bl')}"></i></span></th>
-          <th>Tags <span  @click="toggleSort('tag')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('tag')}"></i></span></th>
-          <th>Time added <span  @click="toggleSort('tag')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('ta')}"></i></span></th>
-          <th>Last active <span  @click="toggleSort('tag')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('la')}"></i></span></th>
+          <th>Hostname</th>
+          <th>ASN</th>
+          <th>Blacklists</th>
+          <th>Tags </th>
+          <th>Time added <span  @click="toggleSort('ts_added')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('ts_added'), desc: isDesc('ts_added')}"></i></span></th>
+          <th>Last active <span  @click="toggleSort('last_activity')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('last_activity'), desc: isDesc('last_activity')}"></i></span></th>
           <th>Rep. score <span @click="toggleSort('rep')"><i class="fa fa-solid fa-arrow-down-wide-short" :class="{active: isActive('rep'), desc: isDesc('rep')}"></i></span></th>
           <th></th>
         </thead>
@@ -70,12 +79,12 @@
                     <country-flag :country="toLower(ip.geo.ctry)" size='normal' rounded/>
                   </span>
                 </div>
-                <a class="result-ip-white" @click="this.$router.push(`ip/${ip.ip}`)">{{ ip.ip }}</a>
+                <a class="result-ip-white" :href="`ip/${ip.ip}`">{{ ip.ip }}</a>
               </div>
               
             </td>
             <td class="result-ip-row">{{ ip.hostname }}</td>
-            <td>
+            <td v-if="ip.asn[0]">
               AS{{ ip.asn[0] }}
               <Popper v-if="ip.asn.length > 1"
               class="tooltip"
@@ -85,6 +94,9 @@
               >
                 <span> + <span class="link">{{ ip.asn.length - 1 }}</span></span>
               </Popper>
+            </td>
+            <td v-else>
+              -
             </td>
             <!-- <td class="country">
               <Popper
@@ -107,7 +119,8 @@
               >
                 <span class="link">{{ ip.bl.length }}</span>
                 <template #content>
-                  This IP address is present on {{ ip.bl.length }} blacklists:
+                  <span v-if="ip.bl?.length > 0">This IP address is present on {{ ip.bl.length }} blacklists:</span>
+                  <span v-else>This IP address is not present on any blacklists.</span>
                   <ul style="text-align: left">
                     <li v-for="b in ip.bl" :key="b">{{ b }}</li>
                   </ul>
@@ -116,8 +129,8 @@
             </td>
             <td >
               <div style="display: flex; align-items: flex-start; flex-wrap: wrap;">
-                <span v-for="t in getTags(ip.tags)" :key="t" :class="`tag ${t.color}`">
-                  {{ t.name }}
+                <span v-for="t in ip.tags" :key="t" :class="`tag ${getTag(t.n)?.color}`" :style="`background-color: ${getTag(t.n)?.color}`">
+                  {{ getTag(t.n)?.name }}
                 </span>
               </div>
               
@@ -140,49 +153,49 @@
                   <div class="dropdown-content">
                     <a :href="'https://www.shodan.io/host/' + ip.ip" target="_blank">
                       <div>
-                        <img src="../../public/shodan_icon.png">
+                        <img src="../assets/shodan_icon.png">
                         <span>Shodan</span>
                       </div>
                     </a>
                     <a :href="'https://search.censys.io/hosts/' + ip.ip" target="_blank">
                       <div>
-                        <img src="../../public/censys_icon.png">
+                        <img src="../assets/censys_icon.png">
                         <span>Censys</span>
                       </div>
                     </a>
                     <a :href="'http://multirbl.valli.org/lookup/' + ip.ip" target="_blank">
                       <div>
-                        <img src="../../public/valli_icon.png">
+                        <img src="../assets/valli_icon.png">
                         <span>valli.org</span>
                       </div>
                     </a>
                     <a :href="'https://www.abuseipdb.com/check/' + ip.ip" target="_blank">
                       <div>
-                        <img src="../../public/abuse_ip_db_icon.png">
+                        <img src="../assets/abuse_ip_db_icon.png">
                         <span>AbuseIPDB</span>
                       </div>
                     </a>
                     <a :href="'https://www.threatcrowd.org/ip.php?ip=' + ip.ip" target="_blank">
                       <div>
-                        <img src="../../public/threat_crowd_icon.png">
+                        <img src="../assets/threat_crowd_icon.png">
                         <span>Threat Crowd</span>
                       </div>
                     </a>
                     <a :href="'https://www.talosintelligence.com/reputation_center/lookup?search=' + ip.ip" target="_blank">
                       <div>
-                        <img src="../../public/talos_icon.png">
+                        <img src="../assets/talos_icon.png">
                         <span>Talos Intelligence Center</span>
                       </div>
                     </a>
                     <a :href="'https://viz.greynoise.io/ip/' + ip.ip" target="_blank">
                       <div>
-                        <img src="../../public/greynoise-logo.png">
+                        <img src="../assets/greynoise-logo.png">
                         <span>Greynoise Visualizer</span>
                       </div>
                     </a>
                     <a :href="'https://isc.sans.edu/ipinfo.html?ip=' + ip.ip" target="_blank">
                       <div>
-                        <img src="../../public/dshield_icon.png">
+                        <img src="../assets/dshield_icon.png">
                         <span>DShield</span>
                       </div> 
                     </a>
@@ -196,7 +209,7 @@
       </table>
     </perfect-scrollbar>
     
-    <div v-if="results.length == 0" style="position: absolute;  top: 200px;left: 200px; 
+    <div v-if="results?.length == 0" style="position: absolute;  top: 200px;left: 200px; 
   right: 0; 
   margin-left: auto; 
   margin-right: auto; 
@@ -204,28 +217,31 @@
   </div>
 
   <div class="is-mobile">
-    <label>Sort by: </label>
-    <Dropdown 
-    v-model="this.$store.state.filter.sort" 
-    :options="sortOptions" 
-    optionLabel="name" 
-    optionValue="code" 
-    class="w-full md:w-14rem" 
-    @change="mobileSort()"
-    style="width: 150px; text-align: left;"/>
-    <label>Order: </label>
-    <!-- <select @change="mobileSort()" v-model="orderVal">
-      <option :value="false">Descending ↓</option>
-      <option :value="true">Ascending ↑</option>
-    </select> -->
-    <Dropdown 
-    v-model="this.$store.state.filter.order" 
-    :options="orderOptions" 
-    optionLabel="name" 
-    optionValue="code" 
-    class="w-full md:w-14rem" 
-    @change="mobileSort()"
-    style="width: 150px; text-align: left;"/>
+    <div class="mobile-sort">
+      <div>
+        <label>Sort by: </label>
+        <Dropdown 
+        v-model="this.$store.state.filter.sort" 
+        :options="sortOptions" 
+        optionLabel="name" 
+        optionValue="code" 
+        class="w-full md:w-14rem" 
+        @change="mobileSort()"
+        style="width: 150px; text-align: left;"/>
+      </div>
+      <div>
+        <label>Order: </label>
+        <Dropdown 
+        v-model="this.$store.state.filter.order" 
+        :options="orderOptions" 
+        optionLabel="name" 
+        optionValue="code" 
+        class="w-full md:w-14rem" 
+        @change="mobileSort()"
+        style="width: 150px; text-align: left;"/>
+      </div>
+    </div>
+
       <div class="tab" v-for="ip in results" :key="ip">
         <span class="result-ip-row mobile-ip-row">
           <div>
@@ -260,8 +276,8 @@
           <div>
             <label>TAGS ({{ ip.tags.length }})</label>
             <span style="margin-top: 5px; display: flex; flex-wrap: wrap;">
-              <span v-for="t in getTags(ip.tags)" :key="t" :class="`tag ${t.color}`">
-                  {{ t.name }}
+              <span v-for="t in ip.tags" :key="t" :class="`tag ${getTag(t.n)?.color}`">
+                  {{ getTag(t.n)?.name }}
               </span>
             </span>
           </div>
@@ -275,7 +291,16 @@
           </div>
           <button @click="this.$router.push(`ip/${ip.ip}`)">More details</button>
       </div>
-      <div>
+      <div style="width: 90%; margin: auto; display: flex; justify-content: center; align-items: center; color: white; flex-direction: column;">
+        <div class="results">
+            <label>Results:</label>
+            <SelectButton 
+            v-model="this.$store.state.filter.limit" 
+            :options="resOptions" 
+            optionLabel="name" 
+            optionValue="code" 
+            @change="$parent.filter()"></SelectButton>
+        </div>
         <div class="pages">
           <span>Page: {{ $store.state.filter.page }}</span>
           <div>
@@ -284,24 +309,40 @@
             <a @click="nextPage($store.state.filter.page + 1)"><i class="fa fa-forward"></i></a>
           </div>
         </div>
+
+        <div class="down" @click="this.$refs.myRefDown.open()">
+            Download <i class="fa fa-solid fa-download"></i>
+          </div>
+        
       </div>
   </div>
+  <vue-modality :ok-loading="loading" ref="myRefDown" title="Download data" centered @cancel="this.$refs.myRefDown.hide()" hide-ok>
+      <p>Download data from this page:</p>
+      <button @click="downloadCSV(results, `nerd_data_page_${$store.state.filter.page}.csv`)" class="download">
+          <i class="fa fa-solid fa-download"></i>
+          <span>Download CSV</span>
+      </button>
+      <button @click="downloadJSON(results, `nerd_data_page_${$store.state.filter.page}.json`)" class="download">
+          <i class="fa fa-solid fa-download"></i>
+          <span>Download JSON</span>
+      </button>
+</vue-modality>
   
 </template>
 
 <script>
 import ctry_info from '../assets/ctry_strings.json';
+import tags from '../assets/tags.json';
 import CountryFlag from 'vue-country-flag-next';
 import Popper from "vue3-popper";
 import moment from 'moment';
 import MiniChart from './MiniChart.vue';
-//import TimeStampVue from '@/components/TimeStamp.vue';
+import VueModalityV3 from 'vue-modality-v3';
 
 export default {
   props: ['results', 'number'],
   data() {
     return {
-      tags: {},
       sort: null,
       desc: false,
       chartOptions: {
@@ -311,21 +352,27 @@ export default {
       clicked: null,
       sortOptions: [
         { name: 'Rep. socre', code: 'rep' },
-        { name: 'IP', code: '_id' },
+        { name: 'IP', code: 'ip' },
         { name: 'Time added', code: 'ts_added' },
         { name: 'Last activity', code: 'last_activity' },
       ],
       orderOptions: [
         { name: 'Descending ↓', code: 'desc' },
         { name: 'Ascending ↑', code: 'asc' },
-    ],
+      ],
+      resOptions: [
+        { name: '5', code: 5 },
+        { name: '10', code: 10 },
+        { name: '20', code: 20 },
+        { name: '50', code: 50 },
+      ],
     };
   },
   components: {
     CountryFlag,
     Popper,
     MiniChart,
-    //TimeStampVue,
+    VueModality: VueModalityV3,
   },
   methods: {
     mobileSort() {
@@ -333,7 +380,6 @@ export default {
     },
     open(ip) {
       this.clicked = ip;
-      console.log('HERE');
     },
     close() {
       this.clicked = null;
@@ -349,7 +395,8 @@ export default {
       return moment.utc(ts).local().format('DD MMM YYYY HH:mm');
     },
     toggleSort(what) {
-      if (what === this.$store.state.filter.sort && !this.$store.state.filter.order) {
+      // double condition to differentiate between first click on filter
+      if (this.$store.state.filter.sort === what && this.$store.state.filter.order === "desc") {
         this.$store.state.filter.order = "asc";
       }
       else {
@@ -362,7 +409,7 @@ export default {
       return this.$store.state.filter.sort === what;
     },
     isDesc(what) {
-      return this.$store.state.filter.sort === what && this.$store.state.filter.desc;
+      return this.$store.state.filter.sort === what && this.$store.state.filter.order == "asc";
     },
     toLower(str) {
       if (str !== undefined)
@@ -386,37 +433,59 @@ export default {
       }
       return text;
     },
-    getTags(tags) {
-      let out = [];
-      for (const t of tags) {
-        let t_out = {
-          color: "white",
-          name: "Unknown",
-        }
-        if (t.n == "whitelist") {
-          t_out.name = "Whitelisted";
-        } 
-        else if (t.n == "researchscanners") {
-          t_out.name = "Research s.";
-          t_out.color = "blue";
-        } 
-        else if (t.n == "reconscanning") {
-          t_out.name = "Scanner";
-          t_out.color = "green";
-        } 
-        else if (t.n == "ip_in_hostname") {
-          t_out.name = "IP in hostname";
-          t_out.color = "orange";
-        } 
-        else if (t.n == "attemptlogin") {
-          t_out.name = "Login attempts";
-          t_out.color = "red";
-        } 
-        out.push(t_out);
-      }
-      return out;
+    getTag(tag) {
+      return tags[tag];
+    },
+    downloadJSON(data, name) {
+        let text = JSON.stringify(data);
+        let element = document.createElement('a');
+        element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', name);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.click();
+        document.body.removeChild(element);     
+    },
+     downloadCSV(data, name) {
+  let csvContent = '';
+  const separator = ',';
+
+  // Get the headers and replace commas if needed
+  const headers = Object.keys(data[0]).map(header => {
+    if (typeof data[0][header] === 'object') {
+      return JSON.stringify(header).replace(/,/g, separator);
     }
-  },
+    return header.replace(/,/g, separator);
+  });
+  csvContent += headers.join(separator) + '\n';
+
+  // Get the rows and replace commas if needed
+  data.forEach(row => {
+    const rowData = Object.values(row).map(value => {
+      if (typeof value === 'object') {
+        return JSON.stringify(value).replace(/,/g, '|');
+      }
+      return value.toString().replace(/,/g, '|');
+    });
+    csvContent += rowData.join(separator) + '\n';
+  });
+
+  // Create a blob and download the file
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', name + '.csv');
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+}
+  
 };
 </script>
 
@@ -438,6 +507,19 @@ export default {
 
   .is-desktop {
     display: none;
+  }
+
+  .results {
+    margin-bottom: 10px;
+  }
+
+  .down {
+    width: 120px;
+    margin: auto !important;
+  }
+
+  .pages {
+    margin-bottom: 10px;
   }
 }
 
@@ -679,11 +761,43 @@ a {
 .pages {
   display: flex;
   min-width: 200px;
-  font-size: 18px;
+  font-size: 16px;
   justify-content: space-around;
-  background-color: #42b983;
+  align-items: center;
+  background-color: #81C784;
+  color: #212529;
   padding: 10px 20px;
   border-radius: 20px;
+}
+
+.down {
+  display: flex;
+  min-width: 20px;
+  font-size: 16px;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #81C784;
+  color: #212529;
+  padding: 10px 20px;
+  border-radius: 20px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.p-highlight {
+  background: #42b983 !important;
+}
+
+.results {
+  display: flex;
+  align-items: center;
+  min-width: 200px;
+  font-size: 18px;
+  justify-content: space-between;
+}
+
+.results label {
+  padding-right: 15px;
 }
 
 .pages > div{
@@ -766,8 +880,36 @@ a {
 }
 
 .disabled {
-  color: rgb(179, 179, 179);
+  color: #21252957;
   cursor: not-allowed;
 }
+
+.mobile-sort {
+  padding-top: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: white;
+  display: flex;
+  justify-content: space-around;
+}
+
+.download {
+    padding: 5px 8px;
+    background-color: transparent;
+    color: #42b983;
+    border-radius: 7px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #42b983;
+    display: flex;
+    justify-content: left;
+    width: 150px;
+}
+
+.download .fa-download {
+    margin-right: 15px;
+    margin-left: 5px;
+}
+
 
 </style>

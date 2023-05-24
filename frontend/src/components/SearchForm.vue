@@ -1,71 +1,30 @@
 <template>
   <div id="search-wrapper">
     <div id="search-form">
-      <!-- <div id="search-top-buttons">
-        <div class="search-btn-selected">Specified IP Search</div>
-        <div class="search-btn-no-selected">Multiple IP Search</div>
-      </div> -->
       <div class="search-item">
         <div class="title">
-          <label>IP prefix</label>
+          <label title="IPv4 prefix/subnet in CIDR format.">IP prefix</label>
           <div @click="this.$parent.multiIpOpen"><i class="fa fa-solid fa-circle-plus"></i> MULTI</div>
         </div>
 
         <InputText type="text" v-if="$store.state.filter.subnet == null || $store.state.filter.subnet?.length < 2 || !Array.isArray(this.$store.state.filter.subnet)" v-model="$store.state.filter.subnet" class="multi2" placeholder="Single IP"/>
         <InputText type="text" v-else disabled :value="`MULTI: ${$store.state.filter.subnet?.length} selected`" class="multi2" @click="this.$parent.multiIpOpen"/>
         
-        <!-- <VueMultiselect
-        :multiple="true"
-        :taggable="true"
-        @tag="addTag"
-        tag-placeholder="Add"
-        placeholder="IPs"
-        v-model="$store.state.filter.subnet"
-        :options="ipOptions"
-        :hide-selected="true" 
-        class="multi"
-        :optionHeight="20">
-        <template #noResult>
-          Duplicate IP
-        </template>
-        <template #noOptions>
-          Type an IP address
-        </template>
-
-        </VueMultiselect> -->
       </div>
 
       <div class="search-item">
         <div class="title">
-          <label>Hostname suffix</label>
+          <label title="Suffix of the hostname associated with the IP address. Can be used to search all hosts under given (sub)domain.">Hostname suffix</label>
           <div @click="this.$parent.multiHostOpen"><i class="fa fa-solid fa-circle-plus"></i> MULTI</div>
         </div>
 
         <InputText type="text" v-if="$store.state.filter.hostname == null || $store.state.filter.hostname?.length < 2 || !Array.isArray(this.$store.state.filter.hostname)" v-model="$store.state.filter.hostname" class="multi2" placeholder="Single Hostname"/>
         <InputText type="text" v-else disabled :value="`MULTI: ${$store.state.filter.hostname?.length} selected`" class="multi2" @click="this.$parent.multiHostOpen"/>
-        <!-- <VueMultiselect
-        :multiple="true"
-        :taggable="true"
-        @tag="addTagHost"
-        tag-placeholder="Add"
-        placeholder="Hosts"
-        v-model="$store.state.filter.hostname"
-        :options="hostOptions"
-        :hide-selected="true" 
-        class="multi">
-        <template #noResult>
-          Duplicate host
-        </template>
-        <template #noOptions>
-          Type a host address
-        </template>
-
-        </VueMultiselect> -->
       </div>
 
       <div class="search-item">
         <div class="title">
-          <label>Country</label>
+          <label title="Code of the country the IP address is probably located in (according to MaxMind database).">Country</label>
         </div>
 
         <MultiSelect 
@@ -81,59 +40,23 @@
         class="multi2"
         >
         </MultiSelect>
-
-        <!-- <VueMultiselect
-        :multiple="true"
-        placeholder="Countries"
-        v-model="$store.state.filter.country"
-        :options="countries"
-        :hide-selected="true" 
-        selectLabel="Select"
-        class="multi">
-        <template #noResult>
-          Duplicate country
-        </template>
-        <template #noOptions>
-          Type a country
-        </template>
-
-        </VueMultiselect> -->
       </div>
       
 
       <div class="search-item">
         <div class="title">
-          <label>ASN</label>
+          <label  title="Autonomous system number. Enter as '1234' or 'AS1234'.">ASN</label>
           <div @click="this.$parent.multiASNOpen"><i class="fa fa-solid fa-circle-plus"></i> MULTI</div>
           <AndOrSwitch v-model="$store.state.filter.asn_op"></AndOrSwitch>
         </div>
 
         <InputText type="text" v-if="$store.state.filter.asn == null || $store.state.filter.asn?.length < 2 || !Array.isArray(this.$store.state.filter.asn)" v-model="$store.state.filter.asn" class="multi2" placeholder="Single ASN"/>
         <InputText type="text" v-else disabled :value="`MULTI: ${$store.state.filter.asn?.length} selected`" class="multi2" @click="this.$parent.multiASNOpen"/>
-        
-        <!-- <VueMultiselect
-        :multiple="true"
-        :taggable="true"
-        @tag="addTagAsn"
-        tag-placeholder="Add"
-        placeholder="ASNs"
-        v-model="$store.state.filter.asn"
-        :options="asnOptions"
-        :hide-selected="true" 
-        class="multi">
-        <template #noResult>
-          Duplicate ASN
-        </template>
-        <template #noOptions>
-          Type an ASN
-        </template>
-
-        </VueMultiselect> -->
       </div>
 
       <div class="search-item">
         <div class="title">
-          <label>Source</label>
+          <label  title="Select IP addresses for which there are data (alerts, events, ...) from given primary data source(s).">Source</label>
           <AndOrSwitch v-model="$store.state.filter.source_op"></AndOrSwitch>
         </div>
         <MultiSelect 
@@ -146,27 +69,11 @@
         class="multi2"
         >
         </MultiSelect>
-        <!-- <VueMultiselect
-        :multiple="true"
-        placeholder="Sources"
-        v-model="$store.state.filter.source"
-        :options="sources"
-        :hide-selected="true" 
-        selectLabel="Select"
-        class="multi">
-        <template #noResult>
-          Duplicate source
-        </template>
-        <template #noOptions>
-          Type a source
-        </template>
-
-        </VueMultiselect> -->
       </div>
 
       <div class="search-item">
         <div class="title">
-          <label>Event category</label>
+          <label title="Select IP addresses with Warden alerts of given category.">Event category</label>
           <AndOrSwitch v-model="$store.state.filter.cat_op"></AndOrSwitch>
         </div>
         <MultiSelect 
@@ -177,27 +84,11 @@
         class="multi2"
         >
         </MultiSelect>
-        <!-- <VueMultiselect
-        :multiple="true"
-        placeholder="Categories"
-        v-model="$store.state.filter.cat"
-        :options="categories"
-        :hide-selected="true" 
-        selectLabel="Select"
-        class="multi">
-        <template #noResult>
-          Duplicate source
-        </template>
-        <template #noOptions>
-          Type a source
-        </template>
-
-        </VueMultiselect> -->
       </div>
 
       <div class="search-item">
         <div class="title">
-          <label>Blacklist</label>
+          <label title="Select IP addresses listed on given blacklist(s).">Blacklist</label>
           <AndOrSwitch v-model="$store.state.filter.bl_op"></AndOrSwitch>
         </div>
         <MultiSelect 
@@ -211,27 +102,11 @@
         class="multi2"
         >
         </MultiSelect>
-        <!-- <VueMultiselect
-        :multiple="true"
-        placeholder="Blacklists"
-        v-model="$store.state.filter.blacklist"
-        :options="categories"
-        :hide-selected="true" 
-        selectLabel="Select"
-        class="multi">
-        <template #noResult>
-          Duplicate source
-        </template>
-        <template #noOptions>
-          Type a source
-        </template>
-
-        </VueMultiselect> -->
       </div>
 
       <div class="search-item">
         <div class="title">
-          <label>Tag</label>
+          <label title="Select IP addresses with given tag(s).">Tag</label>
           <AndOrSwitch v-model="$store.state.filter.tag_op"></AndOrSwitch>
         </div>
         <MultiSelect 
@@ -244,22 +119,6 @@
         class="multi2"
         >
         </MultiSelect>
-        <!-- <VueMultiselect
-        :multiple="true"
-        placeholder="Tags"
-        v-model="$store.state.filter.tag"
-        :options="tags"
-        :hide-selected="true" 
-        selectLabel="Select"
-        class="multi">
-        <template #noResult>
-          Duplicate source
-        </template>
-        <template #noOptions>
-          Type a source
-        </template>
-
-        </VueMultiselect> -->
       </div>
       <div style="color: white; padding: 10px;">
         <input type="checkbox" v-model="$store.state.filter.whitelisted" style="accent-color: #42b983;"> Hide whitelisted
@@ -278,7 +137,7 @@
 import AndOrSwitch from './AndOrSwitch.vue';
 import ctry_list from '../assets/ctry_list.json';
 import ctry_strings from '../assets/ctry_strings.json';
-import tags from '../assets/tags.json';
+import tags_file from '../assets/tags_for_select.json';
 import sources from '../assets/sources.json';
 import blacklists from '../assets/blacklists.json';
 
@@ -297,7 +156,7 @@ export default {
       countries: ctry_list,
       sources: sources,
       categories: ["AnomalyBehaviour", "AnomalyTraffic", "AttemptExploit", "AttemptLogin", "AvailabilityDDoS", "AvailabilityDoS", "IntrusionBotnet", "IntrusionUserCompromise", "Malware", "Other", "ReconScanning", "ReconScanning+AttemtExploit", "VulnerableConfig", "VulnerableOpen"],
-      tags: tags, // TODO if logged in add option  { "name": "MISP (tlp:green)", "tag": "misp_tlp_green"},
+      tags: tags_file,
       selectedCities: null,
       cities: ctry_strings,
       blacklists: blacklists,
@@ -369,6 +228,13 @@ export default {
   }
 }
 
+@media (max-height: 650px) {
+  #search-form {
+    padding-bottom: 200px !important;
+  }
+  
+}
+
 
 h2 {
   color: #42b983;
@@ -386,12 +252,15 @@ h2 {
   display: flex;
   flex-direction: column;
   padding: 10px 20px;
-  min-height: calc(100vh - 50px);
+  height: calc(100vh - 50px);
+  min-height: 600px;
+  overflow-y: auto;
 }
 
 #search-form label {
   padding-bottom: 10px;
   font-size: 12px;
+  cursor: help;
 }
 
 .search-item {

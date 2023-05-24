@@ -33,6 +33,10 @@
         <textarea v-model="multiASN" class="multiField">
         </textarea>
       </vue-modality>
+      <vue-modality ref="myRefError" title="Warning" centered error hide-ok @cancel="this.$refs.myRefError.hide()">
+          {{ message }}
+      </vue-modality>
+      <FooterComp class="footer"></FooterComp>
       
   </template>
   
@@ -40,6 +44,7 @@
   import SearchForm from '../components/SearchForm.vue';
   import ResultsComp from '../components/ResultsComp.vue';
   import SkeletonLoader from '../components/SkeletonLoader.vue';
+  import FooterComp from '../components/FooterComp.vue';
   import * as api from '../api';
   import VueModalityV3 from 'vue-modality-v3';
   import ClipLoader from 'vue-spinner/src/ClipLoader.vue';
@@ -53,6 +58,7 @@
       number: null,
       multiIp: null,
       multiHost: null,
+      message: null,
       }
     },
     components: {
@@ -61,6 +67,7 @@
     SkeletonLoader,
     VueModality: VueModalityV3,
     ClipLoader,
+    FooterComp,
 },
     computed: {
       getFilter() {
@@ -88,7 +95,15 @@
           this.$route.path +
             'nerd2/?' + JSON.stringify(this.$store.state.filter),
         )
-        this.res = await api.filterResults();
+        try {
+          this.res = await api.filterResults();
+        } catch (e) {
+          this.message = e.message;
+          this.$refs.myRefError.open();
+          this.loading = false;
+          return;
+        }
+
         this.number = null;
         this.loading = false;
       },
@@ -151,8 +166,14 @@
             'nerd2/?' + JSON.stringify(this.$store.state.filter),
         )
       }
-      
-      this.res = await api.filterResults();
+      try {
+        this.res = await api.filterResults();
+      } catch (e) {
+        this.message = "An error occured while fetching data. API response error."
+        this.$refs.myRefError.open();
+        this.loading = false;
+        return;
+      }
       this.loading = false;
     }
   };
@@ -226,6 +247,13 @@
 
 .mobile-search {
   z-index: 3;
+}
+
+
+.footer {
+  background-color: #00031c;
+  width: 100% !important;
+  margin-left: 100px;
 }
 
   </style>

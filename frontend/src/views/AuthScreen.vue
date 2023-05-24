@@ -37,7 +37,7 @@ export default {
     this.loading = false;
 
     //redirect to main page
-    if (this.created) {
+    if (this.created == "true") {
       this.$router.push("/account-created");
     } else {
       this.$router.push("/");

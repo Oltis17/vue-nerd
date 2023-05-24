@@ -1,25 +1,29 @@
 <template>
-    <table>
-        <tr>
-            <td rowspan="3">Blacklist</td>
-            <td colspan="30" style="text-align: center;">Last 30 Days</td>
-        </tr>
-        <tr>
-            <td v-for="(v, k) in months" :key="k" :colspan="v" style="border-left: 1px solid white; padding-left: 5px;"><span v-if="v > 2">{{ k }}</span></td>
-        </tr>
-        <tr>
+    <div style="overflow-x: auto;">
+        <table class="is-desktop">
+            <tr>
+                <td rowspan="3">Blacklist</td>
+                <td colspan="30" style="text-align: center;">Last 30 Days</td>
+            </tr>
+            <tr>
+                <td v-for="(v, k) in months" :key="k" :colspan="v" style="border-left: 1px solid white; padding-left: 5px;"><span v-if="v > 2">{{ k }}</span></td>
+            </tr>
+            <tr>
+                
+                <td v-for="d in days" :key="d">{{ d }}</td>
+            </tr>
             
-            <td v-for="d in days" :key="d">{{ d }}</td>
-        </tr>
-        
-        <tr v-for="b in bl" :key="b">
-            <td style="text-align: right; padding-right: 10px;">{{ b.name }}</td>
-            <td v-for="(k, v) in days" :key="k" :class="{yes: b.history.includes(v)}" :title="`${b.name} ${v}`" class="grey">
-                <span v-if="b.history.includes(v)"><i class="fa fa-solid fa-check"></i></span>
-                <span v-else><i class="fa fa-solid fa-xmark"></i></span>
-            </td>
-        </tr>
-    </table>
+            <tr v-for="b in bl" :key="b">
+                <td style="text-align: right; padding-right: 10px;">{{ b.name }}</td>
+                <td v-for="(k, v) in days" :key="k" :class="{yes: b.history.includes(v)}" :title="`${b.name} ${v}`" class="grey">
+                    <span v-if="b.history.includes(v)"><i class="fa fa-solid fa-check"></i></span>
+                    <span v-else><i class="fa fa-solid fa-xmark"></i></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+
 </template>
 
 <script>
@@ -56,6 +60,18 @@ export default {
 </script>
 
 <style scoped>
+@media screen(max-width: 800px) {
+    .is-mobile {
+        display: block !important;
+    }
+    .is-desktop {
+        display: none !important;
+    }
+}
+
+.is-mobile {
+    display: none;
+}
 .yes {
     background-color: green !important;
 }

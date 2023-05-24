@@ -5,7 +5,7 @@
         <div id="title"><a @click="this.$router.push('/')">NERD</a><sub>by <a href="https://cesnet.cz">CESNET</a></sub></div>
 
         <div class="middle">
-          <span><a>Data</a></span>
+          <span><a href="data">Data</a></span>
           <span><a>IP map</a></span>
           <span v-if="$store.state.userInfo.groups && $store.state.userInfo.groups?.includes('admin')"><a @click="this.$router.push('admin')">Admin controls</a></span>
         </div>

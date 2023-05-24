@@ -321,7 +321,7 @@ table {
 .table-wrapped {
     margin: auto;
     width: 95%;
-    height: 71vh;
+    max-height: 71vh;
     border: 2px solid rgba(255, 255, 255, 0.448);
 }
 
@@ -370,12 +370,14 @@ table tr:nth-child(odd) {
     align-items: flex-start;
 }
 
-.add-user-modal .vm-body > div input[type=text], .add-user .vm-body > div input[type=email] {
+.add-user-modal .vm-body > div input[type=text], .add-user-modal .vm-body > div input[type=email] {
     width: 300px;
-    height: 25px;
+    height: 30px;
     border-radius: 7px;
     border: 1px solid black;
     padding: 0px 5px;
+    background-color: white;
+    color: black;
 }
 
 .add-user {

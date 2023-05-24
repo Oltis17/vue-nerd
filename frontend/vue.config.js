@@ -5,11 +5,6 @@ module.exports = defineConfig({
   devServer: {
     "port": 80,
     proxy: {
-      // '/api/': {
-      //   target: 'https://nerd.cesnet.cz/nerd/api/v1',
-      //   pathRewrite: { '^/api': '' },
-      //   changeOrigin: true,
-      // },
       '/nerd/api/v2/': {
         target: 'http://localhost:8000/',
         pathRewrite: { '^/api/v2': '/nerd/api/v2' },

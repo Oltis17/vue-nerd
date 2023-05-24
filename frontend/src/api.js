@@ -67,7 +67,6 @@ axios.interceptors.response.use(
   err => {
     const statusCode = err.response.status;
     if (statusCode === 401 && err.response.data.data === 'Signature verification failed') {
-      console.log("HERE");
       const token = getRefreshToken();
       return axios.post('/nerd/api/v2/refreshToken', { token })
       .then(function (success) {
@@ -95,20 +94,33 @@ axios.interceptors.response.use(
       removeAccessToken();
       return;
     }
+    else {
+      return Promise.reject(err);
+    }
   }
 );
 
 
 export async function getResults() {
-    const response = await axios.post('/nerd/api/v2/search/ip');
+    const response = await axios.post('/nerd/api/v2/search/ip').
+    catch(function (error) {
+      if (error.response) {
+        return Promise.reject(error.response.data);
+      }
+    });
     return response.data;
 }
 
 export async function filterResults() {
     const response = await axios.post('/nerd/api/v2/search/ip',
       store.state.filter
-    );
-    return response.data;
+    ).
+    catch(function (error) {
+      if (error.response) {
+        return Promise.reject(error.response.data);
+      }
+    });
+    return response?.data;
 }
 
 export async function filterResultsQuery(params) {
@@ -232,7 +244,7 @@ export async function editRoles(id, roles) {
 }
 
 export async function deleteUser(ide) {
-  const response = await axios.delete(`/nerd/api/v2/delete-user/${ide}`).
+  const response = await axios.delete(`/nerd/api/v2/delete_user/${ide}`).
   catch(function (error) {
     if (error.response) {
       return Promise.reject(error.response.data);
@@ -243,6 +255,16 @@ export async function deleteUser(ide) {
 
 export async function addUser(email, password, organization, roles, verify) {
   const response = await axios.post('/nerd/api/v2/add-user', { email, name: "NoNamev2", password, organization, roles, verify }).
+  catch(function (error) {
+    if (error.response) {
+      return Promise.reject(error.response.data);
+    }
+  });
+  return response.data;
+}
+
+export async function resetPassFromMail(password, token) {
+  const response = await axios.post('/nerd/api/v2/password_reset_from_token', { password, token }).
   catch(function (error) {
     if (error.response) {
       return Promise.reject(error.response.data);

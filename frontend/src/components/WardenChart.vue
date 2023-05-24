@@ -6,13 +6,13 @@
     :data="chartData"
   />
   </div>
-
 </template>
 
 <script>
 import { Bar } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
 import 'chartjs-adapter-moment';
+import warden from '../assets/warden_categories.json';
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
@@ -23,10 +23,10 @@ export default {
   data() {
     return {
       chartData: {
-        datasets: [ 
-          { data: this.data?.reduce((res, d) => { if (d.categories["ReconScanning"]) {res.push({ x: d.date, y: d.categories["ReconScanning"].n_sum })} return res; }, []), backgroundColor: 'rgba(21, 190, 133, 0.732)', label: 'ReconScanning'},
-          { data: this.data?.reduce((res, d) => { if (d.categories["AnomalyTraffic"]) {res.push({ x: d.date, y: d.categories["AnomalyTraffic"].n_sum })} return res;}, []), backgroundColor: 'rgba(100, 100, 200, 0.732)', label: 'AnomalyTraffic'},
-         ]
+        datasets: 
+          Object.keys(warden).map((w) => {
+            return { data: this.data?.reduce((res, d) => { if (d.categories[w]) {res.push({ x: d.date, y: d.categories[w].n_sum })} return res; }, []), backgroundColor: `rgb(${warden[w]})`, label: w};
+          }).filter(item => item.data.length > 0)
       },
       chartOptions: {
         responsive: true,
@@ -40,6 +40,9 @@ export default {
         }
       }
     }
+  },
+  mounted() {
+    
   }
 }
 </script>

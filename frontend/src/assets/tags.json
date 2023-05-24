@@ -1,21 +1,70 @@
-[
-    { "name": "Exploit attempts", "short": "attemptexploit"},
-    { "name": "Malware", "short": "malware"},
-    { "name": "Scanner", "short": "reconscanning"},
-    { "name": "Login attempts", "short": "attemptlogin"},
-    { "name": "(D)DoS attacks", "short": "availabilitydos"},
-    { "name": "Research scanner", "short": "researchscanners"},
-    { "name": "VPN", "short": "vpn"},
-    { "name": "NAT", "short": "nat"},
-    { "name": "DSL", "short": "dsl"},
-    { "name": "Static IP", "short": "ststicIP"},
-    { "name": "Dynamic IP", "short": "dynamicIP"},
-    { "name": "IP in hostname", "short": "ip_in_hostname"},
-    { "name": "TOR exit node", "short": "tor"},
-    { "name": "SPAM sender", "short": "spam"},
-    { "name": "Reserved IP", "short": "reserved_ip"},
-    { "name": "MISP (tlp:white)", "short": "misp_tlp_white"},
-    { "name": "Whitelisted", "short": "whitelist"}
-
-]
-
+{
+    "attemptexploit": {
+        "name": "Exploit attempts",
+        "color": "#fca103"
+    },
+    "malware": {
+        "name": "Malware",
+        "color": "#1faa00"
+    },
+    "reconscanning": {
+        "name": "Scanner",
+        "color": "#42b983"
+    },
+    "attemptlogin": {
+        "name": "Login attempts",
+        "color": "#0084c8"
+    },
+    "availabilitydos": {
+        "name": "(D)DoS attacks",
+        "color": "#cb5c00"
+    },
+    "researchscanners": {
+        "name": "Research scanner",
+        "color": "#0f3d84"
+    },
+    "vpn": {
+        "name": "VPN",
+        "color": "#fe6960"
+    },
+    "nat": {
+        "name": "NAT",
+        "color": "#ffa534"
+    },
+    "dsl": {
+        "name": "DSL",
+        "color": "#a64dff"
+    },
+    "ststicIP": {
+        "name": "Static IP",
+        "color": "#5d4037"
+    },
+    "dynamicIP": {
+        "name": "Dynamic IP",
+        "color": "#0091ea"
+    },
+    "ip_in_hostname": {
+        "name": "IP in hostname",
+        "color": "#4d4d4d"
+    },
+    "tor": {
+        "name": "TOR exit node",
+        "color": "#aa00ff"
+    },
+    "spam": {
+        "name": "SPAM sender",
+        "color": "#ff6d00"
+    },
+    "reserved_ip": {
+        "name": "Reserved IP",
+        "color": "#c5e1a5"
+    },
+    "misp_tlp_white": {
+        "name": "MISP (tlp:white)",
+        "color": "#e8f5e9"
+    },
+    "whitelist": {
+        "name": "Whitelisted",
+        "color": "white"
+    }
+}

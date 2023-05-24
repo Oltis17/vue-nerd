@@ -2,19 +2,16 @@
   <div id="app">
     <TopBar />
     <router-view />
-    <FooterComp class="footer"/>
   </div>
 </template>
 
 <script>
 import TopBar from './components/TopBar.vue';
-import FooterComp from './components/FooterComp.vue';
 
 export default {
   name: 'App',
   components: {
       TopBar,
-      FooterComp,
   },
   watch: {
       '$route' (to, from) {
@@ -32,11 +29,7 @@ export default {
   }
 }
 
-.footer {
-  background-color: #00031c;
-  width: 100% !important;
-  margin-left: 100px;
-}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

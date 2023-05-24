@@ -136,9 +136,9 @@
                 <p>NERD is developed and operated by <b><a href="https://www.cesnet.cz/" target="_blank">CESNET</a></b> (operator of the Czech National Research and Education Network)
                 and its <a href="https://www.liberouter.org/" target="_blank">Liberouter</a> team.</p>
 
-                <p><a href="https://www.cesnet.cz/" target="_blank"><img class="logo" src="cesnet-logo.png" alt="CESNET logo" width="130px" height="60px"></a>
-                <a href="https://www.liberouter.org/" target="_blank"><img class="logo" src="liberouter-logo.png" alt="Liberouter logo" width="143.2px" height="46.4px" style="vertical-align: center"></a>
-                </p>
+                <a href="https://www.cesnet.cz/" target="_blank">
+                    <div style="background-color: white; width: 150px; margin: auto;"><img class="logo" src="../assets/cesnet-logo.png" alt="CESNET logo" width="130" height="60"></div>
+                </a>
 
                 <p>The software this service is based on was developed within the scope of the
                 Security Research Programme of the Czech Republic 2015 - 2020 (BV III / 1 VS)
@@ -152,12 +152,6 @@
 
                 <p>Development of some parts of the web interface was partially supported by the EU project
                 <a href="https://www.geant.org/Projects/GEANT_Project_GN4" target="_blank">GÉANT GN4-2</a>.</p>
-
-                <p>
-                <a href="https://www.mvcr.cz" target="_blank"><img class="logo" src="mvcr-logo.png" alt="MVČR logo" width="147.5px" height="45px"></a>
-                <a href="https://protective-h2020.eu/" target="_blank"><img class="logo" src="protective-logo.png" alt="PROTECTIVE logo" width="100px" height="45px"></a>
-                <a href="https://www.geant.net" target="_blank"><img class="logo" src="geant-logo.png" alt="GÉANT logo" width="90px" height="45px"></a>
-                </p>
 
                 <p>
                 Geolocation is performed using GeoLite2 data created by MaxMind, available from <a href="http://www.maxmind.com" target="_blank">http://www.maxmind.com</a>.<br>
