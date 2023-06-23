@@ -6,7 +6,7 @@ module.exports = defineConfig({
     "port": 80,
     proxy: {
       '/nerd/api/v2/': {
-        target: 'http://localhost:8000/',
+        target: 'http://nerd-test.liberouter.org',
         pathRewrite: { '^/api/v2': '/nerd/api/v2' },
         changeOrigin: true,
       },

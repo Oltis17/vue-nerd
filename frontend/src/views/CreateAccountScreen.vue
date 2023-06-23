@@ -33,6 +33,8 @@
                             </span>   
                         </div>
                         <password-meter :password="pass1" @score="onScore"/>
+                        <small v-if="score < 3" style="text-align: center; padding-top: 3px" >(Not strong enough)</small>
+                        <small v-else style="text-align: center; padding-top: 3px">(Strong enough)</small>
                     </div>
                     <div>
                         <label>Confirm password</label>

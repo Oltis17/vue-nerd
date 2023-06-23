@@ -24,7 +24,7 @@
         </span>
         <span v-if="$store.state.userInfo.loggedIn" class="flex-item" id="username" @click="this.$router.push('/profile')">{{ $store.state.userInfo.email }}</span>
         <span>
-          <button v-if="$store.state.userInfo.loggedIn" class="flex-item" @click="this.$refs.myRef.open()">Log out</button>
+          <button v-if="$store.state.userInfo.loggedIn" class="flex-item" @click="logout()">Log out</button>
         </span>
 
         <span>
@@ -87,8 +87,8 @@
   </div>
 
   <!-- MODALS -->
-  <vue-modality ref="myRef" title="Logging out" centered @ok="logout()" @cancel="this.$refs.myRef.hide()">
-        Are you sure you want to log out?
+  <vue-modality ref="myRef" title="Logged out" centered hide-cancel @ok="this.$refs.myRef.hide()">
+        You have been logged out.
     </vue-modality>
 </template>
 
@@ -120,9 +120,9 @@ export default {
     logout() {
       this.$store.commit('clearState');
       api.removeAccessToken();
-      this.$refs.myRef.hide();
       this.mobileMenu = false;
       this.$router.push('/');
+      this.$refs.myRef.open();
     },
     goTo(path) {
       this.mobileMenu = false;

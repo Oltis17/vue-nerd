@@ -16,12 +16,12 @@
                 <h3>Log in</h3>
                 <div>
                     <label>Email</label>
-                    <input type="email" v-model="email">
+                    <input type="email" v-model="email" @keyup.enter="login()">
                 </div>
                 <div>
                     <label>Password</label>
                     <div class="password">
-                        <input :type="this.passwordFieldType" v-model="password"> 
+                        <input :type="this.passwordFieldType" v-model="password" @keyup.enter="login()"> 
                         <span @click="switchVisibility()" class="icon">
                             <i class="fa fa-regular fa-eye"></i>
                         </span>   
