@@ -14,6 +14,9 @@
                     <table>
                         <thead>
                             <td>
+                                ID
+                            </td>
+                            <td>
                                 Email
                             </td>
                             <td>
@@ -22,9 +25,7 @@
                             <td>
                                 Roles
                             </td>
-                            <td>
-                                ID
-                            </td>
+
                             <td>
                                 Organization
                             </td>
@@ -47,20 +48,21 @@
 
                         <tbody>
                             <tr v-for="user in users" :key="user[0]">
+                                <td>{{ user[2] }}</td>
                                 <td>{{ user[0] }}</td>
                                 <td><span v-if="user[1].includes('admin')"> ✔ </span></td>
                                 <td><span v-for="role in user[1]" :key="role" style="padding-right: 5px;">{{ role }}</span></td>
-                                <td>{{ user[2] }}</td>
                                 <td>{{ user[3] }}</td>
                                 <td>{{ user[4] }}</td>
                                 <td><span v-if="user[5]"> ✔ </span></td>
                                 <td>{{ user[6] ? formatDateTime(user[6]) : '' }}</td>
                                 <td>{{ user[7] ? formatDateTime(user[7]) : '' }}</td>
                                 <td class="controls">
-                                    <span @click="editUserModal(user)"><i class="fa fa-solid fa-gear green"></i></span>
-                                    <span v-if="user[1].includes('registered')" @click="blockUserModal(user)"><i class="fa fa-solid fa-cancel orange"></i> </span>
-                                    <span v-else @click="unblockUserModal(user)"><i class="fa fa-solid fa-check green"></i> </span>
-                                    <span @click="deleteUserModal(user)"><i class="fa fa-solid fa-trash red"></i></span>
+                                    <span @click="editUserModal(user)"><i class="fa fa-solid fa-gear green" title="Edit user"></i></span>
+                                    <span v-if="user[1].includes('registered')" @click="blockUserModal(user)" title="Block user"><i class="fa fa-solid fa-cancel orange"></i> </span>
+                                    <span v-else @click="unblockUserModal(user)" title="Unblock user"><i class="fa fa-solid fa-check green"></i> </span>
+                                    <span v-if="user[0] !== $store.state.userInfo.email" @click="deleteUserModal(user)" title="Delete user"><i class="fa fa-solid fa-trash red"></i></span>
+                                    <span v-else title="Not allowed"><i class="fa fa-solid fa-minus"></i></span>
                                 </td>
                             </tr>
                         </tbody>

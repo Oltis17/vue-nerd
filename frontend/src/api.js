@@ -48,7 +48,7 @@ export const ifNotAuthenticated = async (to, from, next) => {
   if (!isLoggedIn()) {
     next();
   } else {
-    next('/');
+    next('/unauthorized');
   }
 };
 

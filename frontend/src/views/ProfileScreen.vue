@@ -30,6 +30,12 @@
                     {{ this.$store.state.api_v1_token }}
                 </td>
             </tr>
+            <tr v-else>
+                <td style="display: flex;" @click="this.$refs.myRef.open()">Token (API v1)</td>
+                <td>
+                    Generate new token
+                </td>
+            </tr>
         </table>
     </div>
     <vue-modality ref="myRef" title="About Groups" centered ok-title="Request access" @cancel="this.$refs.myRef.hide()">

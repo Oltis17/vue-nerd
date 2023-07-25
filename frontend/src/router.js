@@ -31,8 +31,8 @@ const router = createRouter({
             component: LoginScreen,
             meta: {
                 title: 'Login'
-            }
-            // beforeEnter: auth.ifNotAuthenticated,
+            },
+            beforeEnter: api.ifNotAuthenticated,
         },
         {
             path: '/create-account',
@@ -40,8 +40,8 @@ const router = createRouter({
             component: CreateAccountScreen,
             meta: {
                 title: 'Create Account'
-            }
-            // beforeEnter: auth.ifNotAuthenticated,
+            },
+            beforeEnter: api.ifNotAuthenticated,
         },
         {
             path: '/account-created',
@@ -49,8 +49,8 @@ const router = createRouter({
             component: AccountCreated,
             meta: {
                 title: 'Account Created'
-            }
-            // beforeEnter: auth.ifNotAuthenticated,
+            },
+            beforeEnter: api.ifNotAuthenticated,
         },
         {
             path: '/',
